@@ -6,11 +6,8 @@ use App\Casts\Hash;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class OrderPayment extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'order_payments';
 
     protected $default = ['xid'];

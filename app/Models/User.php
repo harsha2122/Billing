@@ -12,11 +12,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Hash as FacadesHash;
 
-use App\Traits\HasAdminScope;
-
 class User extends BaseModel implements AuthenticatableContract, JWTSubject
 {
-    use Notifiable, EntrustUserTrait, Authenticatable, HasFactory, HasAdminScope;
+    use Notifiable, EntrustUserTrait, Authenticatable, HasFactory;
 
     protected $default = ["xid", "name", "profile_image"];
 
@@ -24,7 +22,7 @@ class User extends BaseModel implements AuthenticatableContract, JWTSubject
 
     protected $dates = ['last_active_on'];
 
-    protected $hidden = ['id', 'company_id', 'role_id', 'warehouse_id', 'password', 'remember_token'];
+    protected $hidden = ['id', 'company_id', 'role_id',  'warehouse_id', 'password', 'remember_token'];
 
     protected $appends = ['xid', 'x_company_id', 'x_warehouse_id', 'x_role_id', 'profile_image_url'];
 
@@ -93,36 +91,5 @@ class User extends BaseModel implements AuthenticatableContract, JWTSubject
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
-    }
-
-    // Relationships for data owned by this admin user
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'admin_id');
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class, 'admin_id');
-    }
-
-    public function expenses()
-    {
-        return $this->hasMany(Expense::class, 'admin_id');
-    }
-
-    public function brands()
-    {
-        return $this->hasMany(Brand::class, 'admin_id');
-    }
-
-    public function categories()
-    {
-        return $this->hasMany(Category::class, 'admin_id');
-    }
-
-    public function createdUsers()
-    {
-        return $this->hasMany(User::class, 'created_by');
     }
 }

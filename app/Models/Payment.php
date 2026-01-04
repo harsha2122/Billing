@@ -8,11 +8,8 @@ use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Builder;
 
-use App\Traits\HasAdminScope;
-
 class Payment extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'payments';
 
     protected $default = ['xid'];

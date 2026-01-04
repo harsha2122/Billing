@@ -6,11 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class Unit extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'units';
 
     protected $default = ['xid', 'name', 'short_name', 'operator', 'operator_value'];

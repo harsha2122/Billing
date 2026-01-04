@@ -7,11 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class Warehouse extends BaseModel
 {
-    use HasAdminScope;
     use Notifiable;
 
     protected $table = 'warehouses';

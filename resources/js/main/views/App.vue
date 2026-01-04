@@ -68,8 +68,7 @@ export default {
                 newVal.meta &&
                 !(
                     newVal.meta.menuParent == "subscription" ||
-                    newVal.name == "admin.login" ||
-                    newVal.name == "verify.main"
+                    newVal.name == "admin.login"
                 )
             ) {
                 router.push({

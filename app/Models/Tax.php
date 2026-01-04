@@ -5,11 +5,8 @@ namespace App\Models;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class Tax extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'taxes';
 
     protected $default = ['xid', 'name', 'rate'];

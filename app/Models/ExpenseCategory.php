@@ -5,11 +5,8 @@ namespace App\Models;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class ExpenseCategory extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'expense_categories';
 
     protected $default = ['xid', 'name'];

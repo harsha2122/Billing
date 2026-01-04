@@ -6,11 +6,8 @@ use App\Casts\Hash;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class WarehouseStock extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'warehouse_stocks';
 
     protected $default = ['xid'];

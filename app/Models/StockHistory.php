@@ -7,11 +7,8 @@ use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Builder;
 
-use App\Traits\HasAdminScope;
-
 class StockHistory extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'stock_history';
 
     protected $default = ['xid'];

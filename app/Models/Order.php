@@ -7,11 +7,8 @@ use App\Classes\Common;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class Order extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'orders';
 
     protected $default = ['xid'];

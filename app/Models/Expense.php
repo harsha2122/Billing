@@ -8,11 +8,8 @@ use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 use Vinkla\Hashids\Facades\Hashids;
 
-use App\Traits\HasAdminScope;
-
 class Expense extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'expenses';
 
     protected $default = ['xid'];

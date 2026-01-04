@@ -7,11 +7,8 @@ use App\Classes\Common;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 
-use App\Traits\HasAdminScope;
-
 class Brand extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'brands';
 
     protected $default = ['id', 'xid', 'name'];

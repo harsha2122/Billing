@@ -8,11 +8,8 @@ use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
 use Vinkla\Hashids\Facades\Hashids;
 
-use App\Traits\HasAdminScope;
-
 class Category extends BaseModel
 {
-    use HasAdminScope;
     protected $table = 'categories';
 
     protected $default = ['id', 'xid', 'name', 'slug', 'parent_id', 'x_parent_id', 'image', 'image_url'];
