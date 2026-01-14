@@ -59,9 +59,6 @@ use App\Observers\UserObserver;
 use App\Observers\WarehouseHistoryObserver;
 use App\Observers\WarehouseObserver;
 use App\Observers\WarehouseStockObserver;
-use App\SuperAdmin\Models\SuperAdmin;
-use App\SuperAdmin\Observers\SuperAdminObserver;
-use App\SuperAdmin\Observers\CompanyObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -121,10 +118,8 @@ class EventServiceProvider extends ServiceProvider
             Tax::observe(TaxObserver::class);
             Unit::observe(UnitObserver::class);
 
-            if ($appType == 'saas') {
-                Company::observe(CompanyObserver::class);
-                SuperAdmin::observe(SuperAdminObserver::class);
-            }
+            // Note: Company and SuperAdmin observers removed
+            // as they are not needed for the current implementation
         }
     }
 }
