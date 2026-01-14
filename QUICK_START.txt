@@ -1,0 +1,56 @@
+QUICK START COMMANDS
+====================
+
+STEP 1: Configure Database
+---------------------------
+Edit .env:
+APP_TYPE=saas
+DB_DATABASE=billing_saas
+DB_USERNAME=root
+DB_PASSWORD=your_password
+
+
+STEP 2: Setup Application
+--------------------------
+php artisan key:generate
+php artisan migrate:fresh --seed
+
+
+STEP 3: Create SuperAdmin
+--------------------------
+php artisan superadmin:create admin@example.com SecurePass123 --name="Super Admin"
+
+
+STEP 4: Create Admin Companies
+-------------------------------
+php artisan admin:create "Company 1" admin1@test.com Pass123 --name="Admin 1"
+php artisan admin:create "Company 2" admin2@test.com Pass456 --name="Admin 2"
+
+
+STEP 5: Build Assets
+---------------------
+npm install
+npm run production
+
+
+STEP 6: Start Server
+---------------------
+php artisan serve
+
+
+LOGIN CREDENTIALS
+-----------------
+SuperAdmin:
+  Email: admin@example.com
+  Password: SecurePass123
+
+Company Admin 1:
+  Email: admin1@test.com
+  Password: Pass123
+
+Company Admin 2:
+  Email: admin2@test.com
+  Password: Pass456
+
+
+See SAAS_SETUP.txt for detailed instructions.
