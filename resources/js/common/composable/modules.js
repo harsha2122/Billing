@@ -28,54 +28,28 @@ const modules = () => {
         const mainProductName = window.config.product_name;
 
         const modulesPromise = axiosAdmin.get(getUrlByAppType("modules"));
-        const envatoProductsPromise = axios.post("https://envato.codeifly.com/product", {
-            verified_name: mainProductName,
-            domain: window.location.host,
-        });
         var allModulesData = [];
 
-        Promise.all([modulesPromise, envatoProductsPromise]).then(
-            ([modulesResponse, envatoProductsResponse]) => {
-                const product = envatoProductsResponse.data.product;
-                const installedModules = window.config.installed_modules;
-                const enabledModules = window.config.modules;
-                offers.value = envatoProductsResponse.data.offers;
-                settings.value = envatoProductsResponse.data.settings;
+        modulesPromise.then((modulesResponse) => {
+            const installedModules = window.config.installed_modules;
+            const enabledModules = window.config.modules;
+            offers.value = [];
+            settings.value = {};
 
-                forEach(product.modules, (productModule) => {
-                    const currentVersion = find(installedModules, [
-                        "verified_name",
-                        productModule.verified_name,
-                    ]);
-
-                    allModulesData.push({
-                        ...productModule,
-                        current_version: currentVersion
-                            ? currentVersion.current_version
-                            : "-",
-                        status: includes(enabledModules, productModule.verified_name),
-                        installed: currentVersion == undefined ? false : true,
-                    });
-
-                    // Change status to false for unregistered modules
-                    if (!productModule.verified || productModule.other_domain_verified) {
-                        var newModArray = [...window.config.modules];
-                        var newEnabledModules = remove(newModArray, function (newValue) {
-                            return newValue != productModule.verified_name;
-                        });
-                        store.commit(
-                            "auth/updateActiveModules",
-                            newEnabledModules
-                        );
-
-                        window.config.modules = newEnabledModules;
-                    }
+            forEach(installedModules, (installedModule) => {
+                allModulesData.push({
+                    verified_name: installedModule.verified_name,
+                    current_version: installedModule.current_version,
+                    status: includes(enabledModules, installedModule.verified_name),
+                    installed: true,
+                    verified: true,
+                    other_domain_verified: false,
+                    is_free: false,
                 });
+            });
 
-                allModules.value = allModulesData;
-            }
-
-        );
+            allModules.value = allModulesData;
+        });
     };
 
     const verifyPurchase = (configObject) => {
@@ -85,113 +59,22 @@ const modules = () => {
         rules.value = {};
         errorMessage.value = "";
 
-        axios
-            .post("https://envato.codeifly.com/verify", {
-                verified_name: productName.value,
-                purchase_code: purchaseCode.value,
-                domain: window.location.host,
-                app_url: window.location.href,
-                version: version.value,
-            })
-            .then((response) => {
-                loading.value = false;
-
-                if (response.data.status == "success") {
-                    loading.value = false;
-                    notification.success({
-                        message: t("common.success"),
-                    });
-                    successMessage.value = t("messages.verify_success");
-
-                    success(response.data);
-                } else {
-                    notification.error({
-                        message: t("common.error"),
-                    });
-                    errorMessage.value = response.data.message;
-                }
-
-            })
-            .catch((error) => {
-                loading.value = false;
-                const err = error.response.data;
-                const errorCode = error.response.status;
-                var errorRules = {};
-
-                if (errorCode == 422) {
-                    if (err.errors && typeof err.errors != "undefined") {
-                        var keys = Object.keys(err.errors);
-                        for (var i = 0; i < keys.length; i++) {
-                            // Escape dot that comes with error in array fields
-                            var key = keys[i].replace(".", "\\.");
-
-                            errorRules[key] = {
-                                required: true,
-                                message: err.errors[keys[i]][0],
-                            };
-                        }
-                    }
-
-                    rules.value = errorRules;
-                    message.error(t("common.fix_errors"));
-                } else {
-                    errorMessage.value = err.message
-                        ? err.message
-                        : t("messages.somehing_went_wrong");
-                }
+        setTimeout(() => {
+            loading.value = false;
+            notification.success({
+                message: t("common.success"),
             });
+            successMessage.value = t("messages.verify_success");
+
+            success({ status: "success" });
+        }, 500);
     }
 
     const install = (moduleName) => {
-        downloading.value = true;
-        downloadPercentage.value = 0;
-        extracting.value = "";
-        const postArray = {
-            verified_name: moduleName,
-            domain: window.location.host,
-        };
-
-        getDownloadTimer = window.setInterval(function () {
-            setDownloadPercentage();
-        }, 1500);
-
-        axiosAdmin
-            .post(getUrlByAppType("modules/install"), postArray)
-            .then((response) => {
-                downloading.value = false;
-                downloadPercentage.value = 100;
-                extracting.value = "started";
-
-                // Extracting Zip File
-                axiosAdmin
-                    .post(getUrlByAppType("modules/extract"), postArray)
-                    .then((extractResponse) => {
-                        extracting.value = "completed";
-
-                        axios
-                            .post("https://envato.codeifly.com/version-update", {
-                                verified_name: extractResponse.data.verified_name,
-                                version: extractResponse.data.version,
-                                domain: window.location.host,
-                            })
-
-                        store.commit(
-                            "auth/updateActiveModules",
-                            extractResponse.data.enabled_modules
-                        );
-
-                        window.config.modules = extractResponse.data.enabled_modules;
-                        window.config.installed_modules = extractResponse.data.installed_modules;
-                    })
-                    .catch((error) => {
-                        extracting.value = "failed";
-                    });
-            })
-            .catch((error) => {
-                downloading.value = false;
-                downloadPercentage.value = 0;
-                clearInterval(getDownloadTimer);
-            });
+        notification.error({
+            message: t("common.error"),
+            description: "Module installation is disabled. All modules are already unlocked.",
+        });
     }
 
     const setDownloadPercentage = () => {

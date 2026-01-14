@@ -59,73 +59,12 @@ class UpdateAppController extends ApiBaseController
 
     public function updateApp(Request $request)
     {
-        $response = Http::post('https://envato.codeifly.com/install', [
-            'verified_name' => $request->verified_name,
-            'domain' => $request->domain,
-        ]);
-
-        $responseData = $response->object();
-
-        if ((isset($responseData->message))) {
-            throw new ApiException($responseData->message);
-        }
-
-        $tempPath = storage_path() . '/app';
-        $fileName = $responseData->file_name;
-        $tempFileName = $tempPath . '/' . $fileName;
-
-        $fileHandler = fopen($tempFileName, 'w');
-
-        $fileUrl = $responseData->url;
-
-        $client = new Client();
-        $client->request('GET', $fileUrl,  [
-            'sink' => $fileHandler,
-            'progress' => function ($downloadTotalSize, $downloadTotalSoFar, $uploadTotalSize, $uploadSizeSoFar) {
-                $percentageDownloaded = ($downloadTotalSize > 0) ? (($downloadTotalSoFar / $downloadTotalSize) * 100) : 0;
-                File::put(public_path() . '/download-percentage.txt', $percentageDownloaded);
-            },
-            'verify' => false
-        ]);
-
-        $modulesData = Common::moduleInformations();
-
-        return ApiResponse::make('Success', [
-            'modules' => $modulesData,
-            'file_name' => $fileName,
-        ]);
+        throw new ApiException('App updates are disabled. The system is already unlocked.');
     }
 
     public function extractZip(Request $request)
     {
-        $moduleName = $request->verified_name;
-        $fileName = $request->file_name;
-
-        $tempPath = storage_path() . '/app';
-        $tempFileName = $tempPath . '/' . $fileName;
-
-        $extractPath = base_path();
-
-        $zip = Zip::open($tempFileName);
-        $zip->extract($extractPath);
-
-        // PermsSeed::seedMainPermissions();
-        // LangTrans::seedMainTranslations();
-        // sleep(3);
-        // Artisan::call('migrate', ['--force' => true]);
-
-        $this->configClear();
-
-        // Delete Downloaded File
-
-        $modulesData = Common::moduleInformations();
-
-        return ApiResponse::make('Success', [
-            'installed_modules' => $modulesData['installed_modules'],
-            'enabled_modules' => Arr::pluck($modulesData['enabled_modules'], 'verified_name'),
-            'verified_name' => $moduleName,
-            'version'    => $this->getAppVersion()
-        ]);
+        throw new ApiException('Module installation is disabled. The system is already unlocked.');
     }
 
     public function configClear()

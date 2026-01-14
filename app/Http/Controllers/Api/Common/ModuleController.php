@@ -46,63 +46,12 @@ class ModuleController extends ApiBaseController
 
     public function install(Request $request)
     {
-        $response = Http::post('https://envato.codeifly.com/install', [
-            'verified_name' => $request->verified_name,
-            'domain' => $request->domain,
-        ]);
-
-        $responseData = $response->object();
-
-        $tempPath = storage_path() . '/app';
-        $fileName = $request->verified_name . '.zip';
-        $tempFileName = $tempPath . '/' . $fileName;
-
-        $fileHandler = fopen($tempFileName, 'w');
-
-        $fileUrl = $responseData->url;
-
-        $client = new Client();
-        $client->request('GET', $fileUrl,  [
-            'sink' => $fileHandler,
-            'progress' => function ($downloadTotalSize, $downloadTotalSoFar, $uploadTotalSize, $uploadSizeSoFar) {
-                $percentageDownloaded = ($downloadTotalSize > 0) ? (($downloadTotalSoFar / $downloadTotalSize) * 100) : 0;
-                File::put(public_path() . '/download-percentage.txt', $percentageDownloaded);
-            },
-            'verify' => false
-        ]);
-
-        $modulesData = Common::moduleInformations();
-
-        return ApiResponse::make('Success', $modulesData);
+        throw new \Examyou\RestAPI\Exceptions\ApiException('Module installation is disabled. The system is already unlocked.');
     }
 
     public function extractZip(Request $request)
     {
-        $moduleName = $request->verified_name;
-
-        $tempPath = storage_path() . '/app';
-        $fileName = $request->verified_name . '.zip';
-        $tempFileName = $tempPath . '/' . $fileName;
-
-        $extractPath = base_path() . '/Modules';
-
-        $zip = Zip::open($tempFileName);
-        $zip->extract($extractPath);
-
-        LangTrans::seedTranslations($moduleName);
-        sleep(3);
-        Artisan::call('module:migrate', ['module' => $moduleName, '--force' => true]);
-
-        // Delete Downloaded File
-
-        $modulesData = Common::moduleInformations();
-
-        return ApiResponse::make('Success', [
-            'installed_modules' => $modulesData['installed_modules'],
-            'enabled_modules' => Arr::pluck($modulesData['enabled_modules'], 'verified_name'),
-            'verified_name' => $moduleName,
-            'version'    => $this->getModuleVersion($moduleName)
-        ]);
+        throw new \Examyou\RestAPI\Exceptions\ApiException('Module installation is disabled. The system is already unlocked.');
     }
 
     public function getModuleVersion($moduleName)

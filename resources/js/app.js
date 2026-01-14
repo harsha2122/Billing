@@ -41,13 +41,19 @@ async function bootstrap() {
 
     app.component(VueBarcode.name, VueBarcode);
     const allModules = window.config.installed_modules;
-    allModules.forEach((allModule) => {
-        const moduleName = allModule.verified_name;
-        const moduleMenu = require(`../../Modules/${moduleName}/Resources/assets/js/views/menu/admin.vue`)
-            .default;
+    if (allModules && allModules.length > 0) {
+        allModules.forEach((allModule) => {
+            try {
+                const moduleName = allModule.verified_name;
+                const moduleMenu = require(`../../Modules/${moduleName}/Resources/assets/js/views/menu/admin.vue`)
+                    .default;
 
-        app.component(moduleName + 'Menu', moduleMenu);
-    });
+                app.component(moduleName + 'Menu', moduleMenu);
+            } catch (error) {
+                console.warn('Module not found:', allModule.verified_name);
+            }
+        });
+    }
 
     window.i18n = i18n;
 

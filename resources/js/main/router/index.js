@@ -33,15 +33,21 @@ const checkAllRoutes = (currentModuleRoutes, allModule) => {
     })
 }
 
-allInstalledModules.forEach((allModule) => {
-    const allModuleName = allModule.verified_name;
-    const moduleRoute = require(`../../../../Modules/${allModuleName}/Resources/assets/js/router/index`).default;
-    var currentModuleRoutes = [...moduleRoute];
+if (allInstalledModules && allInstalledModules.length > 0) {
+    allInstalledModules.forEach((allModule) => {
+        try {
+            const allModuleName = allModule.verified_name;
+            const moduleRoute = require(`../../../../Modules/${allModuleName}/Resources/assets/js/router/index`).default;
+            var currentModuleRoutes = [...moduleRoute];
 
-    checkAllRoutes(currentModuleRoutes, allModuleName);
+            checkAllRoutes(currentModuleRoutes, allModuleName);
 
-    allModulesRoutes.push(...currentModuleRoutes);
-});
+            allModulesRoutes.push(...currentModuleRoutes);
+        } catch (error) {
+            console.warn('Module router not found:', allModule.verified_name);
+        }
+    });
+}
 
 // Including SuperAdmin Routes
 var superAdminRoutes = [];
