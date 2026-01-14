@@ -1,0 +1,155 @@
+SAAS SETUP GUIDE - Step by Step
+================================
+
+1. UPDATE ENVIRONMENT FILE
+--------------------------
+Edit .env file and set:
+APP_TYPE=saas
+
+Configure database:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=billing_saas
+DB_USERNAME=root
+DB_PASSWORD=your_password
+
+
+2. GENERATE APPLICATION KEY
+----------------------------
+php artisan key:generate
+
+
+3. RUN MIGRATIONS
+------------------
+php artisan migrate:fresh --seed
+
+This will:
+- Create all database tables
+- Set up subscription plans (Default and Trial)
+- Configure SaaS-specific columns
+
+
+4. CREATE SUPERADMIN
+--------------------
+php artisan superadmin:create admin@example.com SecurePassword123 --name="Super Admin"
+
+This creates a superadmin who can:
+- Access all companies data
+- Create/manage admin accounts
+- Monitor the entire system
+
+
+5. CREATE ADMIN COMPANIES
+--------------------------
+For each admin/tenant:
+
+php artisan admin:create "Company Name" admin1@company.com Password123 --name="Admin One"
+
+Example:
+php artisan admin:create "ABC Store" abc@example.com Pass123 --name="ABC Admin"
+php artisan admin:create "XYZ Shop" xyz@example.com Pass456 --name="XYZ Admin"
+
+Each command creates:
+- New company
+- Warehouse for the company
+- Currencies (USD, INR)
+- Admin role and user
+- Default settings
+- Walk-in customer
+
+
+6. BUILD FRONTEND ASSETS
+-------------------------
+npm install
+npm run production
+
+
+7. CONFIGURE WEB SERVER
+------------------------
+Point your web server to /public directory
+
+For Apache (.htaccess already included)
+For Nginx, use this config:
+
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+
+
+8. SET PERMISSIONS
+------------------
+chmod -R 755 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+
+
+9. CLEAR CACHES
+---------------
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+
+10. LOGIN
+---------
+SuperAdmin Login:
+- Email: admin@example.com (or what you set)
+- Password: SecurePassword123 (or what you set)
+- Can access all companies
+
+Admin Login:
+- Email: admin1@company.com (specific company admin)
+- Password: Password123 (or what you set)
+- Can only access their own company data
+
+
+DATA ISOLATION
+--------------
+Each admin company has completely isolated:
+- Products
+- Orders
+- Customers
+- Suppliers
+- Warehouses
+- Inventory
+- Financial records
+- Settings
+
+The system uses Company Scopes to automatically filter all queries by company_id.
+
+
+CREATING MORE ADMINS LATER
+---------------------------
+After initial setup, SuperAdmin can create more companies via:
+
+php artisan admin:create "New Store" newadmin@email.com Password --name="Admin Name"
+
+Or build a UI for SuperAdmin to create companies from the admin panel.
+
+
+SUBSCRIPTION PLANS
+------------------
+Default plans are created:
+1. Default Plan - 5 products max
+2. Trial Plan - 200 products max (or 5 in production)
+
+To customize plans, modify:
+database/migrations/2022_10_06_152352_create_company_id_columns_in_all_tables.php
+
+
+TROUBLESHOOTING
+---------------
+If you see "Class not found":
+composer dump-autoload
+
+If migrations fail:
+php artisan migrate:fresh
+
+If login doesn't work:
+- Clear browser cookies
+- Run: php artisan config:clear
+
+Database exists error:
+Drop database and recreate:
+mysql -u root -p -e "DROP DATABASE billing_saas; CREATE DATABASE billing_saas;"
