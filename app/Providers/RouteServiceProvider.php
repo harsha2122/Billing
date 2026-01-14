@@ -59,49 +59,25 @@ class RouteServiceProvider extends ServiceProvider
                     ->group(base_path('routes/migrate.php'));
             }
 
-            if (app_type() == 'saas' && file_exists(storage_path('installed'))) {
-                Route::middleware('web')
-                    ->namespace($this->superAdminNamespace)
-                    ->group(base_path('app/SuperAdmin/routes/front.php'));
-            }
-
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/front.php'));
 
-            if (app_type() == 'non-saas') {
-                Route::middleware('web')
-                    ->namespace($this->namespace)
-                    ->group(base_path('routes/app.php'));
-            } else {
-                Route::middleware('web')
-                    ->namespace($this->superAdminNamespace)
-                    ->group(base_path('app/SuperAdmin/routes/app.php'));
-            }
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/app.php'));
 
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
 
-            if (app_type() == 'saas') {
-                Route::middleware('web')
-                    ->namespace($this->superAdminNamespace)
-                    ->group(base_path('app/SuperAdmin/routes/superadmin.php'));
-            }
-
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/common.php'));
 
-            if (app_type() == 'non-saas') {
-                Route::middleware('web')
-                    ->namespace($this->namespace)
-                    ->group(base_path('routes/main.php'));
-            } else {
-                Route::middleware('web')
-                    ->namespace($this->superAdminNamespace)
-                    ->group(base_path('app/SuperAdmin/routes/main.php'));
-            }
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/main.php'));
         });
     }
 
