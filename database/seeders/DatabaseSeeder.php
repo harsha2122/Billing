@@ -55,12 +55,11 @@ class DatabaseSeeder extends Seeder
             $company = Company::first();
             Common::assignCompanyForNonSaas($company);
 
-            // Creating SuperAdmin
-            if (app_type() == 'saas') {
-                \App\SuperAdmin\Classes\SuperAdminCommon::createSuperAdmin(true);
+            // Seed translations
+            LangTrans::seedMainTranslations();
 
-                LangTrans::seedMainTranslations();
-            }
+            // Note: SuperAdmin is created via artisan command:
+            // php artisan superadmin:create admin@example.com password
         }
     }
 }
