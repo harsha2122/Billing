@@ -45,6 +45,13 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 
+            // SuperAdmin API routes
+            if (app_type() == 'saas') {
+                Route::prefix('api')
+                    ->namespace($this->namespace)
+                    ->group(base_path('routes/superadmin.php'));
+            }
+
             // Running Migration
             if (file_exists(public_path() . '/migrate')) {
                 Route::middleware('web')

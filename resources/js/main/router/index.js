@@ -120,6 +120,10 @@ router.beforeEach((to, from, next) => {
         const user = store.state.auth.user;
 
         if (to.meta.requireUnauth && isLoggedIn) {
+            // Redirect based on user type
+            if (user && user.is_superadmin) {
+                return next({ name: 'superadmin.dashboard' });
+            }
             return next({ name: 'admin.dashboard.index' });
         }
 
@@ -128,13 +132,23 @@ router.beforeEach((to, from, next) => {
         }
 
         if (to.meta.requireAuth && isLoggedIn) {
-            // Check Company Setup
-            if (!isAdminCompanySetupCorrect() && to.name !== 'admin.setup_app.index' && to.name !== 'admin.logout') {
+            // Check if SuperAdmin trying to access regular admin routes
+            if (user && user.is_superadmin && !to.name.startsWith('superadmin.')) {
+                return next({ name: 'superadmin.dashboard' });
+            }
+
+            // Check if regular admin trying to access SuperAdmin routes
+            if (to.meta.requiresSuperAdmin && (!user || !user.is_superadmin)) {
+                return next({ name: 'admin.dashboard.index' });
+            }
+
+            // Check Company Setup (only for non-superadmin users)
+            if (!user.is_superadmin && !isAdminCompanySetupCorrect() && to.name !== 'admin.setup_app.index' && to.name !== 'admin.logout') {
                 return next({ name: 'admin.setup_app.index' });
             }
 
             // Check Permissions
-            if (to.meta.permission) {
+            if (to.meta.permission && !user.is_superadmin) {
                 const permission = to.meta.permission.replace(/-/g, '_');
                 if (!checkUserPermission(permission, user)) {
                     return next({ name: 'admin.dashboard.index' });

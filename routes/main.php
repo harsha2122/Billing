@@ -25,7 +25,7 @@ Route::get('{path}', function () {
             'company' => $company,
             'appVersion' => $appVersion,
             'appEnv' => env('APP_ENV'),
-            'appType' => 'non-saas'
+            'appType' => app_type()
         ]);
     } else {
         return redirect('/install');

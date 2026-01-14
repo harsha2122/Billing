@@ -160,15 +160,21 @@ class AuthController extends ApiBaseController
         // Adding user type according to email/phone
         if ($user) {
             $credentials['user_type'] = 'staff_members';
-            $credentials['is_superadmin'] = 0;
-            $userCompany = Company::where('id', $user->company_id)->first();
+
+            // Check if user is superadmin
+            if ($user->is_superadmin) {
+                // SuperAdmin doesn't need company checks
+                $userCompany = null;
+            } else {
+                $userCompany = Company::where('id', $user->company_id)->first();
+            }
         }
 
         if (!$token = auth('api')->attempt($credentials)) {
             throw new ApiException('These credentials do not match our records.');
-        } else if ($userCompany->status === 'pending') {
+        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'pending') {
             throw new ApiException('Your company not verified.');
-        } else if ($userCompany->status === 'inactive') {
+        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'inactive') {
             throw new ApiException('Company account deactivated.');
         } else if (auth('api')->user()->status === 'waiting') {
             throw new ApiException('User not verified.');
