@@ -1084,9 +1084,11 @@ class LangTrans
     {
         if ($moduleName == 'Estore') {
             return self::$eStoreTranslations;
-        } else if ($moduleName == 'Superadmin') {
-            return \App\SuperAdmin\Classes\SuperAdminLangTrans::$mainTranslations;
         }
+        // Superadmin uses main translations
+        // else if ($moduleName == 'Superadmin') {
+        //     return \App\SuperAdmin\Classes\SuperAdminLangTrans::$mainTranslations;
+        // }
 
         return self::$mainTranslations;
     }
@@ -1124,10 +1126,10 @@ class LangTrans
         // Main Module
         self::seedTranslations();
 
-        // Seed Translation for SAAS Version
-        if (app_type() == 'saas') {
-            self::seedTranslations('Superadmin');
-        }
+        // Superadmin uses main translations, no separate seeding needed
+        // if (app_type() == 'saas') {
+        //     self::seedTranslations('Superadmin');
+        // }
     }
 
     public static function seedAllModulesTranslations()
