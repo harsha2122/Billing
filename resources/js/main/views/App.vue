@@ -74,6 +74,7 @@ export default {
             // Redirecting if plan is expired
             if (
                 appType == "saas" &&
+                appSetting.value &&
                 appSetting.value.is_global == 0 &&
                 appSetting.value.status == "license_expired" &&
                 newVal &&
