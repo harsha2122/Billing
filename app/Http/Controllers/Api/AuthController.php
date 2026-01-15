@@ -165,12 +165,13 @@ class AuthController extends ApiBaseController
 
         // Adding user type according to email/phone
         if ($user) {
+            $credentials['user_type'] = $user->user_type;
+
             // Check if user is superadmin
             if ($user->is_superadmin) {
-                // SuperAdmin doesn't need company checks and user_type validation
+                // SuperAdmin doesn't need company checks
                 $userCompany = null;
             } else {
-                $credentials['user_type'] = $user->user_type;
                 $userCompany = Company::where('id', $user->company_id)->first();
             }
         }
