@@ -162,43 +162,13 @@ class CompaniesController extends ApiBaseController
 
         DB::beginTransaction();
         try {
-            // Delete all related records first to avoid foreign key constraints
+            // First, remove company's foreign key references to prevent constraint issues
+            $company->admin_id = null;
+            $company->warehouse_id = null;
+            $company->currency_id = null;
+            $company->save();
 
-            // Delete users (including admin)
-            User::withoutGlobalScope(CompanyScope::class)
-                ->where('company_id', $company->id)
-                ->delete();
-
-            // Delete roles
-            Role::withoutGlobalScope(CompanyScope::class)
-                ->where('company_id', $company->id)
-                ->delete();
-
-            // Delete warehouses
-            Warehouse::withoutGlobalScope(CompanyScope::class)
-                ->where('company_id', $company->id)
-                ->delete();
-
-            // Delete currencies
-            Currency::withoutGlobalScope(CompanyScope::class)
-                ->where('company_id', $company->id)
-                ->delete();
-
-            // Delete from other tables
-            DB::table('products')->where('company_id', $company->id)->delete();
-            DB::table('categories')->where('company_id', $company->id)->delete();
-            DB::table('brands')->where('company_id', $company->id)->delete();
-            DB::table('units')->where('company_id', $company->id)->delete();
-            DB::table('taxes')->where('company_id', $company->id)->delete();
-            DB::table('orders')->where('company_id', $company->id)->delete();
-            DB::table('payments')->where('company_id', $company->id)->delete();
-            DB::table('expenses')->where('company_id', $company->id)->delete();
-            DB::table('expense_categories')->where('company_id', $company->id)->delete();
-            DB::table('payment_modes')->where('company_id', $company->id)->delete();
-            DB::table('custom_fields')->where('company_id', $company->id)->delete();
-            DB::table('settings')->where('company_id', $company->id)->delete();
-
-            // Finally delete the company
+            // Delete the company - database cascades will handle related records
             $company->delete();
 
             DB::commit();
