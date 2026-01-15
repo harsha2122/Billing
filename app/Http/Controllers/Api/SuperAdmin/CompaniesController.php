@@ -58,7 +58,7 @@ class CompaniesController extends ApiBaseController
             $company = new Company();
             $company->name = $request->name;
             $company->short_name = $request->short_name ?? $request->name;
-            $company->email = $request->email;
+            $company->email = trim($request->email);
             $company->phone = $request->phone;
             $company->address = $request->address;
             $company->is_global = 0;
@@ -71,7 +71,7 @@ class CompaniesController extends ApiBaseController
             $warehouse->company_id = $company->id;
             $warehouse->name = $request->name . ' Warehouse';
             $warehouse->slug = strtolower(str_replace(' ', '-', $request->name)) . '-' . time();
-            $warehouse->email = $request->email;
+            $warehouse->email = trim($request->email);
             $warehouse->phone = $request->phone ?? '1234567890';
             $warehouse->address = $request->address ?? 'Address';
             $warehouse->save();
@@ -97,11 +97,12 @@ class CompaniesController extends ApiBaseController
             $admin->warehouse_id = $warehouse->id;
             $admin->role_id = $adminRole->id;
             $admin->name = $request->admin_name;
-            $admin->email = $request->admin_email;
-            $admin->password = Hash::make($request->admin_password);
+            $admin->email = strtolower(trim($request->admin_email));
+            $admin->password = $request->admin_password;
             $admin->user_type = 'staff_members';
             $admin->is_superadmin = false;
             $admin->status = 'enabled';
+            $admin->login_enabled = true;
             $admin->save();
 
             // Update company admin_id
