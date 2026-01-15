@@ -15,7 +15,7 @@ class AdminUsersSeeder extends Seeder
             $superAdmin = new User();
             $superAdmin->name = 'SuperAdmin';
             $superAdmin->email = 'superadmin@example.com';
-            $superAdmin->password = Hash::make('12345678');
+            $superAdmin->password = '12345678'; // Model setter will hash it
             $superAdmin->user_type = 'super_admins';
             $superAdmin->is_superadmin = 1;
             $superAdmin->status = 'enabled';
@@ -34,7 +34,7 @@ class AdminUsersSeeder extends Seeder
             $admin = new User();
             $admin->name = 'Admin';
             $admin->email = 'admin@example.com';
-            $admin->password = Hash::make('12345678');
+            $admin->password = '12345678'; // Model setter will hash it
             $admin->user_type = 'staff_members';
             $admin->is_superadmin = 0;
             $admin->status = 'enabled';
