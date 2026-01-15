@@ -68,7 +68,7 @@ class User extends BaseModel implements AuthenticatableContract, JWTSubject
 
     public function setUserTypeAttribute($value)
     {
-        $this->attributes['user_type'] = 'staff_members';
+        $this->attributes['user_type'] = $value === 'super_admins' ? 'super_admins' : 'staff_members';
     }
 
     public function getProfileImageUrlAttribute()
