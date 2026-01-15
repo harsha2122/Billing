@@ -2,7 +2,7 @@
     <router-view v-slot="{ Component, route }">
         <suspense>
             <template #default>
-                <a-config-provider :direction="appSetting.rtl ? 'rtl' : 'ltr'">
+                <a-config-provider :direction="appSetting && appSetting.rtl ? 'rtl' : 'ltr'">
                     <div class="theme-container">
                         <ThemeProvider :theme="{ ...theme }">
                             <LoadingApp v-if="appChecking" />
@@ -38,13 +38,25 @@ export default {
         const store = useStore();
         const darkTheme = "dark";
         const { updatePageTitle, appSetting, frontWarehouse, appType } = common();
-        changeAntdTheme(appSetting.value.primary_color);
+
+        // Only change theme if appSetting is loaded
+        if (appSetting.value && appSetting.value.primary_color) {
+            changeAntdTheme(appSetting.value.primary_color);
+        }
+
         const appChecking = computed(() => store.state.auth.appChecking);
 
         onMounted(() => {
             setInterval(() => {
                 store.dispatch("auth/refreshToken");
             }, 5 * 60 * 1000);
+        });
+
+        // Watch for appSetting changes and apply theme
+        watch(appSetting, (newVal) => {
+            if (newVal && newVal.primary_color) {
+                changeAntdTheme(newVal.primary_color);
+            }
         });
 
         watch(route, (newVal, oldVal) => {
