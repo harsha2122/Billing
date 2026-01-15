@@ -156,7 +156,7 @@ export default defineComponent({
                                 response.email_setting_verified
                             );
                             router.push({
-                                name: "superadmin.dashboard.index",
+                                name: "superadmin.dashboard",
                                 params: { success: true },
                             });
                         } else {
