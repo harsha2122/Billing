@@ -160,9 +160,54 @@ class CompaniesController extends ApiBaseController
             return ApiResponse::make('Cannot delete global company', [], 403);
         }
 
-        $company->delete();
+        DB::beginTransaction();
+        try {
+            // Delete all related records first to avoid foreign key constraints
 
-        return ApiResponse::make('Company deleted successfully', []);
+            // Delete users (including admin)
+            User::withoutGlobalScope(CompanyScope::class)
+                ->where('company_id', $company->id)
+                ->delete();
+
+            // Delete roles
+            Role::withoutGlobalScope(CompanyScope::class)
+                ->where('company_id', $company->id)
+                ->delete();
+
+            // Delete warehouses
+            Warehouse::withoutGlobalScope(CompanyScope::class)
+                ->where('company_id', $company->id)
+                ->delete();
+
+            // Delete currencies
+            Currency::withoutGlobalScope(CompanyScope::class)
+                ->where('company_id', $company->id)
+                ->delete();
+
+            // Delete from other tables
+            DB::table('products')->where('company_id', $company->id)->delete();
+            DB::table('categories')->where('company_id', $company->id)->delete();
+            DB::table('brands')->where('company_id', $company->id)->delete();
+            DB::table('units')->where('company_id', $company->id)->delete();
+            DB::table('taxes')->where('company_id', $company->id)->delete();
+            DB::table('orders')->where('company_id', $company->id)->delete();
+            DB::table('payments')->where('company_id', $company->id)->delete();
+            DB::table('expenses')->where('company_id', $company->id)->delete();
+            DB::table('expense_categories')->where('company_id', $company->id)->delete();
+            DB::table('payment_modes')->where('company_id', $company->id)->delete();
+            DB::table('custom_fields')->where('company_id', $company->id)->delete();
+            DB::table('settings')->where('company_id', $company->id)->delete();
+
+            // Finally delete the company
+            $company->delete();
+
+            DB::commit();
+
+            return ApiResponse::make('Company deleted successfully', []);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::make('Failed to delete company: ' . $e->getMessage(), [], 500);
+        }
     }
 
     public function show(...$args)
