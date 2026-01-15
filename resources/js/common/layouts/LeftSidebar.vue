@@ -875,6 +875,7 @@ export default defineComponent({
             "website_setup",
             "cash_bank",
             "subscription",
+            "companies",
         ];
         const store = useStore();
         const route = useRoute();
