@@ -11,7 +11,11 @@
 			@click="
 				() => {
 					menuSelected();
-					$router.push({ name: 'admin.dashboard.index' });
+					if (user && user.is_superadmin) {
+						$router.push({ name: 'superadmin.dashboard' });
+					} else {
+						$router.push({ name: 'admin.dashboard.index' });
+					}
 				}
 			"
 			key="dashboard"
@@ -463,6 +467,7 @@ export default defineComponent({
 			"expense_manager",
 			"users",
 			"reports",
+			"companies",
 			"settings",
 			"online_orders",
 			"website_setup",
