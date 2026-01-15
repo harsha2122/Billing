@@ -193,7 +193,26 @@ class AuthController extends ApiBaseController
 
         // SuperAdmin doesn't have a company or settings
         if (auth('api')->user()->is_superadmin) {
-            $response['app'] = null;
+            // Provide default app settings for superadmin
+            $defaultAppSetting = (object) [
+                'name' => 'Stockifly',
+                'short_name' => 'Stockifly',
+                'left_sidebar_theme' => 'dark',
+                'primary_color' => '#1890ff',
+                'rtl' => 0,
+                'light_logo_url' => asset('images/light.png'),
+                'dark_logo_url' => asset('images/dark.png'),
+                'small_light_logo_url' => asset('images/small_light.png'),
+                'small_dark_logo_url' => asset('images/small_dark.png'),
+                'login_image_url' => asset('images/login_background.svg'),
+                'x_currency_id' => null,
+                'x_warehouse_id' => null,
+                'x_admin_id' => null,
+                'status' => 'active',
+                'is_global' => 0,
+            ];
+
+            $response['app'] = $defaultAppSetting;
             $response['shortcut_menus'] = null;
             $response['email_setting_verified'] = false;
             $response['visible_subscription_modules'] = [];
