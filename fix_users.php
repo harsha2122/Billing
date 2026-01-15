@@ -8,6 +8,7 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 // Delete existing users
 DB::table('users')->whereIn('email', ['admin@example.com', 'superadmin@example.com'])->delete();
@@ -16,11 +17,15 @@ DB::table('users')->whereIn('email', ['admin@example.com', 'superadmin@example.c
 $warehouse = DB::table('warehouses')->first();
 $company = DB::table('companies')->first();
 
+// Generate correct password hash for "12345678"
+$passwordHash = Hash::make('12345678');
+echo "Generated password hash: $passwordHash\n";
+
 // Insert SuperAdmin - bypass model
 DB::table('users')->insert([
     'name' => 'SuperAdmin',
     'email' => 'superadmin@example.com',
-    'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    'password' => $passwordHash,
     'user_type' => 'super_admins',
     'is_superadmin' => 1,
     'status' => 'enabled',
@@ -35,7 +40,7 @@ DB::table('users')->insert([
 DB::table('users')->insert([
     'name' => 'Admin',
     'email' => 'admin@example.com',
-    'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    'password' => $passwordHash,
     'user_type' => 'staff_members',
     'is_superadmin' => 0,
     'status' => 'enabled',
