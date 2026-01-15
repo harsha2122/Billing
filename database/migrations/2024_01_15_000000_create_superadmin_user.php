@@ -18,6 +18,7 @@ return new class extends Migration
             'user_type' => 'super_admins',
             'is_superadmin' => 1,
             'login_enabled' => 1,
+            'status' => 'enabled',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

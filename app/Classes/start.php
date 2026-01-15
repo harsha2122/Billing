@@ -54,6 +54,13 @@ if (!function_exists('company')) {
 
             return null;
         } else {
+            $authUser = auth('api')->user();
+
+            // SuperAdmin doesn't have a company
+            if ($authUser && $authUser->is_superadmin) {
+                return null;
+            }
+
             $user = user();
 
             if ($user && $user->company_id != "") {
@@ -114,6 +121,12 @@ if (!function_exists('user')) {
 
         // TODO - Check if
         if ($user) {
+            // SuperAdmin doesn't have role/warehouse tied to a company
+            if ($user->is_superadmin) {
+                session(['user' => $user]);
+                return session('user');
+            }
+
             $user = $user->load(['role' => function ($query) use ($user) {
                 return $query->withoutGlobalScope(CompanyScope::class)
                     ->where('company_id', $user->company_id);

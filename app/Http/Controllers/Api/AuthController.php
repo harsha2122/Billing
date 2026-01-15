@@ -190,11 +190,20 @@ class AuthController extends ApiBaseController
 
         $company = company();
         $response = $this->respondWithToken($token);
-        $addMenuSetting = Settings::where('setting_type', 'shortcut_menus')->first();
-        $response['app'] = $company;
-        $response['shortcut_menus'] = $addMenuSetting;
-        $response['email_setting_verified'] = $this->emailSettingVerified();
-        $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
+
+        // SuperAdmin doesn't have a company or settings
+        if (auth('api')->user()->is_superadmin) {
+            $response['app'] = null;
+            $response['shortcut_menus'] = null;
+            $response['email_setting_verified'] = false;
+            $response['visible_subscription_modules'] = [];
+        } else {
+            $addMenuSetting = Settings::where('setting_type', 'shortcut_menus')->first();
+            $response['app'] = $company;
+            $response['shortcut_menus'] = $addMenuSetting;
+            $response['email_setting_verified'] = $this->emailSettingVerified();
+            $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
+        }
 
         return ApiResponse::make('Loggged in successfull', $response);
     }
