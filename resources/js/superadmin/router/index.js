@@ -1,5 +1,5 @@
 import Admin from "../../common/layouts/Admin.vue";
-import Dashboard from "../../main/views/Dashboard.vue";
+import Dashboard from "../views/dashboard/index.vue";
 import Companies from "../views/companies/index.vue";
 
 export default [

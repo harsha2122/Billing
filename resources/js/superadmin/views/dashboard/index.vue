@@ -1,10 +1,11 @@
 <template>
-	<div>
-		<a-page-header
-			title="SuperAdmin Dashboard"
-			:breadcrumb="{ routes }"
-			style="padding: 0; margin-bottom: 20px"
-		/>
+	<AdminPageHeader>
+		<template #header>
+			<a-page-header :title="$t('menu.dashboard')" style="padding: 0px" />
+		</template>
+	</AdminPageHeader>
+
+	<div class="dashboard-page-content-container">
 
 		<a-row :gutter="[16, 16]">
 			<a-col :xs="24" :sm="12" :md="6">
@@ -128,6 +129,7 @@ import {
 	DollarOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
+import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
 
 export default defineComponent({
 	components: {
@@ -137,6 +139,7 @@ export default defineComponent({
 		ShoppingCartOutlined,
 		InboxOutlined,
 		DollarOutlined,
+		AdminPageHeader,
 	},
 	setup() {
 		const stats = ref({
@@ -148,16 +151,6 @@ export default defineComponent({
 			total_sales: 0,
 		});
 		const recentCompanies = ref([]);
-		const routes = [
-			{
-				path: "/",
-				breadcrumbName: "Home",
-			},
-			{
-				path: "/superadmin/dashboard",
-				breadcrumbName: "Dashboard",
-			},
-		];
 
 		const columns = [
 			{
@@ -209,7 +202,6 @@ export default defineComponent({
 		return {
 			stats,
 			recentCompanies,
-			routes,
 			columns,
 			formatDate,
 		};
