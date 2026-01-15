@@ -376,6 +376,20 @@
 		/>
 
 		<a-menu-item
+			v-if="user && user.is_superadmin"
+			@click="
+				() => {
+					menuSelected();
+					$router.push({ name: 'superadmin.companies.index' });
+				}
+			"
+			key="companies"
+		>
+			<ApartmentOutlined />
+			<span>{{ $t("menu.companies") }}</span>
+		</a-menu-item>
+
+		<a-menu-item
 			@click="
 				() => {
 					menuSelected();
@@ -412,6 +426,7 @@ import {
 	ShopOutlined,
 	BarChartOutlined,
 	CalculatorOutlined,
+	ApartmentOutlined,
 } from "@ant-design/icons-vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import common from "../../common/composable/common";
@@ -435,6 +450,7 @@ export default defineComponent({
 		ShopOutlined,
 		BarChartOutlined,
 		CalculatorOutlined,
+		ApartmentOutlined,
 	},
 	setup(props, { emit }) {
 		const { appSetting, user, permsArray, appModules, cssSettings } = common();
