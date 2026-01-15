@@ -48,8 +48,10 @@ class CompaniesController extends ApiBaseController
         ]);
     }
 
-    public function store(StoreRequest $request)
+    public function store()
     {
+        $request = request();
+
         DB::beginTransaction();
         try {
             // Create Company
@@ -123,8 +125,11 @@ class CompaniesController extends ApiBaseController
         }
     }
 
-    public function update(UpdateRequest $request, $id)
+    public function update(...$args)
     {
+        $id = $args[0] ?? request()->route('company');
+        $request = request();
+
         $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
         $company->name = $request->name;
@@ -140,8 +145,10 @@ class CompaniesController extends ApiBaseController
         ]);
     }
 
-    public function destroy(DeleteRequest $request, $id)
+    public function destroy(...$args)
     {
+        $id = $args[0] ?? request()->route('company');
+
         $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
         if ($company->is_global) {
