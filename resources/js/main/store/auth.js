@@ -158,7 +158,7 @@ export default {
 
     actions: {
         updateUser(context) {
-            axiosAdmin.post(`/user`)
+            return axiosAdmin.post(`/user`)
                 .then(function (response) {
                     context.commit('updateUser', response.data.user);
                 })
@@ -167,7 +167,7 @@ export default {
                 });
         },
         updateGlobalSetting(context) {
-            axiosAdmin.get('/global-setting')
+            return axiosAdmin.get('/global-setting')
                 .then(function (response) {
                     context.commit('updateGlobalSetting', response.data.global_setting);
 
@@ -180,7 +180,7 @@ export default {
                 });
         },
         updateApp(context) {
-            axiosAdmin.get('/app')
+            return axiosAdmin.get('/app')
                 .then(function (response) {
                     context.commit('updateApp', response.data.app);
                     context.commit('updateAddMenus', response.data.shortcut_menus.credentials);
@@ -195,7 +195,7 @@ export default {
                 });
         },
         updateAllLangs(context) {
-            axiosAdmin.get('/all-langs')
+            return axiosAdmin.get('/all-langs')
                 .then(function (response) {
                     context.commit('updateAllLangs', response.data.langs);
                 })
@@ -204,7 +204,7 @@ export default {
                 });
         },
         updateAllWarehouses(context) {
-            axiosAdmin.get('/warehouses?limit=10000')
+            return axiosAdmin.get('/warehouses?limit=10000')
                 .then(function (response) {
                     context.commit('updateAllWarehouses', response.data);
                 })
@@ -259,7 +259,7 @@ export default {
                 });
         },
         updateVisibleSubscriptionModules(context) {
-            axiosAdmin.post('/visible-subscription-modules')
+            return axiosAdmin.post('/visible-subscription-modules')
                 .then(function (response) {
                     context.commit('updateVisibleSubscriptionModules', response.data);
                 })
