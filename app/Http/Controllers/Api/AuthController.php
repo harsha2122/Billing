@@ -154,10 +154,38 @@ class AuthController extends ApiBaseController
             $email = $request->email;
         }
 
+        // DEBUG: Log credentials and check user
+        \Log::info('Login attempt', [
+            'credentials' => $credentials,
+            'email' => $email,
+            'phone' => $phone
+        ]);
+
+        // Check if user exists
+        $userCheck = User::where('email', $email)->orWhere('phone', $phone)->first();
+        if ($userCheck) {
+            \Log::info('User found in database', [
+                'id' => $userCheck->id,
+                'email' => $userCheck->email,
+                'user_type' => $userCheck->user_type,
+                'is_superadmin' => $userCheck->is_superadmin,
+                'password_hash' => substr($userCheck->password, 0, 20) . '...'
+            ]);
+
+            // Test password
+            $passwordMatches = \Hash::check($request->password, $userCheck->password);
+            \Log::info('Password check', ['matches' => $passwordMatches]);
+        } else {
+            \Log::error('User not found in database');
+        }
+
         // Attempt authentication without user_type
         if (!$token = auth('api')->attempt($credentials)) {
+            \Log::error('JWT auth failed');
             throw new ApiException('These credentials do not match our records.');
         }
+
+        \Log::info('JWT auth success', ['token' => substr($token, 0, 20) . '...']);
 
         // Get authenticated user and check company status
         $authenticatedUser = auth('api')->user();
