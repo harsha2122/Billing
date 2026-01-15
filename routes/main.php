@@ -16,6 +16,14 @@ Route::get('{path}', function () {
         $appVersion = File::get('version.txt');
         $appVersion = preg_replace("/\r|\n/", "", $appVersion);
 
+        // Handle null company for superadmin routes
+        if (!$company) {
+            $company = (object) [
+                'short_name' => $appName,
+                'small_light_logo_url' => asset('images/small_light.png'),
+            ];
+        }
+
         return view('welcome', [
             'appName' => $appName,
             'appVersion' => preg_replace("/\r|\n/", "", $appVersion),

@@ -703,20 +703,6 @@
                         <span>{{ $t("menu.settings") }}</span>
                     </a-menu-item>
 
-                    <a-menu-item
-                        v-if="appType == 'saas' && appSetting.x_admin_id == user.xid"
-                        @click="
-                            () => {
-                                menuSelected();
-                                $router.push({ name: 'admin.subscription.current_plan' });
-                            }
-                        "
-                        key="subscription"
-                    >
-                        <DollarCircleOutlined />
-                        <span>{{ $t("menu.subscription") }}</span>
-                    </a-menu-item>
-
                     <a-menu-item @click="logout" key="logout">
                         <LogoutOutlined />
                         <span>{{ $t("menu.logout") }}</span>

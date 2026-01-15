@@ -13,7 +13,7 @@
                         <TopBar />
                         <MainContentArea>
                             <a-layout-content>
-                                <router-view></router-view>
+                                <router-view :key="$route.fullPath"></router-view>
                             </a-layout-content>
 
                             <AffixButton

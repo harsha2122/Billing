@@ -25,7 +25,7 @@
 		</MainHeader>
 		<a-layout-content>
 			<MainContentArea :cssSettings="cssSettings">
-				<router-view></router-view>
+				<router-view :key="$route.fullPath"></router-view>
 			</MainContentArea>
 		</a-layout-content>
 	</a-layout>

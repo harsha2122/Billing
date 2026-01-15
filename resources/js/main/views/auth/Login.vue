@@ -80,7 +80,6 @@
                                     </a-button>
                                 </a-form-item>
                             </a-form>
-                            <DemoCredentials :credentials="credentials" />
                         </a-card>
                     </a-col>
                 </a-row>
@@ -100,12 +99,9 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import common from "../../../common/composable/common";
 import apiAdmin from "../../../common/composable/apiAdmin";
-import DemoCredentials from "./DemoCredentials.vue";
 
 export default defineComponent({
-    components: {
-        DemoCredentials,
-    },
+    components: {},
     setup() {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { globalSetting, appType } = common();
