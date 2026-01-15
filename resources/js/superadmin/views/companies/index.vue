@@ -1,18 +1,18 @@
 <template>
-	<div>
-		<a-page-header
-			title="Companies Management"
-			:breadcrumb="{ routes }"
-			style="padding: 0; margin-bottom: 20px"
-		>
-			<template #extra>
-				<a-button type="primary" @click="showAddModal">
-					<template #icon><PlusOutlined /></template>
-					Add Company
-				</a-button>
-			</template>
-		</a-page-header>
+	<AdminPageHeader>
+		<template #header>
+			<a-page-header title="Companies Management" style="padding: 0">
+				<template #extra>
+					<a-button type="primary" @click="showAddModal">
+						<template #icon><PlusOutlined /></template>
+						Add Company
+					</a-button>
+				</template>
+			</a-page-header>
+		</template>
+	</AdminPageHeader>
 
+	<div class="dashboard-page-content-container">
 		<a-card>
 			<a-row class="mb-10">
 				<a-col :span="24">
@@ -216,6 +216,7 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
+import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
 
 export default defineComponent({
 	components: {
@@ -223,6 +224,7 @@ export default defineComponent({
 		EditOutlined,
 		DeleteOutlined,
 		EyeOutlined,
+		AdminPageHeader,
 	},
 	setup() {
 		const companies = ref([]);
