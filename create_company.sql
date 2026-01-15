@@ -1,7 +1,12 @@
 -- Check if company exists
 SELECT * FROM companies;
 
--- If no company exists, create one
+-- Check required foreign keys
+SELECT id FROM currencies LIMIT 1;
+SELECT id FROM langs LIMIT 1;
+SELECT id FROM warehouses LIMIT 1;
+
+-- Create company with NULL foreign keys (will be set later)
 INSERT INTO companies (
     name,
     short_name,
@@ -31,11 +36,11 @@ VALUES (
     'admin@example.com',
     '1234567890',
     'https://example.com',
-    '123 Main St, City, State, 12345',
+    '123 Main St, City, State',
     'sidebar',
-    1,
-    1,
-    1,
+    NULL,
+    NULL,
+    NULL,
     'dark',
     '#1890ff',
     'DD-MM-YYYY',
@@ -48,3 +53,11 @@ VALUES (
     NOW(),
     NOW()
 );
+
+-- Update with actual IDs if they exist
+UPDATE companies
+SET
+    currency_id = (SELECT id FROM currencies LIMIT 1),
+    lang_id = (SELECT id FROM langs LIMIT 1),
+    warehouse_id = (SELECT id FROM warehouses LIMIT 1)
+WHERE id = LAST_INSERT_ID();
