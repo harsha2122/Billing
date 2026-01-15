@@ -154,37 +154,31 @@ class AuthController extends ApiBaseController
             $email = $request->email;
         }
 
-        // For checking user
-        $user = User::select('*');
-        if ($email != '') {
-            $user = $user->where('email', $email);
-        } else if ($phone != '') {
-            $user = $user->where('phone', $phone);
+        // Attempt authentication without user_type
+        if (!$token = auth('api')->attempt($credentials)) {
+            throw new ApiException('These credentials do not match our records.');
         }
-        $user = $user->first();
 
-        // Adding user type according to email/phone
-        if ($user) {
-            $credentials['user_type'] = $user->user_type;
+        // Get authenticated user and check company status
+        $authenticatedUser = auth('api')->user();
 
-            // Check if user is superadmin
-            if ($user->is_superadmin) {
-                // SuperAdmin doesn't need company checks
-                $userCompany = null;
-            } else {
-                $userCompany = Company::where('id', $user->company_id)->first();
+        if (!$authenticatedUser->is_superadmin) {
+            $userCompany = Company::where('id', $authenticatedUser->company_id)->first();
+
+            if ($userCompany && $userCompany->status === 'pending') {
+                throw new ApiException('Your company not verified.');
+            }
+
+            if ($userCompany && $userCompany->status === 'inactive') {
+                throw new ApiException('Company account deactivated.');
             }
         }
 
-        if (!$token = auth('api')->attempt($credentials)) {
-            throw new ApiException('These credentials do not match our records.');
-        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'pending') {
-            throw new ApiException('Your company not verified.');
-        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'inactive') {
-            throw new ApiException('Company account deactivated.');
-        } else if (auth('api')->user()->status === 'waiting') {
+        if ($authenticatedUser->status === 'waiting') {
             throw new ApiException('User not verified.');
-        } else if (auth('api')->user()->status === 'disabled') {
+        }
+
+        if ($authenticatedUser->status === 'disabled') {
             throw new ApiException('Account deactivated.');
         }
 
