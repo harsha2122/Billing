@@ -153,8 +153,10 @@ class CompaniesController extends ApiBaseController
         return ApiResponse::make('Company deleted successfully', []);
     }
 
-    public function show($id)
+    public function show(...$args)
     {
+        $id = $args[0] ?? null;
+
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])
             ->findOrFail($id);
