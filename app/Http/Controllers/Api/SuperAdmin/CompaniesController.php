@@ -173,13 +173,6 @@ class CompaniesController extends ApiBaseController
 
         DB::beginTransaction();
         try {
-            // Cancel any active subscriptions if using Cashier
-            if (method_exists($company, 'subscriptions')) {
-                foreach ($company->subscriptions as $subscription) {
-                    $subscription->delete();
-                }
-            }
-
             // Remove company's foreign key references to prevent constraint issues
             $company->admin_id = null;
             $company->warehouse_id = null;
