@@ -153,8 +153,10 @@ class CompaniesController extends ApiBaseController
         return ApiResponse::make('Company deleted successfully', []);
     }
 
-    public function show($id)
+    public function show(...$args)
     {
+        $id = $args[0] ?? request()->route('company');
+
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])
             ->findOrFail($id);
@@ -162,13 +164,13 @@ class CompaniesController extends ApiBaseController
         // Get company stats
         $stats = [
             'total_users' => User::withoutGlobalScope(CompanyScope::class)
-                ->where('company_id', $id)
+                ->where('company_id', $company->id)
                 ->count(),
             'total_products' => DB::table('products')
-                ->where('company_id', $id)
+                ->where('company_id', $company->id)
                 ->count(),
             'total_orders' => DB::table('orders')
-                ->where('company_id', $id)
+                ->where('company_id', $company->id)
                 ->count(),
         ];
 
