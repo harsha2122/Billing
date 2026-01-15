@@ -49,9 +49,9 @@ class CompaniesController extends ApiBaseController
         ]);
     }
 
-    public function store()
+    public function store(...$args)
     {
-        $request = request();
+        $request = $args[0] ?? request();
 
         DB::beginTransaction();
         try {
@@ -129,17 +129,10 @@ class CompaniesController extends ApiBaseController
 
     public function update(...$args)
     {
-        $xid = $args[0] ?? request()->route('company');
-        $request = request();
+        $request = $args[0] ?? request();
+        $id = $args[1] ?? null;
 
-        $id = Hashids::decode($xid);
-        if (empty($id)) {
-            return ApiResponse::make('Invalid company ID', [], 400);
-        }
-
-        $company = Company::withoutGlobalScope(CompanyScope::class)
-            ->where('id', $id[0])
-            ->firstOrFail();
+        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
         $company->name = $request->name;
         $company->short_name = $request->short_name ?? $request->name;
@@ -156,54 +149,22 @@ class CompaniesController extends ApiBaseController
 
     public function destroy(...$args)
     {
-        $xid = $args[0] ?? request()->route('company');
+        $id = $args[0] ?? null;
 
-        $id = Hashids::decode($xid);
-        if (empty($id)) {
-            return ApiResponse::make('Invalid company ID', [], 400);
-        }
-
-        $company = Company::withoutGlobalScope(CompanyScope::class)
-            ->where('id', $id[0])
-            ->firstOrFail();
+        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
         if ($company->is_global) {
             return ApiResponse::make('Cannot delete global company', [], 403);
         }
 
-        DB::beginTransaction();
-        try {
-            // Remove company's foreign key references to prevent constraint issues
-            $company->admin_id = null;
-            $company->warehouse_id = null;
-            $company->currency_id = null;
-            $company->subscription_plan_id = null;
-            $company->save();
+        $company->delete();
 
-            // Delete the company - database cascades will handle related records
-            $company->delete();
-
-            DB::commit();
-
-            return ApiResponse::make('Company deleted successfully', []);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Company deletion failed: ' . $e->getMessage(), [
-                'company_xid' => $xid,
-                'trace' => $e->getTraceAsString()
-            ]);
-            return ApiResponse::make('Failed to delete company: ' . $e->getMessage(), [], 500);
-        }
+        return ApiResponse::make('Company deleted successfully', []);
     }
 
     public function show(...$args)
     {
-        $xid = $args[0] ?? request()->route('company');
-
-        $id = Hashids::decode($xid);
-        if (empty($id)) {
-            return ApiResponse::make('Invalid company ID', [], 400);
-        }
+        $id = $args[0] ?? null;
 
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])

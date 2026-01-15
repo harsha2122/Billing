@@ -30,6 +30,11 @@ class SmtpSettingsProvider extends ServiceProvider
             }
             $company = $company->first();
 
+            // If no company found, return early
+            if (!$company) {
+                return;
+            }
+
             // Mail Setting
             $mailSetting = DB::table('settings')->where('setting_type', 'email')->where('status', 1)->where('verified', 1);
             if (app_type() == 'saas') {

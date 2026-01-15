@@ -26,8 +26,8 @@ class CreateSuperAdmin extends Command
         $superAdmin = new User();
         $superAdmin->name = $name;
         $superAdmin->email = $email;
-        $superAdmin->password = Hash::make($password);
-        $superAdmin->user_type = 'staff_members';
+        $superAdmin->password = $password; // Model setter will hash it
+        $superAdmin->user_type = 'super_admins';
         $superAdmin->is_superadmin = true;
         $superAdmin->company_id = null;
         $superAdmin->save();

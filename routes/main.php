@@ -12,7 +12,7 @@ Route::get('{path}', function () {
         $appVersion = File::get(public_path() . '/version.txt');
         $modulesData = Common::moduleInformations();
         $themeMode = session()->has('theme_mode') ? session('theme_mode') : 'light';
-        $company = Company::first();
+        $company = Company::with(['currency', 'warehouse'])->first();
         $appVersion = File::get('version.txt');
         $appVersion = preg_replace("/\r|\n/", "", $appVersion);
 

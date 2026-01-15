@@ -154,75 +154,46 @@ class AuthController extends ApiBaseController
             $email = $request->email;
         }
 
-        // For checking user
-        $user = User::select('*');
-        if ($email != '') {
-            $user = $user->where('email', $email);
-        } else if ($phone != '') {
-            $user = $user->where('phone', $phone);
+        // Attempt authentication without user_type
+        if (!$token = auth('api')->attempt($credentials)) {
+            throw new ApiException('These credentials do not match our records.');
         }
-        $user = $user->first();
 
-        // Adding user type according to email/phone
-        if ($user) {
-            // Check if user is superadmin
-            if ($user->is_superadmin) {
-                $credentials['user_type'] = 'super_admins';
-                // SuperAdmin doesn't need company checks
-                $userCompany = null;
-            } else {
-                $credentials['user_type'] = 'staff_members';
-                $userCompany = Company::where('id', $user->company_id)->first();
+        // Get authenticated user and check company status
+        $authenticatedUser = auth('api')->user();
+
+        if (!$authenticatedUser->is_superadmin) {
+            $userCompany = Company::where('id', $authenticatedUser->company_id)->first();
+
+            if ($userCompany && $userCompany->status === 'pending') {
+                throw new ApiException('Your company not verified.');
+            }
+
+            if ($userCompany && $userCompany->status === 'inactive') {
+                throw new ApiException('Company account deactivated.');
             }
         }
 
-        if (!$token = auth('api')->attempt($credentials)) {
-            throw new ApiException('These credentials do not match our records.');
-        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'pending') {
-            throw new ApiException('Your company not verified.');
-        } else if (!auth('api')->user()->is_superadmin && $userCompany && $userCompany->status === 'inactive') {
-            throw new ApiException('Company account deactivated.');
-        } else if (auth('api')->user()->status === 'waiting') {
+        if ($authenticatedUser->status === 'waiting') {
             throw new ApiException('User not verified.');
-        } else if (auth('api')->user()->status === 'disabled') {
+        }
+
+        if ($authenticatedUser->status === 'disabled') {
             throw new ApiException('Account deactivated.');
         }
 
+        // Get company - for superadmin, use first company
         $company = company();
-        $response = $this->respondWithToken($token);
-
-        // SuperAdmin doesn't have a company or settings
-        if (auth('api')->user()->is_superadmin) {
-            // Provide default app settings for superadmin
-            $defaultAppSetting = (object) [
-                'name' => 'Stockifly',
-                'short_name' => 'Stockifly',
-                'left_sidebar_theme' => 'dark',
-                'primary_color' => '#1890ff',
-                'rtl' => 0,
-                'light_logo_url' => asset('images/light.png'),
-                'dark_logo_url' => asset('images/dark.png'),
-                'small_light_logo_url' => asset('images/small_light.png'),
-                'small_dark_logo_url' => asset('images/small_dark.png'),
-                'login_image_url' => asset('images/login_background.svg'),
-                'x_currency_id' => null,
-                'x_warehouse_id' => null,
-                'x_admin_id' => null,
-                'status' => 'active',
-                'is_global' => 0,
-            ];
-
-            $response['app'] = $defaultAppSetting;
-            $response['shortcut_menus'] = null;
-            $response['email_setting_verified'] = false;
-            $response['visible_subscription_modules'] = [];
-        } else {
-            $addMenuSetting = Settings::where('setting_type', 'shortcut_menus')->first();
-            $response['app'] = $company;
-            $response['shortcut_menus'] = $addMenuSetting;
-            $response['email_setting_verified'] = $this->emailSettingVerified();
-            $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
+        if (!$company && $authenticatedUser->is_superadmin) {
+            $company = Company::with(['currency', 'warehouse'])->first();
         }
+
+        $response = $this->respondWithToken($token);
+        $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
+        $response['app'] = $company;
+        $response['shortcut_menus'] = $addMenuSetting;
+        $response['email_setting_verified'] = $this->emailSettingVerified();
+        $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
 
         return ApiResponse::make('Loggged in successfull', $response);
     }
