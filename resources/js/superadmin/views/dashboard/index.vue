@@ -12,8 +12,11 @@
 					<a-statistic
 						title="Total Companies"
 						:value="stats.total_companies"
-						:prefix="$createElement('ShopOutlined')"
-					/>
+					>
+						<template #prefix>
+							<ShopOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 			<a-col :xs="24" :sm="12" :md="6">
@@ -21,9 +24,12 @@
 					<a-statistic
 						title="Active Companies"
 						:value="stats.active_companies"
-						:prefix="$createElement('CheckCircleOutlined')"
 						:value-style="{ color: '#3f8600' }"
-					/>
+					>
+						<template #prefix>
+							<CheckCircleOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 			<a-col :xs="24" :sm="12" :md="6">
@@ -31,8 +37,11 @@
 					<a-statistic
 						title="Total Users"
 						:value="stats.total_users"
-						:prefix="$createElement('UserOutlined')"
-					/>
+					>
+						<template #prefix>
+							<UserOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 			<a-col :xs="24" :sm="12" :md="6">
@@ -40,8 +49,11 @@
 					<a-statistic
 						title="Total Orders"
 						:value="stats.total_orders"
-						:prefix="$createElement('ShoppingCartOutlined')"
-					/>
+					>
+						<template #prefix>
+							<ShoppingCartOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 		</a-row>
@@ -52,8 +64,11 @@
 					<a-statistic
 						title="Total Products"
 						:value="stats.total_products"
-						:prefix="$createElement('InboxOutlined')"
-					/>
+					>
+						<template #prefix>
+							<InboxOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 			<a-col :xs="24" :sm="12" :md="18">
@@ -61,10 +76,13 @@
 					<a-statistic
 						title="Total Sales"
 						:value="stats.total_sales"
-						:prefix="$createElement('DollarOutlined')"
 						:precision="2"
 						:value-style="{ color: '#1890ff' }"
-					/>
+					>
+						<template #prefix>
+							<DollarOutlined />
+						</template>
+					</a-statistic>
 				</a-card>
 			</a-col>
 		</a-row>
@@ -100,7 +118,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, createVNode } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import {
 	ShopOutlined,
 	CheckCircleOutlined,
