@@ -55,6 +55,12 @@ class AuthController extends ApiBaseController
     public function app()
     {
         $company = company(true);
+
+        // For SaaS mode, if no company (user not logged in), get first company for login page
+        if (!$company && app_type() == 'saas') {
+            $company = Company::with(['currency', 'warehouse'])->first();
+        }
+
         $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
         $totalPaymentModes = PaymentMode::count();
         $totalCurrencies = Currency::count();
