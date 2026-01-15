@@ -14,15 +14,19 @@ import print from 'vue3-print-nb';
 
 async function bootstrap() {
     if (store.getters["auth/isLoggedIn"]) {
-        store.dispatch("auth/updateUser");
+        await store.dispatch("auth/updateUser");
     }
 
-    store.dispatch("auth/updateGlobalSetting");
-    store.dispatch("auth/updateApp");
-    store.dispatch("auth/updateAllLangs");
-    store.dispatch("auth/updateAllWarehouses");
+    await Promise.all([
+        store.dispatch("auth/updateGlobalSetting"),
+        store.dispatch("auth/updateApp"),
+        store.dispatch("auth/updateAllLangs"),
+        store.dispatch("auth/updateAllWarehouses"),
+        store.dispatch("auth/updateVisibleSubscriptionModules")
+    ]);
+
     store.commit("auth/updateActiveModules", window.config.modules);
-    store.dispatch("auth/updateVisibleSubscriptionModules");
+    store.commit("auth/updateAppChecking", false);
 
     const app = createApp(App);
 
