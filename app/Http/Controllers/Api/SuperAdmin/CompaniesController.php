@@ -18,6 +18,7 @@ use App\Scopes\CompanyScope;
 use Examyou\RestAPI\ApiResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Vinkla\Hashids\Facades\Hashids;
 
 class CompaniesController extends ApiBaseController
 {
@@ -131,8 +132,13 @@ class CompaniesController extends ApiBaseController
         $xid = $args[0] ?? request()->route('company');
         $request = request();
 
+        $id = Hashids::decode($xid);
+        if (empty($id)) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
         $company = Company::withoutGlobalScope(CompanyScope::class)
-            ->where('xid', $xid)
+            ->where('id', $id[0])
             ->firstOrFail();
 
         $company->name = $request->name;
@@ -152,8 +158,13 @@ class CompaniesController extends ApiBaseController
     {
         $xid = $args[0] ?? request()->route('company');
 
+        $id = Hashids::decode($xid);
+        if (empty($id)) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
         $company = Company::withoutGlobalScope(CompanyScope::class)
-            ->where('xid', $xid)
+            ->where('id', $id[0])
             ->firstOrFail();
 
         if ($company->is_global) {
@@ -196,9 +207,14 @@ class CompaniesController extends ApiBaseController
     {
         $xid = $args[0] ?? request()->route('company');
 
+        $id = Hashids::decode($xid);
+        if (empty($id)) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])
-            ->where('xid', $xid)
+            ->where('id', $id[0])
             ->firstOrFail();
 
         // Get company stats
