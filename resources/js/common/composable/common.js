@@ -214,6 +214,13 @@ const common = () => {
             });
         }
 
+        // Superadmin gets all permissions
+        if (user && user.value && user.value.is_superadmin) {
+            if (!permsArrayList.includes('admin')) {
+                permsArrayList.push('admin');
+            }
+        }
+
         return permsArrayList;
     });
 
