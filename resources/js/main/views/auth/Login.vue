@@ -15,7 +15,7 @@
                             :bordered="innerWidth <= 768 ? true : false"
                         >
                             <a-form layout="vertical">
-                                <div class="login-logo mb-30">
+                                <div class="login-logo mb-30" v-if="globalSetting && globalSetting.light_logo_url">
                                     <img
                                         class="login-img-logo"
                                         :src="globalSetting.light_logo_url"
@@ -105,7 +105,7 @@ export default defineComponent({
     setup() {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { globalSetting, appType } = common();
-        const loginBackground = globalSetting.value.login_image_url;
+        const loginBackground = globalSetting.value?.login_image_url || window.config.login_background;
         const store = useStore();
         const router = useRouter();
         const credentials = reactive({
