@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 // Delete existing users
 DB::table('users')->whereIn('email', ['admin@example.com', 'superadmin@example.com'])->delete();
 
+// Get first warehouse and company
+$warehouse = DB::table('warehouses')->first();
+$company = DB::table('companies')->first();
+
 // Insert SuperAdmin - bypass model
 DB::table('users')->insert([
     'name' => 'SuperAdmin',
@@ -37,8 +41,8 @@ DB::table('users')->insert([
     'status' => 'enabled',
     'phone' => '1234567890',
     'login_enabled' => 1,
-    'company_id' => 1,
-    'warehouse_id' => 1,
+    'company_id' => $company ? $company->id : null,
+    'warehouse_id' => $warehouse ? $warehouse->id : null,
     'created_at' => now(),
     'updated_at' => now(),
 ]);
