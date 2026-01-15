@@ -162,10 +162,18 @@ class CompaniesController extends ApiBaseController
 
         DB::beginTransaction();
         try {
-            // First, remove company's foreign key references to prevent constraint issues
+            // Cancel any active subscriptions if using Cashier
+            if (method_exists($company, 'subscriptions')) {
+                foreach ($company->subscriptions as $subscription) {
+                    $subscription->delete();
+                }
+            }
+
+            // Remove company's foreign key references to prevent constraint issues
             $company->admin_id = null;
             $company->warehouse_id = null;
             $company->currency_id = null;
+            $company->subscription_plan_id = null;
             $company->save();
 
             // Delete the company - database cascades will handle related records
@@ -176,6 +184,10 @@ class CompaniesController extends ApiBaseController
             return ApiResponse::make('Company deleted successfully', []);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Company deletion failed: ' . $e->getMessage(), [
+                'company_xid' => $xid,
+                'trace' => $e->getTraceAsString()
+            ]);
             return ApiResponse::make('Failed to delete company: ' . $e->getMessage(), [], 500);
         }
     }

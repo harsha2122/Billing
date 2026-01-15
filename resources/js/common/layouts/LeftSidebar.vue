@@ -99,11 +99,26 @@
                         <span>{{ $t("menu.dashboard") }}</span>
                     </a-menu-item>
 
+                    <a-menu-item
+                        v-if="user && user.is_superadmin"
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'superadmin.companies.index' });
+                            }
+                        "
+                        key="companies"
+                    >
+                        <ApartmentOutlined />
+                        <span>{{ $t("menu.companies") }}</span>
+                    </a-menu-item>
+
                     <a-sub-menu
                         v-if="
-                            permsArray.includes('customers_view') ||
+                            !user.is_superadmin &&
+                            (permsArray.includes('customers_view') ||
                             permsArray.includes('suppliers_view') ||
-                            permsArray.includes('admin')
+                            permsArray.includes('admin'))
                         "
                         key="parties"
                     >
@@ -490,23 +505,6 @@
                         </a-menu-item>
                     </a-sub-menu>
 
-                    <a-menu-item
-                        v-if="
-                            permsArray.includes('users_view') ||
-                            permsArray.includes('admin')
-                        "
-                        @click="
-                            () => {
-                                menuSelected();
-                                $router.push({ name: 'admin.users.index' });
-                            }
-                        "
-                        key="users"
-                    >
-                        <UserOutlined />
-                        <span>{{ $t("menu.staff_members") }}</span>
-                    </a-menu-item>
-
                     <a-sub-menu
                         v-if="
                             ((permsArray.includes('purchases_view') ||
@@ -685,74 +683,12 @@
                         </router-link>
                     </a-menu-item>
 
-                    <a-sub-menu
-                        v-if="
-                            (permsArray.includes('product_cards_view') ||
-                                permsArray.includes('admin')) &&
-                            willSubscriptionModuleVisible('online_store')
-                        "
-                        key="website_setup"
-                    >
-                        <template #title>
-                            <span>
-                                <RocketOutlined />
-                                <span>{{ $t("menu.website_setup") }}</span>
-                            </span>
-                        </template>
-                        <a-menu-item
-                            v-if="
-                                permsArray.includes('product_cards_view') ||
-                                permsArray.includes('admin')
-                            "
-                            @click="menuSelected"
-                            key="product_cards"
-                        >
-                            <router-link
-                                :to="{
-                                    name: 'admin.website-setup.product-cards.index',
-                                }"
-                            >
-                                {{ $t("menu.product_cards") }}
-                            </router-link>
-                        </a-menu-item>
-                        <a-menu-item
-                            v-if="
-                                permsArray.includes('front_settings_edit') ||
-                                permsArray.includes('admin')
-                            "
-                            @click="menuSelected"
-                            key="front_settings"
-                        >
-                            <router-link
-                                :to="{
-                                    name: 'admin.website-setup.front-settings.edit',
-                                }"
-                            >
-                                {{ $t("menu.front_settings") }}
-                            </router-link>
-                        </a-menu-item>
-                    </a-sub-menu>
-
                     <component
                         v-for="(appModule, index) in appModules"
                         :key="index"
                         v-bind:is="appModule + 'Menu'"
                         @menuSelected="menuSelected"
                     />
-
-                    <a-menu-item
-                        v-if="user && user.is_superadmin"
-                        @click="
-                            () => {
-                                menuSelected();
-                                $router.push({ name: 'superadmin.companies.index' });
-                            }
-                        "
-                        key="companies"
-                    >
-                        <ApartmentOutlined />
-                        <span>{{ $t("menu.companies") }}</span>
-                    </a-menu-item>
 
                     <a-menu-item
                         @click="
