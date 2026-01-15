@@ -128,10 +128,12 @@ class CompaniesController extends ApiBaseController
 
     public function update(...$args)
     {
-        $id = $args[0] ?? request()->route('company');
+        $xid = $args[0] ?? request()->route('company');
         $request = request();
 
-        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+        $company = Company::withoutGlobalScope(CompanyScope::class)
+            ->where('xid', $xid)
+            ->firstOrFail();
 
         $company->name = $request->name;
         $company->short_name = $request->short_name ?? $request->name;
@@ -148,9 +150,11 @@ class CompaniesController extends ApiBaseController
 
     public function destroy(...$args)
     {
-        $id = $args[0] ?? request()->route('company');
+        $xid = $args[0] ?? request()->route('company');
 
-        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+        $company = Company::withoutGlobalScope(CompanyScope::class)
+            ->where('xid', $xid)
+            ->firstOrFail();
 
         if ($company->is_global) {
             return ApiResponse::make('Cannot delete global company', [], 403);
@@ -163,11 +167,12 @@ class CompaniesController extends ApiBaseController
 
     public function show(...$args)
     {
-        $id = $args[0] ?? request()->route('company');
+        $xid = $args[0] ?? request()->route('company');
 
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])
-            ->findOrFail($id);
+            ->where('xid', $xid)
+            ->firstOrFail();
 
         // Get company stats
         $stats = [
