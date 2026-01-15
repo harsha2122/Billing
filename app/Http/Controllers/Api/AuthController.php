@@ -165,7 +165,7 @@ class AuthController extends ApiBaseController
 
         // Adding user type according to email/phone
         if ($user) {
-            $credentials['user_type'] = 'staff_members';
+            $credentials['user_type'] = $user->user_type;
 
             // Check if user is superadmin
             if ($user->is_superadmin) {
