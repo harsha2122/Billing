@@ -4,9 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ $company->short_name }}</title>
-		<link rel="icon" type="image/png" href="{{ $company->small_light_logo_url }}">
-		<meta name="msapplication-TileImage" href="{{ $company->small_light_logo_url }}">
+        <title>{{ $company ? $company->short_name : 'Stockifly' }}</title>
+		<link rel="icon" type="image/png" href="{{ $company ? $company->small_light_logo_url : asset('images/logo.png') }}">
+		<meta name="msapplication-TileImage" href="{{ $company ? $company->small_light_logo_url : asset('images/logo.png') }}">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700&display=swap">
 
 		@if($themeMode == 'dark')
