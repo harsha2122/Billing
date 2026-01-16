@@ -167,6 +167,41 @@ php artisan superadmin:create your-email@domain.com YourSecurePassword --name="Y
 
 ---
 
+## CREATE ADMIN COMPANY (Complete Company + Admin User)
+
+### Create Company with Admin User in One Command
+
+```bash
+php artisan admin:create "Company Name" admin@company.com password123
+```
+
+**With custom admin name:**
+```bash
+php artisan admin:create "My Company" admin@company.com SecurePass123 --name="John Doe"
+```
+
+**This creates:**
+- ✅ Company (with warehouse and currencies)
+- ✅ Admin role
+- ✅ Admin user linked to company
+- ✅ Walk-in customer
+- ✅ Initial settings
+
+**Example:**
+```bash
+php artisan admin:create "Acme Corporation" admin@acme.com MyPassword123 --name="Admin User"
+```
+
+**Output:**
+```
+Admin company created successfully!
+Company: Acme Corporation
+Admin Email: admin@acme.com
+Admin Password: MyPassword123
+```
+
+---
+
 ## IMPORTANT NOTES
 
 ⚠️ **DO NOT run `php artisan db:seed` on production if you have existing data!**
