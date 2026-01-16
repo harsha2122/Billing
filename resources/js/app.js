@@ -13,11 +13,20 @@ import VueBarcode from '@chenfengyuan/vue-barcode';
 import print from 'vue3-print-nb';
 
 async function bootstrap() {
-    // Force dismiss loader after 5 seconds as a safety measure
+    const app = createApp(App);
+    const i18n = setupI18n({ legacy: false, globalInjection: true, locale: store.state.auth.lang, warnHtmlMessage: false });
+
+    try {
+        await loadLocaleMessages(i18n, store.state.auth.lang);
+    } catch (error) {
+        console.error("Error loading locale messages:", error);
+    }
+
+    // Force dismiss loader after 2 seconds as a safety measure
     const timeout = setTimeout(() => {
         console.warn("Bootstrap timeout - forcing loader dismissal");
         store.commit("auth/updateAppChecking", false);
-    }, 5000);
+    }, 2000);
 
     try {
         if (store.getters["auth/isLoggedIn"]) {
@@ -39,11 +48,6 @@ async function bootstrap() {
         clearTimeout(timeout);
         store.commit("auth/updateAppChecking", false);
     }
-
-    const app = createApp(App);
-
-    const i18n = setupI18n({ legacy: false, globalInjection: true, locale: store.state.auth.lang, warnHtmlMessage: false });
-    await loadLocaleMessages(i18n, store.state.auth.lang);
 
     // app.config.devtools = true;
     // app.config.debug = true;
