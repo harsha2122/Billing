@@ -15,7 +15,7 @@
                             :bordered="innerWidth <= 768 ? true : false"
                         >
                             <a-form layout="vertical">
-                                <div class="login-logo mb-30" v-if="globalSetting && globalSetting.light_logo_url">
+                                <div class="login-logo mb-30" v-if="globalSetting?.light_logo_url">
                                     <img
                                         class="login-img-logo"
                                         :src="globalSetting.light_logo_url"
@@ -126,7 +126,7 @@ export default defineComponent({
             addEditRequestAdmin({
                 url: "auth/login",
                 data: credentials,
-                success: (response) => {
+                success: async (response) => {
                     const user = response.user;
                     store.commit("auth/updateUser", user);
                     store.commit("auth/updateToken", response.token);
@@ -137,8 +137,9 @@ export default defineComponent({
                     );
 
                     if (appType == "non-saas") {
-                        store.dispatch("auth/updateAllWarehouses");
+                        await store.dispatch("auth/updateAllWarehouses");
                         store.commit("auth/updateWarehouse", response.user.warehouse);
+                        store.commit("auth/updateAppChecking", false);
 
                         router.push({
                             name: "admin.dashboard.index",
@@ -151,6 +152,7 @@ export default defineComponent({
                                 "auth/updateEmailVerifiedSetting",
                                 response.email_setting_verified
                             );
+                            store.commit("auth/updateAppChecking", false);
                             router.push({
                                 name: "superadmin.dashboard",
                                 params: { success: true },
@@ -165,8 +167,9 @@ export default defineComponent({
                                 "auth/updateAddMenus",
                                 response.shortcut_menus.credentials
                             );
-                            store.dispatch("auth/updateAllWarehouses");
+                            await store.dispatch("auth/updateAllWarehouses");
                             store.commit("auth/updateWarehouse", response.user.warehouse);
+                            store.commit("auth/updateAppChecking", false);
                             router.push({
                                 name: "admin.dashboard.index",
                                 params: { success: true },

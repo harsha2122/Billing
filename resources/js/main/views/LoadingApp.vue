@@ -7,7 +7,7 @@
 				</span>
 			</template>
 			<template #icon>
-				<img style="width: 150px" :src="appSetting.light_logo_url" />
+				<img v-if="appSetting?.light_logo_url" style="width: 150px" :src="appSetting.light_logo_url" />
 			</template>
 			<template #extra>
 				<SyncOutlined :style="{ fontSize: '38px', color: '#5254cf' }" spin />

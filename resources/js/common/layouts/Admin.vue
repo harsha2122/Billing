@@ -1,12 +1,10 @@
 <template>
-	<keep-alive>
-		<component
-			v-if="cssSettings.headerMenuMode == 'horizontal'"
-			key="horizontal"
-			v-bind:is="'HorizantalStyle'"
-		/>
-		<component v-else key="vertical" v-bind:is="'VerticalStyle'" />
-	</keep-alive>
+	<component
+		v-if="cssSettings.headerMenuMode == 'horizontal'"
+		key="horizontal"
+		v-bind:is="'HorizantalStyle'"
+	/>
+	<component v-else key="vertical" v-bind:is="'VerticalStyle'" />
 </template>
 
 <script>

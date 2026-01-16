@@ -15,6 +15,7 @@
     >
         <div v-if="menuCollapsed" class="logo">
             <img
+                v-if="appSetting"
                 :style="{
                     height: '32px',
                 }"
@@ -27,6 +28,7 @@
         </div>
         <div v-else>
             <img
+                v-if="appSetting"
                 :style="{
                     width: '150px',
                     height: '53px',
