@@ -17,6 +17,25 @@ DB::table('users')->whereIn('email', ['admin@example.com', 'superadmin@example.c
 $warehouse = DB::table('warehouses')->first();
 $company = DB::table('companies')->first();
 
+// Get or create admin role
+$adminRole = DB::table('roles')
+    ->where('name', 'admin')
+    ->where('company_id', $company ? $company->id : null)
+    ->first();
+
+if (!$adminRole && $company) {
+    // Create admin role if it doesn't exist
+    $roleId = DB::table('roles')->insertGetId([
+        'company_id' => $company->id,
+        'name' => 'admin',
+        'display_name' => 'Admin',
+        'description' => 'Administrator role',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    $adminRole = (object)['id' => $roleId];
+}
+
 // Generate correct password hash for "12345678"
 $passwordHash = Hash::make('12345678');
 echo "Generated password hash: $passwordHash\n";
@@ -46,6 +65,7 @@ DB::table('users')->insert([
     'status' => 'enabled',
     'phone' => '1234567890',
     'login_enabled' => 1,
+    'role_id' => $adminRole ? $adminRole->id : null,
     'company_id' => $company ? $company->id : null,
     'warehouse_id' => $warehouse ? $warehouse->id : null,
     'created_at' => now(),
