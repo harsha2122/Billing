@@ -22,9 +22,9 @@ export default [
                 name: 'admin.settings.company.index',
                 meta: {
                     requireAuth: true,
+                    requiresSuperAdmin: true,
                     menuParent: "settings",
-                    menuKey: route => "company",
-                    permission: "companies_edit"
+                    menuKey: route => "company"
                 }
             },
             {

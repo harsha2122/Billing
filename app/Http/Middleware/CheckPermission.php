@@ -37,6 +37,13 @@ class CheckPermission
                 throw new UnauthorizedException("Don't have valid permission");
             }
 
+            // Company settings (logo, name, etc.) - only superadmin can modify
+            if ($routePathString == 'companies' && $resourceRequestString == 'update') {
+                if (!$user->is_superadmin) {
+                    throw new UnauthorizedException("Only superadmin can update company settings");
+                }
+            }
+
             // Those route for which we don't want to check permission
             // We will check permission for those on controller level
             $skipResourcePath = ['payments'];
