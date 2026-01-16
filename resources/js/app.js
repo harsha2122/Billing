@@ -13,6 +13,12 @@ import VueBarcode from '@chenfengyuan/vue-barcode';
 import print from 'vue3-print-nb';
 
 async function bootstrap() {
+    // Force dismiss loader after 5 seconds as a safety measure
+    const timeout = setTimeout(() => {
+        console.warn("Bootstrap timeout - forcing loader dismissal");
+        store.commit("auth/updateAppChecking", false);
+    }, 5000);
+
     try {
         if (store.getters["auth/isLoggedIn"]) {
             await store.dispatch("auth/updateUser");
@@ -30,7 +36,7 @@ async function bootstrap() {
     } catch (error) {
         console.error("Error during app initialization:", error);
     } finally {
-        // Always set appChecking to false, even if API calls fail
+        clearTimeout(timeout);
         store.commit("auth/updateAppChecking", false);
     }
 
