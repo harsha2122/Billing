@@ -33,7 +33,15 @@ class CompanyController extends ApiBaseController
     public function updated(Company $company)
     {
         $user = user();
-        if ($company->warehouse_id != null && $user->warehouse_id == null && $user->hasRole('admin')) {
+
+        // Only update warehouse for regular admin users (not superadmin)
+        if ($company->warehouse_id != null &&
+            $user &&
+            !$user->is_superadmin &&
+            $user->warehouse_id == null &&
+            $user->role_id != null &&
+            $user->hasRole('admin')) {
+
             $user->warehouse_id = $company->warehouse_id;
             $user->save();
 

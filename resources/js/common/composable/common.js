@@ -468,6 +468,11 @@ const common = () => {
     }
 
     const willSubscriptionModuleVisible = (moduleName) => {
+        // Superadmin has access to all modules
+        if (user.value && user.value.is_superadmin) {
+            return true;
+        }
+
         if (appType == 'non-saas') {
             return true;
         } else {

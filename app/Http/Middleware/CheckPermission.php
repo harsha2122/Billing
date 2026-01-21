@@ -25,6 +25,11 @@ class CheckPermission
         if (auth('api')->check()) {
             $user = auth('api')->user();
 
+            // Superadmin has access to everything, skip all permission checks
+            if ($user->is_superadmin) {
+                return $next($request);
+            }
+
             $resourceRequests = ['index', 'store', 'update', 'show', 'destroy'];
             $urlArray = explode('.', $request->route()->action['as']);
             $resourceRequestString = $urlArray[2];
