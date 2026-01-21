@@ -168,8 +168,7 @@ class CompaniesController extends ApiBaseController
 
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])
-            ->where('id', $id[0])
-            ->firstOrFail();
+            ->findOrFail($id);
 
         // Get company stats
         $stats = [

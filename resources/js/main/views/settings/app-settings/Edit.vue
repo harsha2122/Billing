@@ -238,6 +238,7 @@ import { defineComponent, ref, onMounted, computed } from "vue";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
+import { notification } from "ant-design-vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
 import SettingSidebar from "../SettingSidebar.vue";
 import Upload from "../../../../common/core/ui/file/Upload.vue";
@@ -254,9 +255,10 @@ export default defineComponent({
 	setup() {
 		const { t } = useI18n();
 		const store = useStore();
-		const { permsArray } = common();
+		const { permsArray, appSetting } = common();
 		const { addEditRequestAdmin, loading, rules } = apiAdmin();
 		const user = computed(() => store.state.auth.user);
+		const axiosAdmin = appSetting.axiosAdmin;
 
 		const formData = ref({
 			site_name: "",
@@ -292,18 +294,26 @@ export default defineComponent({
 						meta_keywords: settings.meta_keywords || "",
 					};
 				}
+			}).catch((error) => {
+				console.error("Failed to fetch app settings:", error);
 			});
 		};
 
 		const onSubmit = () => {
-			addEditRequestAdmin({
-				url: "app-settings",
-				data: formData.value,
-				successMessage: t("app_settings.updated"),
-				success: (res) => {
-					// Update global settings in store
-					store.dispatch("auth/updateAppSettings", res.app_settings);
-				},
+			axiosAdmin.post("app-settings", formData.value).then((response) => {
+				notification.success({
+					message: "Settings updated successfully",
+				});
+				if (response.data.app_settings) {
+					// Update global settings in store if available
+					store.dispatch("auth/updateAppSettings", response.data.app_settings).catch(() => {});
+				}
+				fetchSettings();
+			}).catch((error) => {
+				notification.error({
+					message: "Failed to update settings",
+					description: error.response?.data?.message || error.message,
+				});
 			});
 		};
 

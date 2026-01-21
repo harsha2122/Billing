@@ -80,8 +80,8 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::post('companies/update-create-menu', ['as' => 'api.companies.update-create-menu', 'uses' => 'CompanyController@updateCreateMenu']);
 
         // App Settings (SuperAdmin only)
-        ApiRoute::get('app-settings', ['as' => 'api.app-settings.show', 'uses' => 'AppSettingsController@show']);
-        ApiRoute::put('app-settings', ['as' => 'api.app-settings.update', 'uses' => 'AppSettingsController@update']);
+        ApiRoute::get('app-settings', ['as' => 'api.app-settings.index', 'uses' => 'AppSettingsController@index']);
+        ApiRoute::post('app-settings', ['as' => 'api.app-settings.update', 'uses' => 'AppSettingsController@update']);
 
         // Update waerhouse online_store_enabled
         ApiRoute::post('warehouses/update-online-store-status', ['as' => 'api.warehouses.update-online-store-status', 'uses' => 'WarehouseController@updateOnlineStoreStatus']);

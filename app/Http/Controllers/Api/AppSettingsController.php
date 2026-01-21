@@ -3,18 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiBaseController;
-use App\Http\Requests\Api\AppSettings\UpdateRequest;
 use App\Models\AppSettings;
 use Examyou\RestAPI\ApiResponse;
 use Examyou\RestAPI\Exceptions\ApiException;
 
 class AppSettingsController extends ApiBaseController
 {
-    protected $model = AppSettings::class;
 
-    protected $updateRequest = UpdateRequest::class;
-
-    public function show()
+    public function index()
     {
         $user = user();
 
@@ -38,13 +34,14 @@ class AppSettingsController extends ApiBaseController
         ]);
     }
 
-    public function update(UpdateRequest $request)
+    public function update()
     {
+        $request = request();
         $user = user();
 
         // Only superadmin can update global settings
         if (!$user || !$user->is_superadmin) {
-            throw new ApiException('Unauthorized. Only SuperAdmin can update global settings.');
+            throw new ApiException('Unauthorized. Only SuperAdmin can access global settings.');
         }
 
         $appSettings = AppSettings::first();
@@ -53,8 +50,13 @@ class AppSettingsController extends ApiBaseController
             $appSettings = new AppSettings();
         }
 
-        $appSettings->site_name = $request->site_name;
-        $appSettings->primary_color = $request->primary_color;
+        if ($request->has('site_name')) {
+            $appSettings->site_name = $request->site_name;
+        }
+
+        if ($request->has('primary_color')) {
+            $appSettings->primary_color = $request->primary_color;
+        }
 
         if ($request->has('light_logo')) {
             $appSettings->light_logo = $request->light_logo;
