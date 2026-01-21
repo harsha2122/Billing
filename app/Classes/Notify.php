@@ -69,11 +69,13 @@ class Notify
 
         if (app_type() == 'saas') {
             $globalCompany = Company::where('is_global', 1)->first();
-            $mailSetting = DB::table('settings')->where('setting_type', 'email')
-                ->where('name_key', 'smtp')
-                ->where('is_global', 1)
-                ->where('company_id', $globalCompany->id)
-                ->first();
+            if ($globalCompany) {
+                $mailSetting = DB::table('settings')->where('setting_type', 'email')
+                    ->where('name_key', 'smtp')
+                    ->where('is_global', 1)
+                    ->where('company_id', $globalCompany->id)
+                    ->first();
+            }
         } else {
             $mailSetting = Settings::where('setting_type', 'email')
                 ->where('name_key', 'smtp')

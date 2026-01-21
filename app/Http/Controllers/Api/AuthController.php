@@ -22,6 +22,7 @@ use App\Models\Settings;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\AppSettings;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Examyou\RestAPI\ApiResponse;
@@ -66,8 +67,12 @@ class AuthController extends ApiBaseController
         $totalCurrencies = Currency::count();
         $totalWarehouses = Warehouse::count();
 
+        // Get global app settings
+        $appSettings = AppSettings::first();
+
         return ApiResponse::make('Success', [
             'app' => $company,
+            'app_settings' => $appSettings,
             'shortcut_menus' => $addMenuSetting,
             'email_setting_verified' => $this->emailSettingVerified(),
             'total_currencies' => $totalCurrencies,
@@ -190,7 +195,9 @@ class AuthController extends ApiBaseController
 
         $response = $this->respondWithToken($token);
         $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
+        $appSettings = AppSettings::first();
         $response['app'] = $company;
+        $response['app_settings'] = $appSettings;
         $response['shortcut_menus'] = $addMenuSetting;
         $response['email_setting_verified'] = $this->emailSettingVerified();
         $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
@@ -671,10 +678,12 @@ class AuthController extends ApiBaseController
 
         if ($mode == 'dark') {
             $company = company();
-            $company->left_sidebar_theme = 'dark';
-            $company->save();
+            if ($company) {
+                $company->left_sidebar_theme = 'dark';
+                $company->save();
 
-            $updatedCompany = company(true);
+                $updatedCompany = company(true);
+            }
         }
 
         return ApiResponse::make('Success', [

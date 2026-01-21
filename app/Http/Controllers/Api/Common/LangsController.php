@@ -72,7 +72,7 @@ class LangsController extends ApiBaseController
 
         // Updating current company language
         $company = company();
-        if ($lang->id == $company->lang_id) {
+        if ($company && $lang->id == $company->lang_id) {
             $enLang = Lang::where('key', 'en')->first();
             $company->lang_id = $enLang->id;
             $company->save();

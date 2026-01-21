@@ -23,8 +23,10 @@ class CurrencyController extends ApiBaseController
     {
         if (app_type() == 'saas') {
             $company = company();
-            $query = $query->withoutGlobalScope(CompanyScope::class)
-                ->where('currencies.company_id', $company->id);
+            if ($company) {
+                $query = $query->withoutGlobalScope(CompanyScope::class)
+                    ->where('currencies.company_id', $company->id);
+            }
         }
 
         return $query;
@@ -34,7 +36,9 @@ class CurrencyController extends ApiBaseController
     {
         if (app_type() == 'saas') {
             $company = company();
-            $currency->company_id = $company->id;
+            if ($company) {
+                $currency->company_id = $company->id;
+            }
         }
 
         return $currency;
@@ -44,7 +48,9 @@ class CurrencyController extends ApiBaseController
     {
         if (app_type() == 'saas') {
             $company = company();
-            $currency->company_id = $company->id;
+            if ($company) {
+                $currency->company_id = $company->id;
+            }
         }
 
         return $currency;
@@ -54,7 +60,7 @@ class CurrencyController extends ApiBaseController
     {
         $company = company();
 
-        if ($currency->id == $company->currency_id) {
+        if ($company && $currency->id == $company->currency_id) {
             throw new ApiException('Default currency cannot be deleted');
         }
 

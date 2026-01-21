@@ -1,5 +1,6 @@
 import Admin from '../../common/layouts/Admin.vue';
 import CompanyEdit from '../views/settings/company/Edit.vue';
+import AppSettingsEdit from '../views/settings/app-settings/Edit.vue';
 import ProfileEdit from '../views/settings/profile/Edit.vue';
 import Langs from '../views/settings/translations/langs/index.vue';
 import Warehouse from '../views/settings/warehouses/index.vue';
@@ -25,6 +26,17 @@ export default [
                     requiresSuperAdmin: true,
                     menuParent: "settings",
                     menuKey: route => "company"
+                }
+            },
+            {
+                path: 'app-settings',
+                component: AppSettingsEdit,
+                name: 'admin.settings.app_settings.index',
+                meta: {
+                    requireAuth: true,
+                    requiresSuperAdmin: true,
+                    menuParent: "settings",
+                    menuKey: route => "app_settings"
                 }
             },
             {

@@ -57,8 +57,11 @@ class CompanyController extends ApiBaseController
     public function updateCreateMenu(Request $request)
     {
         $company = company();
-        $company->shortcut_menus = $request->position;
-        $company->save();
+
+        if ($company) {
+            $company->shortcut_menus = $request->position;
+            $company->save();
+        }
 
         // Setting for create menu
         $settingCreateMenu = Settings::where('setting_type', 'shortcut_menus')->first();

@@ -49,6 +49,7 @@ class Common
             'langImagePath' => 'langs',
             'warehouseLogoPath' => 'warehouses',
             'websiteImagePath' => 'website',
+            'appSettingsPath' => 'app-settings',
         ];
 
         return ($type == null) ? $paths : $paths[$type];

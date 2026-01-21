@@ -22,6 +22,16 @@
                     {{ $t("menu.company") }}
                 </a-menu-item>
                 <a-menu-item
+                    key="app_settings"
+                    v-if="user && user.is_superadmin"
+                    @click="$router.push({ name: 'admin.settings.app_settings.index' })"
+                >
+                    <template #icon>
+                        <SettingOutlined />
+                    </template>
+                    {{ $t("menu.app_settings") }}
+                </a-menu-item>
+                <a-menu-item
                     key="profile"
                     @click="$router.push({ name: 'admin.settings.profile.index' })"
                 >
@@ -236,6 +246,7 @@ import {
     HistoryOutlined,
     FormOutlined,
     DatabaseOutlined,
+    SettingOutlined,
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -259,6 +270,7 @@ export default defineComponent({
         HistoryOutlined,
         FormOutlined,
         DatabaseOutlined,
+        SettingOutlined,
     },
     setup() {
         const { appSetting, user, permsArray, appModules, appType } = common();
@@ -286,7 +298,7 @@ export default defineComponent({
 
         return {
             permsArray,
-
+            user,
             selectedKeys,
             appType,
         };

@@ -42,6 +42,11 @@ class WarehouseController extends ApiBaseController
     public function stored(Warehouse $warehouse)
     {
         $company = company();
+
+        if (!$company) {
+            throw new ApiException('Company not found');
+        }
+
         $companyWarehouse = $company->warehouse;
 
         // Front website settings
@@ -117,7 +122,7 @@ class WarehouseController extends ApiBaseController
     {
         $company = company();
 
-        if ($warehouse->id == $company->warehouse_id) {
+        if ($company && $warehouse->id == $company->warehouse_id) {
             throw new ApiException('Default warehouse cannot be deleted');
         }
 

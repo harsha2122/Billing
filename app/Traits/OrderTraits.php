@@ -96,7 +96,7 @@ trait OrderTraits
                 'x_unit_id'    =>  $allOrderIteam->x_unit_id,
                 'unit'    =>  $unit,
                 'stock_quantity' => $maxQuantity,
-                'unit_short_name' => $unit->short_name,
+                'unit_short_name' => $unit ? $unit->short_name : '',
             ];
 
             $selectProductIds[] = $allOrderIteam->x_product_id;
