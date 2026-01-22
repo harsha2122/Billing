@@ -121,6 +121,24 @@
 					<a-textarea v-model:value="formData.address" :rows="2" placeholder="Enter address" />
 				</a-form-item>
 
+				<template v-if="!isEdit">
+					<a-form-item label="Subscription Plan" required>
+						<a-select
+							v-model:value="formData.subscription_plan_id"
+							placeholder="Select a subscription plan"
+							:loading="plansLoading"
+						>
+							<a-select-option
+								v-for="plan in subscriptionPlans"
+								:key="plan.xid"
+								:value="plan.xid"
+							>
+								{{ plan.name }} (Max {{ plan.max_products }} products)
+							</a-select-option>
+						</a-select>
+					</a-form-item>
+				</template>
+
 				<template v-if="isEdit">
 					<a-form-item label="Status" required>
 						<a-select v-model:value="formData.status">
@@ -217,6 +235,7 @@ import {
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
+import axiosAdmin from "../../../common/plugins/axios";
 
 export default defineComponent({
 	components: {
@@ -235,6 +254,8 @@ export default defineComponent({
 		const searchText = ref("");
 		const viewingCompany = ref(null);
 		const viewingStats = ref(null);
+		const subscriptionPlans = ref([]);
+		const plansLoading = ref(false);
 
 		const pagination = ref({
 			current: 1,
@@ -248,6 +269,7 @@ export default defineComponent({
 			email: "",
 			phone: "",
 			address: "",
+			subscription_plan_id: null,
 			admin_name: "",
 			admin_email: "",
 			admin_password: "",
@@ -418,6 +440,7 @@ export default defineComponent({
 				email: "",
 				phone: "",
 				address: "",
+				subscription_plan_id: null,
 				admin_name: "",
 				admin_email: "",
 				admin_password: "",
@@ -438,8 +461,25 @@ export default defineComponent({
 			return dayjs(date).format("DD-MM-YYYY HH:mm");
 		};
 
+		const fetchSubscriptionPlans = () => {
+			plansLoading.value = true;
+			axiosAdmin
+				.get("superadmin/subscription-plans-all")
+				.then((response) => {
+					subscriptionPlans.value = response.data.plans;
+				})
+				.catch((error) => {
+					message.error("Failed to fetch subscription plans");
+					console.error(error);
+				})
+				.finally(() => {
+					plansLoading.value = false;
+				});
+		};
+
 		onMounted(() => {
 			fetchCompanies();
+			fetchSubscriptionPlans();
 		});
 
 		return {
@@ -455,7 +495,10 @@ export default defineComponent({
 			columns,
 			viewingCompany,
 			viewingStats,
+			subscriptionPlans,
+			plansLoading,
 			fetchCompanies,
+			fetchSubscriptionPlans,
 			handleTableChange,
 			showAddModal,
 			editCompany,

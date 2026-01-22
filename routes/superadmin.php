@@ -14,6 +14,12 @@ ApiRoute::group([
         'as' => 'api.superadmin'
     ]);
 
+    // Subscription Plans management
+    ApiRoute::resource('subscription-plans', 'SubscriptionPlansController', [
+        'as' => 'api.superadmin'
+    ]);
+    ApiRoute::get('subscription-plans-all', ['as' => 'api.superadmin.subscription-plans-all', 'uses' => 'SubscriptionPlansController@allPlans']);
+
     // Dashboard stats
     ApiRoute::get('dashboard/stats', ['as' => 'api.superadmin.dashboard.stats', 'uses' => 'DashboardController@stats']);
 });

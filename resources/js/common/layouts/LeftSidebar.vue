@@ -115,6 +115,20 @@
                         <span>{{ $t("menu.companies") }}</span>
                     </a-menu-item>
 
+                    <a-menu-item
+                        v-if="user && user.is_superadmin"
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'superadmin.subscription-plans.index' });
+                            }
+                        "
+                        key="subscription-plans"
+                    >
+                        <RocketOutlined />
+                        <span>{{ $t("menu.subscription_plans") }}</span>
+                    </a-menu-item>
+
                     <a-sub-menu
                         v-if="
                             !user.is_superadmin &&
@@ -801,6 +815,7 @@ export default defineComponent({
             "cash_bank",
             "subscription",
             "companies",
+            "subscription-plans",
         ];
         const store = useStore();
         const route = useRoute();

@@ -80,8 +80,15 @@ class CompaniesController extends ApiBaseController
             // Add Currencies
             Common::addCurrencies($company);
 
-            // Update company warehouse
+            // Update company warehouse and subscription plan
             $company->warehouse_id = $warehouse->id;
+
+            // Assign subscription plan if provided
+            if ($request->has('subscription_plan_id') && $request->subscription_plan_id) {
+                $subscriptionPlanId = Hashids::decode($request->subscription_plan_id);
+                $company->subscription_plan_id = $subscriptionPlanId[0] ?? null;
+            }
+
             $company->save();
 
             // Create Admin Role
