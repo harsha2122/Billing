@@ -783,6 +783,7 @@ export default defineComponent({
         } = common();
         const rootSubmenuKeys = [
             "dashboard",
+            "superadmin-dashboard",
             "product_manager",
             "stock_management",
             "pos",
@@ -829,7 +830,7 @@ export default defineComponent({
                 openKeys.value = menuCollapsed.value ? [] : [route.meta.menuParent];
             }
 
-            selectedKeys.value = [menuKey.replace("-", "_")];
+            selectedKeys.value = [menuKey];
         });
 
         const logout = () => {
@@ -871,7 +872,7 @@ export default defineComponent({
             } else if (newVal.meta.menuParent == "subscription") {
                 selectedKeys.value = ["subscription"];
             } else {
-                selectedKeys.value = [menuKey.replace("-", "_")];
+                selectedKeys.value = [menuKey];
             }
         });
 
@@ -897,7 +898,7 @@ export default defineComponent({
                 ) {
                     selectedKeys.value = ["subscription"];
                 } else {
-                    selectedKeys.value = [menuKey.replace("-", "_")];
+                    selectedKeys.value = [menuKey];
                 }
             }
         );

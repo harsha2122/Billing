@@ -18,8 +18,8 @@ export default [
 				meta: {
 					requireAuth: true,
 					requiresSuperAdmin: true,
-					menuParent: "dashboard",
-					menuKey: "dashboard",
+					menuParent: "superadmin-dashboard",
+					menuKey: "superadmin-dashboard",
 				},
 			},
 			{
