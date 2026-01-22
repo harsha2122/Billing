@@ -94,7 +94,7 @@
                                 $router.push({ name: 'superadmin.dashboard' });
                             }
                         "
-                        key="dashboard"
+                        key="superadmin-dashboard"
                         v-if="user && user.is_superadmin"
                     >
                         <HomeOutlined />
