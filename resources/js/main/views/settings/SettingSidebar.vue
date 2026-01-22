@@ -21,7 +21,8 @@
                     </template>
                     {{ $t("menu.company") }}
                 </a-menu-item>
-                <a-menu-item
+                <!-- App Settings Hidden - All settings consolidated into Company Settings -->
+                <!-- <a-menu-item
                     key="app_settings"
                     v-if="user && user.is_superadmin"
                     @click="$router.push({ name: 'admin.settings.app_settings.index' })"
@@ -30,7 +31,7 @@
                         <SettingOutlined />
                     </template>
                     {{ $t("menu.app_settings") }}
-                </a-menu-item>
+                </a-menu-item> -->
                 <a-menu-item
                     key="profile"
                     @click="$router.push({ name: 'admin.settings.profile.index' })"

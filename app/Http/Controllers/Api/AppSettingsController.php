@@ -9,6 +9,7 @@ use Examyou\RestAPI\Exceptions\ApiException;
 
 class AppSettingsController extends ApiBaseController
 {
+    protected $model = AppSettings::class;
 
     public function index()
     {

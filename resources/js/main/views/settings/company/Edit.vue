@@ -43,7 +43,8 @@
 		<a-col :xs="24" :sm="24" :md="24" :lg="20" :xl="20">
 			<a-card class="page-content-container">
 				<a-form layout="vertical">
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Company Basic Info -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.name')"
@@ -81,7 +82,8 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Contact Info -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.email')"
@@ -119,7 +121,8 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Address -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="24" :lg="24">
 							<a-form-item
 								:label="$t('company.address')"
@@ -139,7 +142,8 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Theme Settings -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.left_sidebar_theme')"
@@ -194,7 +198,8 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Logo Settings -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="6" :lg="6">
 							<a-form-item
 								:label="$t('company.dark_logo')"
@@ -284,7 +289,8 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Currency Selection -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.currency')"
@@ -319,6 +325,10 @@
 								</span>
 							</a-form-item>
 						</a-col>
+					</a-row>
+
+					<!-- Warehouse: Visible to Both Superadmin and Admin -->
+					<a-row :gutter="16">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('warehouse.warehouse')"
@@ -356,7 +366,8 @@
 						</a-col>
 					</a-row>
 
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Layout & Shortcut Menus -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.layout')"
@@ -422,7 +433,8 @@
 						</a-col>
 					</a-row>
 
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Timezone Settings -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="4" :lg="4">
 							<a-form-item
 								:label="$t('company.auto_detect_timezone')"
@@ -520,7 +532,8 @@
 						</a-col>
 					</a-row>
 
-					<a-row :gutter="16">
+					<!-- Superadmin Only: Date/Time Format -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
 								:label="$t('company.date_format')"
@@ -595,7 +608,8 @@
 						</a-col>
 					</a-row>
 
-					<a-row :gutter="16" v-if="appType == 'non-saas'">
+					<!-- Superadmin Only: Login Image -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin && appType == 'non-saas'">
 						<a-col :xs="24" :sm="24" :md="6" :lg="6">
 							<a-form-item
 								:label="$t('company.login_image')"
@@ -684,7 +698,7 @@ export default {
 	},
 	setup() {
 		const { addEditRequestAdmin, loading, rules } = apiAdmin();
-		const { permsArray, appSetting, dayjsObject, appType } = common();
+		const { permsArray, appSetting, dayjsObject, appType, user } = common();
 		const { t } = useI18n();
 		const store = useStore();
 		const formData = ref({});
@@ -784,6 +798,7 @@ export default {
 		return {
 			appType,
 			permsArray,
+			user,
 			formData,
 			loading,
 			rules,

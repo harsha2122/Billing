@@ -27,7 +27,7 @@ class AppSettings extends BaseModel
     ];
 
     protected $casts = [
-        'xid' => Hash::class,
+        // Removed xid casting - it's an appended attribute, not a database column
     ];
 
     public function getLightLogoUrlAttribute()
