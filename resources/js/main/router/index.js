@@ -133,6 +133,11 @@ router.beforeEach((to, from, next) => {
         }
 
         if (to.meta.requireAuth && isLoggedIn) {
+            // Redirect superadmin from regular admin dashboard to superadmin dashboard
+            if (user && user.is_superadmin && to.name === 'admin.dashboard.index') {
+                return next({ name: 'superadmin.dashboard' });
+            }
+
             // Check if regular admin trying to access SuperAdmin routes
             if (to.meta.requiresSuperAdmin && (!user || !user.is_superadmin)) {
                 return next({ name: 'admin.dashboard.index' });
