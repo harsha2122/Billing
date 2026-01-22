@@ -231,7 +231,7 @@ import {
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
-import axiosAdmin from "../../../common/plugins/axios";
+import axiosAdmin from "../../../common/plugins/axiosAdmin";
 
 export default defineComponent({
 	components: {
