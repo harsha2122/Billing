@@ -38,14 +38,17 @@ trait OrderTraits
         }
 
         // Can see only order of warehouses which is assigned to him
-        if ($this->orderType == 'stock-transfers') {
-            if ($request->transfer_type == 'transfered') {
-                $query = $query->where('orders.from_warehouse_id', $warehouse->id);
+        // For superadmins without warehouse, show all orders (no warehouse filter)
+        if ($warehouse) {
+            if ($this->orderType == 'stock-transfers') {
+                if ($request->transfer_type == 'transfered') {
+                    $query = $query->where('orders.from_warehouse_id', $warehouse->id);
+                } else {
+                    $query = $query->where('orders.warehouse_id', $warehouse->id);
+                }
             } else {
                 $query = $query->where('orders.warehouse_id', $warehouse->id);
             }
-        } else {
-            $query = $query->where('orders.warehouse_id', $warehouse->id);
         }
 
         return $query;
@@ -121,8 +124,8 @@ trait OrderTraits
 
         $order->unique_id = Common::generateOrderUniqueId();
         $order->order_type = $this->orderType;
-        $order->warehouse_id = $this->orderType == 'stock-transfers' ? $request->warehouse_id : $warehouse->id;
-        $order->from_warehouse_id = $this->orderType == 'stock-transfers' ? $warehouse->id : null;
+        $order->warehouse_id = $this->orderType == 'stock-transfers' ? $request->warehouse_id : ($warehouse ? $warehouse->id : null);
+        $order->from_warehouse_id = $this->orderType == 'stock-transfers' ? ($warehouse ? $warehouse->id : null) : null;
         $order->user_id = $this->orderType == 'stock-transfers' ? null : $request->user_id;
 
         if ($this->orderType == "quotations") {
@@ -160,10 +163,9 @@ trait OrderTraits
         $loggedUser = user();
         $warehouse = warehouse();
 
-        // If logged in user is not admin
-        // then cannot update order who are
-        // of other warehouse
-        if (!$loggedUser->hasRole('admin') && $order->warehouse_id != $warehouse->id) {
+        // If logged in user is not admin (and has a warehouse assigned)
+        // then cannot update order who are of other warehouse
+        if (!$loggedUser->hasRole('admin') && $warehouse && $order->warehouse_id != $warehouse->id) {
             throw new ApiException("Don't have valid permission");
         }
 
