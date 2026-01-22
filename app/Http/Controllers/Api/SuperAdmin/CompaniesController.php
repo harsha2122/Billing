@@ -137,7 +137,11 @@ class CompaniesController extends ApiBaseController
     public function update(...$args)
     {
         $request = $args[0] ?? request();
-        $id = $args[1] ?? null;
+        $xid = $args[1] ?? null;
+
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
 
         $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
@@ -156,7 +160,15 @@ class CompaniesController extends ApiBaseController
 
     public function destroy(...$args)
     {
-        $id = $args[0] ?? null;
+        $xid = $args[0] ?? null;
+
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
 
         $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
 
@@ -171,7 +183,11 @@ class CompaniesController extends ApiBaseController
 
     public function show(...$args)
     {
-        $id = $args[0] ?? null;
+        $xid = $args[0] ?? null;
+
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
 
         $company = Company::withoutGlobalScope(CompanyScope::class)
             ->with(['admin', 'warehouse', 'currency', 'subscriptionPlan'])

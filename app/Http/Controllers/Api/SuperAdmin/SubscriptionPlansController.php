@@ -7,6 +7,7 @@ use App\Models\SubscriptionPlan;
 use Examyou\RestAPI\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Vinkla\Hashids\Facades\Hashids;
 
 class SubscriptionPlansController extends ApiBaseController
 {
@@ -33,19 +34,23 @@ class SubscriptionPlansController extends ApiBaseController
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'max_products' => 'required|integer|min:0',
-            'modules' => 'nullable|array',
-            'modules.*' => 'string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'max_products' => 'required|integer|min:0',
+                'modules' => 'nullable|array',
+                'modules.*' => 'string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return ApiResponse::make('Validation failed', ['errors' => $e->errors()], 422);
+        }
 
         DB::beginTransaction();
         try {
             $plan = new SubscriptionPlan();
             $plan->name = $request->name;
-            $plan->description = $request->description;
+            $plan->description = $request->description ?? '';
             $plan->max_products = $request->max_products;
             $plan->modules = $request->modules ?? [];
             $plan->annual_price = $request->annual_price ?? 0;
@@ -59,14 +64,28 @@ class SubscriptionPlansController extends ApiBaseController
             return ApiResponse::make('Subscription plan created successfully', [
                 'plan' => $plan
             ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            // Check for specific SQL errors
+            $errorCode = $e->errorInfo[1] ?? 0;
+            if ($errorCode == 1062) {
+                return ApiResponse::make('A subscription plan with this name already exists', [], 400);
+            } elseif ($errorCode == 1054) {
+                return ApiResponse::make('Database column error. Please contact administrator.', [], 500);
+            }
+            return ApiResponse::make('Database error: ' . $e->getMessage(), [], 500);
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::make('Failed to create subscription plan: ' . $e->getMessage(), [], 500);
         }
     }
 
-    public function show($id)
+    public function show($xid)
     {
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
         $plan = SubscriptionPlan::findOrFail($id);
 
         // Get count of companies using this plan
@@ -80,7 +99,7 @@ class SubscriptionPlansController extends ApiBaseController
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $xid)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -89,6 +108,10 @@ class SubscriptionPlansController extends ApiBaseController
             'modules' => 'nullable|array',
             'modules.*' => 'string',
         ]);
+
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
 
         $plan = SubscriptionPlan::findOrFail($id);
 
@@ -107,8 +130,16 @@ class SubscriptionPlansController extends ApiBaseController
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($xid)
     {
+        // Decode hashed ID
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid plan ID', [], 400);
+        }
+
         $plan = SubscriptionPlan::findOrFail($id);
 
         // Check if any companies are using this plan
