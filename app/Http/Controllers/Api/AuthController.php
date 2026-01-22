@@ -511,8 +511,9 @@ class AuthController extends ApiBaseController
     public function getTopProducts()
     {
         $request = request();
-        $waehouse = warehouse();
-        $warehouseId = $waehouse->id;
+        $warehouse = warehouse();
+        // For superadmins without assigned warehouse, set warehouseId to null
+        $warehouseId = $warehouse ? $warehouse->id : null;
 
         $colors = ["#20C997", "#5F63F2", "#ffa040", "#FFCD56", "#ff6385"];
 
@@ -560,8 +561,14 @@ class AuthController extends ApiBaseController
 
     public function getWarehouseId()
     {
-        $waehouse = warehouse();
-        $warehouseId = $waehouse->id;
+        $warehouse = warehouse();
+
+        // For superadmins without assigned warehouse, return null
+        if (!$warehouse) {
+            return null;
+        }
+
+        $warehouseId = $warehouse->id;
 
         return $warehouseId;
     }
