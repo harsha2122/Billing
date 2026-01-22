@@ -18,7 +18,12 @@ class CompanyController extends ApiBaseController
 
     public function updating(Company $company)
     {
-        if (env('APP_ENV') == 'production' && ($company->isDirty('name') ||
+        $user = user();
+
+        // Allow superadmin to update everything, apply demo mode restriction only to regular users
+        if (env('APP_ENV') == 'production' &&
+            (!$user || !$user->is_superadmin) &&
+            ($company->isDirty('name') ||
             $company->isDirty('short_name') || $company->isDirty('light_logo') ||
             $company->isDirty('dark_logo') || $company->isDirty('small_dark_logo') ||
             $company->isDirty('small_light_logo') || $company->isDirty('app_debug') ||
