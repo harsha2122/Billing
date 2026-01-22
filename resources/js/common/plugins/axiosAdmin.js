@@ -45,3 +45,5 @@ axiosAdmin.interceptors.response.use(function (response) {
  * Set global so you don't have to import it
  */
 window.axiosAdmin = axiosAdmin;
+
+export default axiosAdmin;
