@@ -126,7 +126,7 @@
                         key="subscription-plans"
                     >
                         <RocketOutlined />
-                        <span>{{ $t("menu.subscription_plans") }}</span>
+                        <span>Subscription Plans</span>
                     </a-menu-item>
 
                     <a-sub-menu
