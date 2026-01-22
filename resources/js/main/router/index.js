@@ -64,7 +64,8 @@ if (appType == 'saas') {
 const isAdminCompanySetupCorrect = () => {
     var appSetting = store.state.auth.appSetting;
 
-    if (appSetting.x_currency_id == null || appSetting.x_warehouse_id == null) {
+    // Check if appSetting exists before accessing properties
+    if (!appSetting || appSetting.x_currency_id == null || appSetting.x_warehouse_id == null) {
         return false;
     }
 
@@ -138,7 +139,7 @@ router.beforeEach((to, from, next) => {
             }
 
             // Check Company Setup (only for non-superadmin users)
-            if (!user.is_superadmin && !isAdminCompanySetupCorrect() && to.name !== 'admin.setup_app.index' && to.name !== 'admin.logout') {
+            if (user && !user.is_superadmin && !isAdminCompanySetupCorrect() && to.name !== 'admin.setup_app.index' && to.name !== 'admin.logout') {
                 return next({ name: 'admin.setup_app.index' });
             }
 
