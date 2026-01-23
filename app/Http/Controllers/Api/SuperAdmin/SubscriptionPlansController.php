@@ -80,8 +80,10 @@ class SubscriptionPlansController extends ApiBaseController
         }
     }
 
-    public function show($xid)
+    public function show(...$args)
     {
+        $xid = $args[0] ?? null;
+
         // Decode hashed ID
         $id = Hashids::decode($xid);
         $id = $id[0] ?? null;
@@ -99,8 +101,11 @@ class SubscriptionPlansController extends ApiBaseController
         ]);
     }
 
-    public function update(Request $request, $xid)
+    public function update(...$args)
     {
+        $request = $args[0] ?? request();
+        $xid = $args[1] ?? null;
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -130,8 +135,10 @@ class SubscriptionPlansController extends ApiBaseController
         ]);
     }
 
-    public function destroy($xid)
+    public function destroy(...$args)
     {
+        $xid = $args[0] ?? null;
+
         // Decode hashed ID
         $id = Hashids::decode($xid);
         $id = $id[0] ?? null;
