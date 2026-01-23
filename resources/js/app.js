@@ -2,13 +2,13 @@ require('./common/plugins');
 
 import { createApp } from 'vue';
 import Antd from 'ant-design-vue';
-import PerfectScrollbar from 'vue3-perfect-scrollbar';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 import App from './main/views/App.vue';
 import routes from './main/router'
 import store from './main/store';
 import { setupI18n, loadLocaleMessages } from './common/i18n';
 
-import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
+import 'vue3-perfect-scrollbar/style.css';
 import VueBarcode from '@chenfengyuan/vue-barcode';
 import print from 'vue3-print-nb';
 
