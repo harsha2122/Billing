@@ -95,8 +95,9 @@
                 <a-menu-item
                     key="currencies"
                     v-if="
-                        permsArray.includes('currencies_view') ||
-                        permsArray.includes('admin')
+                        (permsArray.includes('currencies_view') ||
+                        permsArray.includes('admin')) &&
+                        (appType == 'non-saas' || (user && user.is_superadmin))
                     "
                     @click="$router.push({ name: 'admin.settings.currencies.index' })"
                 >

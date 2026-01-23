@@ -727,29 +727,48 @@ class Common
 
     public static function addCurrencies($company)
     {
-        $newCurrency = new Currency();
-        $newCurrency->company_id = $company->id;
-        $newCurrency->name = 'Dollar';
-        $newCurrency->code = 'USD';
-        $newCurrency->symbol = '$';
-        $newCurrency->position = 'front';
-        $newCurrency->is_deletable = false;
-        $newCurrency->save();
+        // For SaaS tenant companies, only add INR currency
+        if (app_type() == 'saas' && $company->is_global == 0) {
+            $rupeeCurrency = new Currency();
+            $rupeeCurrency->company_id = $company->id;
+            $rupeeCurrency->name = 'Rupee';
+            $rupeeCurrency->code = 'INR';
+            $rupeeCurrency->symbol = '₹';
+            $rupeeCurrency->position = 'front';
+            $rupeeCurrency->is_deletable = false;
+            $rupeeCurrency->save();
 
-        $rupeeCurrency = new Currency();
-        $rupeeCurrency->company_id = $company->id;
-        $rupeeCurrency->name = 'Rupee';
-        $rupeeCurrency->code = 'INR';
-        $rupeeCurrency->symbol = '₹';
-        $rupeeCurrency->position = 'front';
-        $rupeeCurrency->is_deletable = false;
-        $rupeeCurrency->save();
+            $enLang = Lang::where('key', 'en')->first();
 
-        $enLang = Lang::where('key', 'en')->first();
+            $company->currency_id = $rupeeCurrency->id;
+            $company->lang_id = $enLang->id;
+            $company->save();
+        } else {
+            // For non-SaaS or global companies, add both USD and INR
+            $newCurrency = new Currency();
+            $newCurrency->company_id = $company->id;
+            $newCurrency->name = 'Dollar';
+            $newCurrency->code = 'USD';
+            $newCurrency->symbol = '$';
+            $newCurrency->position = 'front';
+            $newCurrency->is_deletable = false;
+            $newCurrency->save();
 
-        $company->currency_id = $newCurrency->id;
-        $company->lang_id = $enLang->id;
-        $company->save();
+            $rupeeCurrency = new Currency();
+            $rupeeCurrency->company_id = $company->id;
+            $rupeeCurrency->name = 'Rupee';
+            $rupeeCurrency->code = 'INR';
+            $rupeeCurrency->symbol = '₹';
+            $rupeeCurrency->position = 'front';
+            $rupeeCurrency->is_deletable = false;
+            $rupeeCurrency->save();
+
+            $enLang = Lang::where('key', 'en')->first();
+
+            $company->currency_id = $newCurrency->id;
+            $company->lang_id = $enLang->id;
+            $company->save();
+        }
 
         return $company;
     }
