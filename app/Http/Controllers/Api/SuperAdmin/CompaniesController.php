@@ -55,6 +55,16 @@ class CompaniesController extends ApiBaseController
 
         DB::beginTransaction();
         try {
+            // Get the first company (global or superadmin's company) to copy default settings from
+            $sourceCompany = Company::withoutGlobalScope(CompanyScope::class)
+                ->where('is_global', 1)
+                ->first();
+
+            // If no global company, get the first company
+            if (!$sourceCompany) {
+                $sourceCompany = Company::withoutGlobalScope(CompanyScope::class)->first();
+            }
+
             // Create Company
             $company = new Company();
             $company->name = $request->name;
@@ -65,6 +75,16 @@ class CompaniesController extends ApiBaseController
             $company->is_global = 0;
             $company->status = 'active';
             $company->verified = true;
+
+            // Copy logos from source company if available
+            if ($sourceCompany) {
+                $company->light_logo = $sourceCompany->light_logo;
+                $company->dark_logo = $sourceCompany->dark_logo;
+                $company->small_light_logo = $sourceCompany->small_light_logo;
+                $company->small_dark_logo = $sourceCompany->small_dark_logo;
+                $company->login_image = $sourceCompany->login_image;
+            }
+
             $company->save();
 
             // Create Warehouse

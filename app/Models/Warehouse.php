@@ -41,14 +41,40 @@ class Warehouse extends BaseModel
     {
         $warehouseLogoPath = Common::getFolderPath('warehouseLogoPath');
 
-        return $this->logo == null ? asset('images/warehouse.png') : Common::getFileUrl($warehouseLogoPath, $this->logo);
+        // If warehouse has its own logo, use it
+        if ($this->logo != null) {
+            return Common::getFileUrl($warehouseLogoPath, $this->logo);
+        }
+
+        // Otherwise, try to use company's light logo
+        $company = company();
+        if ($company && $company->light_logo) {
+            $companyLogoPath = Common::getFolderPath('companyLogoPath');
+            return Common::getFileUrl($companyLogoPath, $company->light_logo);
+        }
+
+        // Fallback to default image
+        return asset('images/warehouse.png');
     }
 
     public function getDarkLogoUrlAttribute()
     {
         $warehouseLogoPath = Common::getFolderPath('warehouseLogoPath');
 
-        return $this->dark_logo == null ? asset('images/warehouse_dark.png') : Common::getFileUrl($warehouseLogoPath, $this->dark_logo);
+        // If warehouse has its own dark logo, use it
+        if ($this->dark_logo != null) {
+            return Common::getFileUrl($warehouseLogoPath, $this->dark_logo);
+        }
+
+        // Otherwise, try to use company's dark logo
+        $company = company();
+        if ($company && $company->dark_logo) {
+            $companyLogoPath = Common::getFolderPath('companyLogoPath');
+            return Common::getFileUrl($companyLogoPath, $company->dark_logo);
+        }
+
+        // Fallback to default image
+        return asset('images/warehouse_dark.png');
     }
 
     public function getSignatureUrlAttribute()
