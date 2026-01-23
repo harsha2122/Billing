@@ -8,11 +8,7 @@ if (!function_exists('app_type')) {
 
     function app_type()
     {
-        if (env('APP_TYPE')) {
-            return env('APP_TYPE');
-        } else {
-            return "non-saas";
-        }
+        return config('app.type', 'non-saas');
     }
 }
 
