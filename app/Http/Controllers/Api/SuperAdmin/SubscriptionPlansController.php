@@ -32,8 +32,10 @@ class SubscriptionPlansController extends ApiBaseController
         ]);
     }
 
-    public function store(Request $request)
+    public function store(...$args)
     {
+        $request = $args[0] ?? request();
+
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
