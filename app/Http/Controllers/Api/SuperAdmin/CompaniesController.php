@@ -11,6 +11,7 @@ use App\Http\Requests\Api\SuperAdmin\Company\DeleteRequest;
 use App\Models\Company;
 use App\Models\Currency;
 use App\Models\Lang;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -118,6 +119,10 @@ class CompaniesController extends ApiBaseController
             $adminRole->display_name = 'Admin';
             $adminRole->description = 'Admin role for ' . $request->name;
             $adminRole->save();
+
+            // Attach all permissions to admin role
+            $allPermissionIds = Permission::pluck('id');
+            $adminRole->savePermissions($allPermissionIds);
 
             // Create Admin User
             $admin = new User();
