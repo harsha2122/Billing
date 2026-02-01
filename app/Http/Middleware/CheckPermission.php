@@ -31,7 +31,7 @@ class CheckPermission
             }
 
             // Tenant admin (role name 'admin') has access to everything
-            $userRole = $user->role;
+            $userRole = Role::find($user->role_id);
             if ($userRole && $userRole->name === 'admin') {
                 return $next($request);
             }
