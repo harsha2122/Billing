@@ -331,19 +331,25 @@ export default defineComponent({
         const companySettingUpdated = () => {
             showFinalModal.value = true;
 
+            // Mark setup as complete in backend
             axiosAdmin
-                .post(`/user`)
-                .then(function (response) {
-                    store.commit("auth/updateUser", response.data.user);
-
+                .post("setup/complete")
+                .then(() => {
                     axiosAdmin
-                        .post("change-warehouse", {
-                            warehouse_id: response.data.user.x_warehouse_id,
+                        .post(`/user`)
+                        .then(function (response) {
+                            store.commit("auth/updateUser", response.data.user);
+
+                            axiosAdmin
+                                .post("change-warehouse", {
+                                    warehouse_id: response.data.user.x_warehouse_id,
+                                })
+                                .then((response) => {
+                                    store.commit("auth/updateWarehouse", response.data.warehouse);
+                                    setupCompleted.value = true;
+                                });
                         })
-                        .then((response) => {
-                            store.commit("auth/updateWarehouse", response.data.warehouse);
-                            setupCompleted.value = true;
-                        });
+                        .catch(function (error) {});
                 })
                 .catch(function (error) {});
         };

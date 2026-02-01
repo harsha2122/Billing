@@ -32,7 +32,14 @@ axiosAdmin.interceptors.response.use(function (response) {
 		message.error(errMessage);
 	} else if (errorCode === 403) {
 		var errMessage = error.response.data.error.message;
-		message.error(errMessage);
+		var errCode = error.response.data.error.error_code;
+
+		// Error code 2001 = setup not completed, redirect to setup page
+		if (errCode === 2001) {
+			window.location.href = window.config.path + '/admin/setup';
+		} else {
+			message.error(errMessage);
+		}
 	} else if (errorCode === 404) {
 		var errMessage = error.response.data.error.message;
 		message.error(errMessage);
