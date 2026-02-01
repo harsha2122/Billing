@@ -14,6 +14,11 @@ class LicenseExpireDateWise
     {
         if (app_type() == 'saas') {
             $company = company();
+
+            if (!$company) {
+                return $next($request);
+            }
+
             $expireOn = $company->licence_expire_on;
             $currentDate = Carbon::now();
             $package = SubscriptionPlan::where('id', $company->subscription_plan_id)->first();
