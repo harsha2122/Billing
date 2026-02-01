@@ -30,6 +30,12 @@ class CheckPermission
                 return $next($request);
             }
 
+            // Tenant admin (role name 'admin') has access to everything
+            $userRole = $user->role;
+            if ($userRole && $userRole->name === 'admin') {
+                return $next($request);
+            }
+
             $resourceRequests = ['index', 'store', 'update', 'show', 'destroy'];
             $urlArray = explode('.', $request->route()->action['as']);
             $resourceRequestString = $urlArray[2];
