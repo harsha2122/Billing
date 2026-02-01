@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Role;
+use App\Scopes\CompanyScope;
 use Closure;
 use Examyou\RestAPI\Exceptions\ApiException;
 use Examyou\RestAPI\Exceptions\UnauthorizedException;
@@ -31,7 +32,7 @@ class CheckPermission
             }
 
             // Tenant admin (role name 'admin') has access to everything
-            $userRole = Role::find($user->role_id);
+            $userRole = Role::withoutGlobalScope(CompanyScope::class)->find($user->role_id);
             if ($userRole && $userRole->name === 'admin') {
                 return $next($request);
             }

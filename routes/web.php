@@ -40,7 +40,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
     });
 
     // Routes Accessable to thouse user who have permissions realted to route
-    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire', 'setup.check']], function () {
+    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire']], function () {
         $options = [
             'as' => 'api'
         ];
