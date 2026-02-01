@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'api.front.check' => \App\Http\Middleware\ApiCustomerMiddleware::class,
         'api.superadmin.check' => \App\Http\Middleware\ApiSuperAdminMiddleware::class,
         'license-expire' => \App\Http\Middleware\LicenseExpireDateWise::class,
+        'setup.check' => \App\Http\Middleware\CheckSetupComplete::class,
     ];
 }

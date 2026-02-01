@@ -76,6 +76,7 @@ class CompaniesController extends ApiBaseController
             $company->is_global = 0;
             $company->status = 'active';
             $company->verified = true;
+            $company->setup_completed = false;
 
             // Copy logos from source company if available
             if ($sourceCompany) {

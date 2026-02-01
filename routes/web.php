@@ -22,6 +22,10 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
     ApiRoute::get('warehouses', ['as' => 'api.warehouses.index', 'uses' => 'WarehouseController@index']);
 
     ApiRoute::group(['middleware' => ['api.auth.check']], function () {
+        // Setup routes (accessible before setup completion)
+        ApiRoute::get('setup', ['as' => 'api.setup.index', 'uses' => 'SetupController@index']);
+        ApiRoute::post('setup/complete', ['as' => 'api.setup.complete', 'uses' => 'SetupController@complete']);
+
         ApiRoute::post('dashboard', ['as' => 'api.extra.dashboard', 'uses' => 'AuthController@dashboard']);
         ApiRoute::post('upload-file', ['as' => 'api.extra.upload-file', 'uses' => 'AuthController@uploadFile']);
         ApiRoute::post('profile', ['as' => 'api.extra.profile', 'uses' => 'AuthController@profile']);
@@ -36,7 +40,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
     });
 
     // Routes Accessable to thouse user who have permissions realted to route
-    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire']], function () {
+    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire', 'setup.check']], function () {
         $options = [
             'as' => 'api'
         ];
