@@ -10,10 +10,7 @@
             <a-menu v-model:selectedKeys="selectedKeys">
                 <a-menu-item
                     key="company"
-                    v-if="
-                        permsArray.includes('companies_edit') ||
-                        permsArray.includes('admin')
-                    "
+                    v-if="user && user.is_superadmin"
                     @click="$router.push({ name: 'admin.settings.company.index' })"
                 >
                     <template #icon>
@@ -70,9 +67,7 @@
                 </a-menu-item>
                 <a-menu-item
                     key="roles"
-                    v-if="
-                        permsArray.includes('roles_view') || permsArray.includes('admin')
-                    "
+                    v-if="user && user.is_superadmin"
                     @click="$router.push({ name: 'admin.settings.roles.index' })"
                 >
                     <template #icon>

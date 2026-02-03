@@ -12,19 +12,19 @@
                 <div class="invoice-header">
                     <img
                         class="invoice-logo"
-                        :src="appSetting.light_logo_url"
-                        :alt="appSetting.name"
+                        :src="selectedWarehouse && selectedWarehouse.logo_url ? selectedWarehouse.logo_url : appSetting.light_logo_url"
+                        :alt="selectedWarehouse ? selectedWarehouse.name : appSetting.name"
                     />
                 </div>
                 <div class="company-details">
-                    <h2>{{ appSetting.name }}</h2>
+                    <h2>{{ selectedWarehouse ? selectedWarehouse.name : appSetting.name }}</h2>
                     <p class="company-address">
-                        {{ appSetting.address }}
+                        {{ selectedWarehouse ? selectedWarehouse.address : appSetting.address }}
                     </p>
                     <h4 style="margin-bottom: 0px">
-                        {{ $t("common.phone") }}: {{ appSetting.phone }}
+                        {{ $t("common.phone") }}: {{ selectedWarehouse ? selectedWarehouse.phone : appSetting.phone }}
                     </h4>
-                    <h4>{{ $t("common.email") }}: {{ appSetting.email }}</h4>
+                    <h4>{{ $t("common.email") }}: {{ selectedWarehouse ? selectedWarehouse.email : appSetting.email }}</h4>
                 </div>
                 <div class="tax-invoice-details">
                     <h3 class="tax-invoice-title">{{ $t("sales.tax_invoice") }}</h3>
@@ -219,7 +219,7 @@ export default defineComponent({
         PrinterOutlined,
     },
     setup(props, { emit }) {
-        const { appSetting, formatAmountCurrency, formatDate } = common();
+        const { appSetting, selectedWarehouse, formatAmountCurrency, formatDate } = common();
 
         const onClose = () => {
             emit("closed");
@@ -239,6 +239,7 @@ export default defineComponent({
 
         return {
             appSetting,
+            selectedWarehouse,
             onClose,
             formatDate,
             formatAmountCurrency,

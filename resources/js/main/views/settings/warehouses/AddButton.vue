@@ -1,5 +1,5 @@
 <template>
-	<div v-if="permsArray.includes('warehouses_create') || permsArray.includes('admin')">
+	<div v-if="user && user.is_superadmin && (permsArray.includes('warehouses_create') || permsArray.includes('admin'))">
 		<template v-if="customType == 'menu'">
 			<a-menu-item @click="showAdd" key="customers">
 				<template #icon>
@@ -69,7 +69,7 @@ export default defineComponent({
 		AddEdit,
 	},
 	setup(props, { emit }) {
-		const { permsArray } = common();
+		const { permsArray, user } = common();
 		const { initData, addEditUrl } = fields();
 		const visible = ref(false);
 		const addEditType = ref("add");
@@ -91,6 +91,7 @@ export default defineComponent({
 
 		return {
 			permsArray,
+			user,
 			visible,
 			addEditType,
 			addEditUrl,

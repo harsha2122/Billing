@@ -233,7 +233,14 @@ class AuthController extends ApiBaseController
     public function user()
     {
         $user = auth('api')->user();
-        $user = $user->load('role', 'role.perms', 'warehouse');
+
+        // Load role without CompanyScope to ensure tenant admin role is loaded
+        $role = \App\Models\Role::withoutGlobalScope(\App\Scopes\CompanyScope::class)
+            ->with('perms')
+            ->find($user->role_id);
+
+        $user->load('warehouse');
+        $user->setRelation('role', $role);
 
         session(['user' => $user]);
 
