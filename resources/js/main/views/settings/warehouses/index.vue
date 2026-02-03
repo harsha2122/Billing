@@ -3,10 +3,7 @@
         <template #header>
             <a-page-header :title="$t(`menu.warehouses`)" class="p-0">
                 <template
-                    v-if="
-                        permsArray.includes('warehouses_create') ||
-                        permsArray.includes('admin')
-                    "
+                    v-if="user && user.is_superadmin"
                     #extra
                 >
                     <a-button type="primary" @click="addItem">
@@ -178,7 +175,7 @@ export default {
         OnlineStoreStatus,
     },
     setup() {
-        const { permsArray, appSetting } = common();
+        const { permsArray, appSetting, user } = common();
         const { url, addEditUrl, initData, columns, filterableColumns } = fields();
         const crudVariables = crud();
 
@@ -201,6 +198,7 @@ export default {
         return {
             appSetting,
             permsArray,
+            user,
             columns,
             ...crudVariables,
             filterableColumns,

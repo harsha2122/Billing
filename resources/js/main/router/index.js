@@ -145,7 +145,10 @@ router.beforeEach((to, from, next) => {
 
             // Check Permissions
             if (to.meta.permission && !user.is_superadmin) {
-                const permission = to.meta.permission.replace(/-/g, '_');
+                const permissionValue = typeof to.meta.permission === 'function'
+                    ? to.meta.permission(to)
+                    : to.meta.permission;
+                const permission = permissionValue.replace(/-/g, '_');
                 if (!checkUserPermission(permission, user)) {
                     return next({ name: 'admin.dashboard.index' });
                 }

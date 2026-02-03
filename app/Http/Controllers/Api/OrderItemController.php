@@ -17,8 +17,13 @@ class OrderItemController extends ApiBaseController
         $request = request();
         $warehouse = warehouse();
 
-        $query = $query->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.warehouse_id', $warehouse->id);
+        // Skip warehouse filter if warehouse is null
+        if ($warehouse) {
+            $query = $query->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->where('orders.warehouse_id', $warehouse->id);
+        } else {
+            $query = $query->join('orders', 'orders.id', '=', 'order_items.order_id');
+        }
 
         // Dates Filters
         if ($request->has('dates') && $request->dates != "") {
