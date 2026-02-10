@@ -303,14 +303,33 @@ export default defineComponent({
             var printClass = isThermal.value ? "print-thermal" : "print-a4";
             var windowWidth = isThermal.value ? 400 : 900;
             var windowHeight = isThermal.value ? 600 : 1000;
+
+            // Collect all stylesheets and inline styles from the current page
+            var allStyles = "";
+            // 1. Link the pos_invoice_css
+            allStyles += '<link rel="stylesheet" href="' + posInvoiceCssUrl + '">';
+            // 2. Copy all <style> tags (includes Vue scoped component styles)
+            var styleTags = document.querySelectorAll("style");
+            for (var i = 0; i < styleTags.length; i++) {
+                allStyles += "<style>" + styleTags[i].innerHTML + "</style>";
+            }
+            // 3. Copy linked stylesheets (app.css, antd.css, etc.)
+            var linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+            for (var j = 0; j < linkTags.length; j++) {
+                allStyles += '<link rel="stylesheet" href="' + linkTags[j].href + '">';
+            }
+
             var newWindow = window.open("", "", "height=" + windowHeight + ", width=" + windowWidth);
             newWindow.document.write(
-                `<link rel="stylesheet" href="${posInvoiceCssUrl}"><html><body class="${printClass}">`
+                "<html><head>" + allStyles + "</head><body class=\"" + printClass + "\">"
             );
             newWindow.document.write(invoiceContent);
             newWindow.document.write("</body></html>");
             newWindow.document.close();
-            newWindow.print();
+            // Wait for stylesheets to load before printing
+            newWindow.onload = function() {
+                newWindow.print();
+            };
         };
 
         return {

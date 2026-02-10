@@ -188,8 +188,7 @@ export default defineComponent({
 
 <style scoped>
 .tally-theme-invoice {
-    max-width: 400px;
-    margin: 0 auto;
+    width: 100%;
     font-family: "Courier New", Courier, monospace;
     font-size: 11px;
     color: #333;

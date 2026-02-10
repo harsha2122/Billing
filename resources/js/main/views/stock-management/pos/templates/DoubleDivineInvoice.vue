@@ -189,8 +189,7 @@ export default defineComponent({
 
 <style scoped>
 .double-divine-invoice {
-    max-width: 400px;
-    margin: 0 auto;
+    width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 11px;
     color: #333;
