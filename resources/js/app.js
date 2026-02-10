@@ -8,7 +8,7 @@ import routes from './main/router'
 import store from './main/store';
 import { setupI18n, loadLocaleMessages } from './common/i18n';
 
-import 'vue3-perfect-scrollbar/style.css';
+import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
 import VueBarcode from '@chenfengyuan/vue-barcode';
 import print from 'vue3-print-nb';
 
