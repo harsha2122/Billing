@@ -172,12 +172,13 @@
                                 </a-col>
                                 <a-col :xs="24" :sm="24" :md="8" :lg="8">
                                     <a-form-item
-                                        label="State Code"
+                                        label="State Code (Numeric)"
                                         name="state_code"
                                     >
                                         <a-input
                                             v-model:value="formData.state_code"
                                             placeholder="e.g. 09"
+                                            :maxlength="10"
                                         />
                                     </a-form-item>
                                 </a-col>
