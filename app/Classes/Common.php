@@ -413,6 +413,63 @@ class Common
         }
     }
 
+    public static function getGstBreakup($taxAmount, $sellerStateCode, $buyerStateCode)
+    {
+        $isInterState = $sellerStateCode !== $buyerStateCode;
+
+        if ($isInterState) {
+            return [
+                'type' => 'igst',
+                'igst' => round($taxAmount, 2),
+                'cgst' => 0,
+                'sgst' => 0,
+            ];
+        }
+
+        $halfTax = round($taxAmount / 2, 2);
+        return [
+            'type' => 'cgst_sgst',
+            'igst' => 0,
+            'cgst' => $halfTax,
+            'sgst' => $halfTax,
+        ];
+    }
+
+    public static function getItemGstBreakup($taxRate, $taxableAmount, $sellerStateCode, $buyerStateCode)
+    {
+        $isInterState = $sellerStateCode !== $buyerStateCode;
+        $taxAmount = $taxableAmount * ($taxRate / 100);
+
+        if ($isInterState) {
+            return [
+                'type' => 'igst',
+                'taxable_amount' => round($taxableAmount, 2),
+                'igst_rate' => $taxRate,
+                'igst_amount' => round($taxAmount, 2),
+                'cgst_rate' => 0,
+                'cgst_amount' => 0,
+                'sgst_rate' => 0,
+                'sgst_amount' => 0,
+                'total_tax' => round($taxAmount, 2),
+            ];
+        }
+
+        $halfRate = round($taxRate / 2, 2);
+        $halfTax = round($taxAmount / 2, 2);
+
+        return [
+            'type' => 'cgst_sgst',
+            'taxable_amount' => round($taxableAmount, 2),
+            'igst_rate' => 0,
+            'igst_amount' => 0,
+            'cgst_rate' => $halfRate,
+            'cgst_amount' => $halfTax,
+            'sgst_rate' => $halfRate,
+            'sgst_amount' => $halfTax,
+            'total_tax' => round($taxAmount, 2),
+        ];
+    }
+
     public static function recalculateOrderStock($warehouseId, $productId)
     {
         $purchaseOrderCount = self::calculateOrderCount('purchases', $warehouseId, $productId);
@@ -572,6 +629,7 @@ class Common
                 $orderItem->tax_type = $productItem->tax_type;
                 $orderItem->subtotal = $productItem->subtotal;
                 $orderItem->single_unit_price = $productItem->single_unit_price;
+                $orderItem->hsn_sac_code = isset($productItem->hsn_sac_code) ? $productItem->hsn_sac_code : null;
                 $orderItem->save();
 
                 $warehouseId = $order->warehouse_id;

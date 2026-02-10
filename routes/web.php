@@ -120,5 +120,8 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('stock-transfers', 'StockTransferController', $options);
         ApiRoute::resource('sales', 'SalesController', $options);
         ApiRoute::resource('sales-returns', 'SalesReturnsController', $options);
+
+        // POS Invoice Templates
+        ApiRoute::resource('pos-invoice-templates', 'PosInvoiceTemplateController', $options);
     });
 });

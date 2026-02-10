@@ -25,6 +25,10 @@ const fields = () => {
         discount: 0,
         shipping: 0,
         subtotal: 0,
+        e_way_bill_number: "",
+        irn_number: "",
+        qr_code_data: "",
+        pos_invoice_template_id: undefined,
     });
 
     const orderItemColumns = [

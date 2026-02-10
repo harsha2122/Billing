@@ -111,7 +111,7 @@ class AuthController extends ApiBaseController
 
     public function pdf($uniqueId, $langKey = "en")
     {
-        $order = Order::with(['warehouse', 'user', 'items', 'items.product', 'items.unit', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name'])
+        $order = Order::with(['warehouse', 'user', 'items', 'items.product', 'items.unit', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name', 'posInvoiceTemplate'])
             ->where('unique_id', $uniqueId)
             ->first();
 
@@ -125,16 +125,48 @@ class AuthController extends ApiBaseController
             ->pluck('value', 'key')
             ->toArray();
 
+        $company = Company::with('currency')->first();
+
+        // Determine template slug
+        $templateSlug = 'default';
+        if ($order->posInvoiceTemplate) {
+            $templateSlug = $order->posInvoiceTemplate->slug;
+        }
+
+        // Calculate amount in words
+        $amountInWords = \App\Helpers\NumberToWords::convert($order->total);
+
+        // Calculate GST breakup if needed
+        $gstBreakup = null;
+        $sellerStateCode = $order->warehouse ? $order->warehouse->state_code : ($company->state_code ?? '');
+        $buyerStateCode = $order->user && $order->user->state_code ? $order->user->state_code : $sellerStateCode;
+
+        if ($order->posInvoiceTemplate && $order->posInvoiceTemplate->show_gst_breakup) {
+            $gstBreakup = Common::getGstBreakup($order->tax_amount, $sellerStateCode, $buyerStateCode);
+        }
+
         $pdfData = [
             'order' => $order,
-            'company' => Company::with('currency')->first(),
+            'company' => $company,
             'dateTimeFormat' => 'd-m-Y',
-            'traslations' => $invoiceTranslation
+            'traslations' => $invoiceTranslation,
+            'amountInWords' => $amountInWords,
+            'gstBreakup' => $gstBreakup,
+            'templateSlug' => $templateSlug,
         ];
 
-        $html = view('pdf', $pdfData);
+        // Use template-specific view if it exists
+        $viewName = 'invoice-templates.' . $templateSlug;
+        if (!view()->exists($viewName)) {
+            $viewName = 'pdf';
+        }
+
+        $html = view($viewName, $pdfData);
 
         $pdf = app('dompdf.wrapper');
+        if ($templateSlug === 'landscape-theme-1') {
+            $pdf->setPaper('a4', 'landscape');
+        }
         $pdf->loadHTML($html);
         return $pdf->download();
     }

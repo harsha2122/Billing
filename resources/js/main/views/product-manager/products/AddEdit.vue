@@ -282,6 +282,19 @@
 					<a-row :gutter="16">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
 							<a-form-item
+								label="HSN/SAC Code"
+								name="hsn_sac_code"
+							>
+								<a-input
+									v-model:value="formData.hsn_sac_code"
+									placeholder="Enter HSN/SAC Code"
+								/>
+							</a-form-item>
+						</a-col>
+					</a-row>
+					<a-row :gutter="16">
+						<a-col :xs="24" :sm="24" :md="12" :lg="12">
+							<a-form-item
 								:label="$t('product.opening_stock')"
 								name="opening_stock"
 								:help="

@@ -28,6 +28,7 @@ class PosController extends ApiBaseController
             'products.id',
             'products.name',
             'products.image',
+            'products.hsn_sac_code',
             'product_details.sales_price',
             'products.unit_id',
             'product_details.sales_tax_type',
@@ -92,6 +93,7 @@ class PosController extends ApiBaseController
                 'name'    =>  $product->name,
                 'image'    =>  $product->image,
                 'image_url'    =>  $product->image_url,
+                'hsn_sac_code' =>  $product->hsn_sac_code,
                 'discount_rate'    =>  0,
                 'total_discount'    =>  0,
                 'x_tax_id'    => $tax ? $tax->xid : null,
@@ -147,6 +149,10 @@ class PosController extends ApiBaseController
         $order->total = $orderDetails['subtotal'];
         $order->paid_amount = 0;
         $order->due_amount = $order->total;
+        $order->e_way_bill_number = isset($orderDetails['e_way_bill_number']) ? $orderDetails['e_way_bill_number'] : null;
+        $order->irn_number = isset($orderDetails['irn_number']) ? $orderDetails['irn_number'] : null;
+        $order->qr_code_data = isset($orderDetails['qr_code_data']) ? $orderDetails['qr_code_data'] : null;
+        $order->pos_invoice_template_id = isset($orderDetails['pos_invoice_template_id']) ? $orderDetails['pos_invoice_template_id'] : null;
         $order->order_status = $posDefaultStatus;
         $order->staff_user_id = $loggedInUser->id;
         $order->save();
@@ -187,8 +193,8 @@ class PosController extends ApiBaseController
 
         Common::updateOrderAmount($order->id);
 
-        $savedOrder = Order::select('id', 'unique_id', 'invoice_number', 'user_id', 'staff_user_id', 'order_date', 'discount', 'shipping', 'tax_amount', 'subtotal', 'total', 'paid_amount', 'due_amount', 'total_items', 'total_quantity')
-            ->with(['user:id,name', 'items:id,order_id,product_id,unit_id,unit_price,subtotal,quantity', 'items.product:id,name', 'items.unit:id,name,short_name', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name', 'staffMember:id,name'])
+        $savedOrder = Order::select('id', 'unique_id', 'invoice_number', 'user_id', 'staff_user_id', 'order_date', 'discount', 'shipping', 'tax_amount', 'tax_rate', 'subtotal', 'total', 'paid_amount', 'due_amount', 'total_items', 'total_quantity', 'e_way_bill_number', 'irn_number', 'qr_code_data', 'pos_invoice_template_id', 'terms_condition')
+            ->with(['user:id,name,phone,tax_number', 'items:id,order_id,product_id,unit_id,unit_price,single_unit_price,subtotal,quantity,tax_rate,tax_type,total_tax,total_discount,hsn_sac_code', 'items.product:id,name,hsn_sac_code', 'items.unit:id,name,short_name', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name', 'staffMember:id,name', 'warehouse:id,name,phone,email,address,gstin,state,state_code,signature,terms_condition'])
             ->find($order->id);
 
         return ApiResponse::make('Data fetched', [

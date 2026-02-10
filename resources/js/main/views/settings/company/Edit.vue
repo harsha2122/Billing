@@ -142,6 +142,24 @@
 							</a-form-item>
 						</a-col>
 					</a-row>
+					<!-- GSTIN and State -->
+					<a-row :gutter="16" v-if="user && user.is_superadmin">
+						<a-col :xs="24" :sm="24" :md="8" :lg="8">
+							<a-form-item label="GSTIN" name="gstin">
+								<a-input v-model:value="formData.gstin" placeholder="Enter GSTIN" />
+							</a-form-item>
+						</a-col>
+						<a-col :xs="24" :sm="24" :md="8" :lg="8">
+							<a-form-item label="State" name="state">
+								<a-input v-model:value="formData.state" placeholder="Enter State" />
+							</a-form-item>
+						</a-col>
+						<a-col :xs="24" :sm="24" :md="8" :lg="8">
+							<a-form-item label="State Code" name="state_code">
+								<a-input v-model:value="formData.state_code" placeholder="e.g. 09" />
+							</a-form-item>
+						</a-col>
+					</a-row>
 					<!-- Superadmin Only: Theme Settings -->
 					<a-row :gutter="16" v-if="user && user.is_superadmin">
 						<a-col :xs="24" :sm="24" :md="12" :lg="12">
