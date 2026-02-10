@@ -781,6 +781,9 @@ export default {
 				auto_detect_timezone: company.auto_detect_timezone,
 				app_debug: company.app_debug,
 				update_app_notification: company.update_app_notification,
+				gstin: company.gstin || "",
+				state: company.state || "",
+				state_code: company.state_code || "",
 				_method: "PUT",
 			};
 		};

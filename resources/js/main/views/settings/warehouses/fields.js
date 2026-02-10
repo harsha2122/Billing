@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 
 const fields = () => {
     const addEditUrl = "warehouses";
-    const url = "warehouses?fields=id,xid,logo,logo_url,dark_logo,dark_logo_url,name,slug,email,phone,address,show_email_on_invoice,show_phone_on_invoice,terms_condition,bank_details,signature,signature_url,online_store_enabled,default_pos_order_status,customers_visibility,suppliers_visibility,products_visibility";
+    const url = "warehouses?fields=id,xid,logo,logo_url,dark_logo,dark_logo_url,name,slug,email,phone,address,show_email_on_invoice,show_phone_on_invoice,terms_condition,bank_details,signature,signature_url,online_store_enabled,default_pos_order_status,customers_visibility,suppliers_visibility,products_visibility,gstin,state,state_code";
     const { t } = useI18n();
 
     const initData = {
@@ -27,6 +27,9 @@ const fields = () => {
         customers_visibility: "all",
         suppliers_visibility: "all",
         products_visibility: "all",
+        gstin: "",
+        state: "",
+        state_code: "",
     };
 
     const columns = [

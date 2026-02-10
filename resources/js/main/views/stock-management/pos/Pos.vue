@@ -953,6 +953,7 @@
     <InvoiceModal
         :visible="printInvoiceModalVisible"
         :order="printInvoiceOrder"
+        :selectedTemplateSlug="selectedTemplateSlug"
         @closed="printInvoiceModalVisible = false"
     />
 </template>
@@ -1044,6 +1045,7 @@ export default {
         const payNowVisible = ref(false);
         const printInvoiceModalVisible = ref(false);
         const printInvoiceOrder = ref({});
+        const selectedTemplateSlug = ref("default");
 
         // For Barcode Search
         const searchBarcodeInput = ref(false);
@@ -1372,7 +1374,7 @@ export default {
             });
         };
 
-        const payNowSuccess = (invoiceOrder) => {
+        const payNowSuccess = (invoiceOrder, templateSlug) => {
             resetPos();
 
             var walkInCustomerId =
@@ -1387,6 +1389,7 @@ export default {
             reFetchProducts();
             payNowVisible.value = false;
 
+            selectedTemplateSlug.value = templateSlug || "default";
             printInvoiceOrder.value = invoiceOrder;
             printInvoiceModalVisible.value = true;
         };
@@ -1445,6 +1448,7 @@ export default {
 
             printInvoiceModalVisible,
             printInvoiceOrder,
+            selectedTemplateSlug,
 
             postLayout,
             innerWidth: window.innerWidth,

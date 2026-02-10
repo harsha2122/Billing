@@ -7,29 +7,9 @@
         :width="modalWidth"
         @cancel="onClose"
     >
-        <div style="margin-bottom: 10px">
-            <a-select
-                v-model:value="selectedTemplateSlug"
-                style="width: 250px"
-                :placeholder="$t('common.select_default_text', ['Template'])"
-                @change="onTemplateChange"
-            >
-                <a-select-option value="default">
-                    Default (Thermal)
-                </a-select-option>
-                <a-select-option
-                    v-for="tpl in templates"
-                    :key="tpl.slug"
-                    :value="tpl.slug"
-                >
-                    {{ tpl.name }}
-                </a-select-option>
-            </a-select>
-        </div>
-
-        <div id="pos-invoice">
+        <div id="pos-invoice" :class="printSizeClass">
             <!-- Default Thermal Template -->
-            <div v-if="selectedTemplateSlug === 'default'" style="max-width: 400px; margin: 0px auto" >
+            <div v-if="activeSlug === 'default'" style="max-width: 400px; margin: 0px auto" >
                 <div v-if="order && order.xid">
                     <div class="invoice-header">
                         <img
@@ -218,8 +198,8 @@
                 </div>
             </div>
 
-            <!-- Dynamic Template -->
-            <div v-else style="max-width: 400px; margin: 0px auto">
+            <!-- Dynamic Template (A4 size) -->
+            <div v-else style="margin: 0px auto">
                 <component
                     v-if="order && order.xid"
                     :is="currentTemplateComponent"
@@ -247,7 +227,7 @@
 </template>
 
 <script>
-import { ref, defineComponent, computed, onMounted, watch } from "vue";
+import { defineComponent, computed } from "vue";
 import { PrinterOutlined } from "@ant-design/icons-vue";
 import common from "../../../../common/composable/common";
 import GstDistributorInvoice from "./templates/GstDistributorInvoice.vue";
@@ -269,7 +249,7 @@ const templateComponentMap = {
 };
 
 export default defineComponent({
-    props: ["visible", "order"],
+    props: ["visible", "order", "selectedTemplateSlug"],
     emits: ["closed", "success"],
     components: {
         PrinterOutlined,
@@ -282,32 +262,31 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const { appSetting, selectedWarehouse, formatAmountCurrency, formatDate } = common();
-        const selectedTemplateSlug = ref("default");
-        const templates = ref([]);
 
-        onMounted(() => {
-            axiosAdmin.get("pos-invoice-templates?limit=10000").then((response) => {
-                templates.value = response.data;
+        const activeSlug = computed(() => {
+            return props.selectedTemplateSlug || "default";
+        });
 
-                // Auto-select default template if one exists
-                const defaultTpl = templates.value.find((t) => t.is_default);
-                if (defaultTpl) {
-                    selectedTemplateSlug.value = defaultTpl.slug;
-                }
-            }).catch(() => {
-                // Templates not available yet (migration not run)
-            });
+        const isThermal = computed(() => {
+            return activeSlug.value === "default";
         });
 
         const currentTemplateComponent = computed(() => {
-            return templateComponentMap[selectedTemplateSlug.value] || null;
+            return templateComponentMap[activeSlug.value] || null;
         });
 
         const modalWidth = computed(() => {
-            if (selectedTemplateSlug.value === "landscape-theme-1") {
-                return "700px";
+            if (activeSlug.value === "landscape-theme-1") {
+                return "900px";
             }
-            return "450px";
+            if (isThermal.value) {
+                return "450px";
+            }
+            return "850px";
+        });
+
+        const printSizeClass = computed(() => {
+            return isThermal.value ? "print-thermal" : "print-a4";
         });
 
         const amountInWords = computed(() => {
@@ -315,19 +294,18 @@ export default defineComponent({
             return convertNumberToWords(props.order.total);
         });
 
-        const onTemplateChange = () => {
-            // Template changed - component re-renders automatically
-        };
-
         const onClose = () => {
             emit("closed");
         };
 
         const printInvoice = () => {
             var invoiceContent = document.getElementById("pos-invoice").innerHTML;
-            var newWindow = window.open("", "", "height=500, width=500");
+            var printClass = isThermal.value ? "print-thermal" : "print-a4";
+            var windowWidth = isThermal.value ? 400 : 900;
+            var windowHeight = isThermal.value ? 600 : 1000;
+            var newWindow = window.open("", "", "height=" + windowHeight + ", width=" + windowWidth);
             newWindow.document.write(
-                `<link rel="stylesheet" href="${posInvoiceCssUrl}"><html><body>`
+                `<link rel="stylesheet" href="${posInvoiceCssUrl}"><html><body class="${printClass}">`
             );
             newWindow.document.write(invoiceContent);
             newWindow.document.write("</body></html>");
@@ -342,12 +320,12 @@ export default defineComponent({
             formatDate,
             formatAmountCurrency,
             printInvoice,
-            selectedTemplateSlug,
-            templates,
+            activeSlug,
+            isThermal,
             currentTemplateComponent,
             modalWidth,
+            printSizeClass,
             amountInWords,
-            onTemplateChange,
         };
     },
 });

@@ -49,6 +49,26 @@
             <a-col :xs="24" :sm="24" :md="16" :lg="16">
                 <a-row :gutter="[24, 24]">
                     <a-col :span="24" v-if="!showAddForm">
+                        <div style="margin-bottom: 12px">
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                                {{ $t("common.invoice_template") || "Invoice Template" }}
+                            </label>
+                            <a-select
+                                v-model:value="selectedTemplateSlug"
+                                style="width: 250px"
+                            >
+                                <a-select-option value="default">
+                                    Default (Thermal)
+                                </a-select-option>
+                                <a-select-option
+                                    v-for="tpl in invoiceTemplates"
+                                    :key="tpl.slug"
+                                    :value="tpl.slug"
+                                >
+                                    {{ tpl.name }}
+                                </a-select-option>
+                            </a-select>
+                        </div>
                         <a-space>
                             <a-button type="primary" @click="() => (showAddForm = true)">
                                 <PlusOutlined />
@@ -218,6 +238,8 @@ export default {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { appSetting, formatAmountCurrency } = common();
         const paymentModes = ref([]);
+        const invoiceTemplates = ref([]);
+        const selectedTemplateSlug = ref("default");
         const formData = ref({
             payment_mode_id: undefined,
             amount: 0,
@@ -245,6 +267,14 @@ export default {
             axiosAdmin.get("payment-modes").then((response) => {
                 paymentModes.value = response.data;
             });
+
+            axiosAdmin.get("pos-invoice-templates?limit=10000").then((response) => {
+                invoiceTemplates.value = response.data;
+                const defaultTpl = invoiceTemplates.value.find((t) => t.is_default);
+                if (defaultTpl) {
+                    selectedTemplateSlug.value = defaultTpl.slug;
+                }
+            }).catch(() => {});
         });
 
         const drawerClosed = () => {
@@ -298,7 +328,7 @@ export default {
 
                     allPaymentRecords.value = [];
                     showAddForm.value = false;
-                    emit("success", res.order);
+                    emit("success", res.order, selectedTemplateSlug.value);
                 },
             });
         };
@@ -340,6 +370,8 @@ export default {
             rules,
             drawerClosed,
             paymentModes,
+            invoiceTemplates,
+            selectedTemplateSlug,
             formData,
             appSetting,
             formatAmountCurrency,
