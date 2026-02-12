@@ -1,5 +1,5 @@
 <template>
-    <div class="gst-theme2-invoice">
+    <div class="pos-tpl gst-theme2-invoice">
         <div class="top-title-bar"><h3>Tax Invoice</h3></div>
         <div class="header-section">
             <div class="header-logo" v-if="selectedWarehouse && selectedWarehouse.logo_url">
@@ -97,39 +97,39 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .gst-theme2-invoice { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: #1a1a1a; line-height: 1.5; }
-.top-title-bar { background: #6c63ff; color: #fff; text-align: center; padding: 6px 0; margin-bottom: 10px; }
-.top-title-bar h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-.header-section { display: flex; align-items: flex-start; justify-content: flex-end; margin-bottom: 8px; padding: 0 4px; }
-.header-logo { margin-right: 12px; }
-.company-logo { max-width: 60px; max-height: 45px; object-fit: contain; }
-.header-company-info { text-align: right; flex: 1; }
-.company-name { margin: 0 0 3px 0; font-size: 15px; color: #6c63ff; font-weight: 700; }
-.header-company-info p { margin: 0; font-size: 10px; color: #555; }
-.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-.meta-table td { padding: 4px 6px; font-size: 11px; }
-.text-right { text-align: right; }
-.bill-to-bar { background: #6c63ff; color: #fff; padding: 4px 10px; font-size: 11px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; }
-.customer-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.customer-table td { padding: 3px 6px; font-size: 10px; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.items-table thead tr { background: #6c63ff; color: #fff; }
-.items-table th { padding: 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.items-table tbody tr:nth-child(even) { background: #fafafa; }
-.amounts-section { margin-bottom: 8px; }
-.amounts-table { width: 50%; margin-left: auto; border-collapse: collapse; }
-.amounts-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
-.grand-total-row td { border-top: 2px solid #6c63ff; border-bottom: 2px solid #6c63ff; padding: 5px 6px; font-size: 12px; color: #6c63ff; }
-.amount-words-bar { background: #6c63ff; color: #fff; padding: 5px 10px; font-size: 10px; margin-bottom: 8px; }
-.payment-info { font-size: 10px; padding: 4px 6px; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
-.terms-section { margin-bottom: 10px; font-size: 9px; color: #666; padding: 0 4px; }
-.terms-section p { margin: 2px 0 0 0; }
-.signatory-section { text-align: right; margin-top: 14px; padding: 0 4px; }
-.signatory-block { display: inline-block; text-align: center; }
-.signatory-block p { margin: 2px 0; font-size: 10px; }
-.for-company { font-weight: 600; color: #6c63ff; }
-.signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
-.signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
+.gst-theme2-invoice .top-title-bar { background: #6c63ff; color: #fff; text-align: center; padding: 6px 0; margin-bottom: 10px; }
+.gst-theme2-invoice .top-title-bar h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #fff; }
+.gst-theme2-invoice .header-section { display: flex; align-items: flex-start; justify-content: flex-end; margin-bottom: 8px; padding: 0 4px; }
+.gst-theme2-invoice .header-logo { margin-right: 12px; }
+.gst-theme2-invoice .company-logo { max-width: 60px; max-height: 45px; object-fit: contain; }
+.gst-theme2-invoice .header-company-info { text-align: right; flex: 1; }
+.gst-theme2-invoice .company-name { margin: 0 0 3px 0; font-size: 15px; color: #6c63ff; font-weight: 700; }
+.gst-theme2-invoice .header-company-info p { margin: 0; font-size: 10px; color: #555; }
+.gst-theme2-invoice .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+.gst-theme2-invoice .meta-table td { padding: 4px 6px; font-size: 11px; }
+.gst-theme2-invoice .text-right { text-align: right; }
+.gst-theme2-invoice .bill-to-bar { background: #6c63ff; color: #fff; padding: 4px 10px; font-size: 11px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; }
+.gst-theme2-invoice .customer-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.gst-theme2-invoice .customer-table td { padding: 3px 6px; font-size: 10px; }
+.gst-theme2-invoice .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.gst-theme2-invoice .items-table thead tr { background: #6c63ff; color: #fff; }
+.gst-theme2-invoice .items-table th { padding: 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #fff; }
+.gst-theme2-invoice .items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.gst-theme2-invoice .items-table tbody tr:nth-child(even) { background: #fafafa; }
+.gst-theme2-invoice .amounts-section { margin-bottom: 8px; }
+.gst-theme2-invoice .amounts-table { width: 50%; margin-left: auto; border-collapse: collapse; }
+.gst-theme2-invoice .amounts-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
+.gst-theme2-invoice .grand-total-row td { border-top: 2px solid #6c63ff; border-bottom: 2px solid #6c63ff; padding: 5px 6px; font-size: 12px; color: #6c63ff; }
+.gst-theme2-invoice .amount-words-bar { background: #6c63ff; color: #fff; padding: 5px 10px; font-size: 10px; margin-bottom: 8px; }
+.gst-theme2-invoice .payment-info { font-size: 10px; padding: 4px 6px; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
+.gst-theme2-invoice .terms-section { margin-bottom: 10px; font-size: 9px; color: #666; padding: 0 4px; }
+.gst-theme2-invoice .terms-section p { margin: 2px 0 0 0; }
+.gst-theme2-invoice .signatory-section { text-align: right; margin-top: 14px; padding: 0 4px; }
+.gst-theme2-invoice .signatory-block { display: inline-block; text-align: center; }
+.gst-theme2-invoice .signatory-block p { margin: 2px 0; font-size: 10px; }
+.gst-theme2-invoice .for-company { font-weight: 600; color: #6c63ff; }
+.gst-theme2-invoice .signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
+.gst-theme2-invoice .signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
 </style>

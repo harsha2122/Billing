@@ -1,5 +1,5 @@
 <template>
-    <div class="landscape-theme1-invoice">
+    <div class="pos-tpl landscape-theme1-invoice">
         <div class="header-section">
             <div class="header-left">
                 <img v-if="selectedWarehouse && selectedWarehouse.logo_url" :src="selectedWarehouse.logo_url" :alt="selectedWarehouse.name" class="company-logo" />
@@ -99,41 +99,41 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .landscape-theme1-invoice { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: #1a1a1a; line-height: 1.5; }
-.header-section { display: flex; align-items: flex-start; padding-bottom: 8px; border-bottom: 2px solid #2196F3; margin-bottom: 8px; }
-.header-left { flex: 0 0 60px; margin-right: 10px; }
-.company-logo { max-width: 55px; max-height: 40px; object-fit: contain; }
-.header-center { flex: 1; }
-.company-name { margin: 0 0 3px 0; font-size: 14px; color: #2196F3; font-weight: 700; }
-.header-center p { margin: 0; font-size: 9px; color: #555; }
-.title-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.invoice-title-chip { background: #2196F3; color: #fff; padding: 4px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-radius: 2px; }
-.meta-info { font-size: 10px; }
-.meta-info span { margin-left: 12px; }
-.customer-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.customer-table td { padding: 3px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.text-right { text-align: right; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-.items-table thead tr { background: #2196F3; color: #fff; }
-.items-table th { padding: 5px 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.items-table td { padding: 4px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.items-table tbody tr:nth-child(even) { background: #fafafa; }
-.subtotals-row { margin-bottom: 4px; }
-.subtotals-table { width: 45%; margin-left: auto; border-collapse: collapse; }
-.subtotals-table td { padding: 2px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.total-words-row { background: #2196F3; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 6px; }
-.total-value { font-size: 13px; }
-.words-value { font-size: 9px; font-style: italic; text-align: right; flex: 1; margin-left: 10px; opacity: 0.9; }
-.received-balance-row { display: flex; justify-content: space-between; background: #e3f2fd; padding: 5px 10px; margin-bottom: 6px; font-size: 11px; border-radius: 2px; }
-.payment-info { font-size: 10px; padding: 4px 6px; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
-.summary-bar { display: flex; justify-content: space-around; background: #f8f8f8; padding: 4px 0; margin-bottom: 8px; font-size: 10px; font-weight: 600; border-radius: 2px; }
-.bottom-section { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 10px; }
-.terms-column { flex: 1; font-size: 9px; padding-right: 10px; color: #666; }
-.terms-column p { margin: 2px 0 0 0; }
-.signatory-column { flex: 0 0 auto; text-align: center; }
-.signatory-column p { margin: 2px 0; font-size: 10px; }
-.for-company { font-weight: 600; color: #2196F3; }
-.signature-img { max-width: 90px; max-height: 35px; object-fit: contain; display: block; margin: 4px auto; }
-.signatory-line { width: 100px; border-top: 1px solid #333; margin: 4px auto; }
+.landscape-theme1-invoice .header-section { display: flex; align-items: flex-start; padding-bottom: 8px; border-bottom: 2px solid #2196F3; margin-bottom: 8px; }
+.landscape-theme1-invoice .header-left { flex: 0 0 60px; margin-right: 10px; }
+.landscape-theme1-invoice .company-logo { max-width: 55px; max-height: 40px; object-fit: contain; }
+.landscape-theme1-invoice .header-center { flex: 1; }
+.landscape-theme1-invoice .company-name { margin: 0 0 3px 0; font-size: 14px; color: #2196F3; font-weight: 700; }
+.landscape-theme1-invoice .header-center p { margin: 0; font-size: 9px; color: #555; }
+.landscape-theme1-invoice .title-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.landscape-theme1-invoice .invoice-title-chip { background: #2196F3; color: #fff; padding: 4px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-radius: 2px; }
+.landscape-theme1-invoice .meta-info { font-size: 10px; }
+.landscape-theme1-invoice .meta-info span { margin-left: 12px; }
+.landscape-theme1-invoice .customer-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.landscape-theme1-invoice .customer-table td { padding: 3px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.landscape-theme1-invoice .text-right { text-align: right; }
+.landscape-theme1-invoice .items-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+.landscape-theme1-invoice .items-table thead tr { background: #2196F3; color: #fff; }
+.landscape-theme1-invoice .items-table th { padding: 5px 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #fff; }
+.landscape-theme1-invoice .items-table td { padding: 4px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.landscape-theme1-invoice .items-table tbody tr:nth-child(even) { background: #fafafa; }
+.landscape-theme1-invoice .subtotals-row { margin-bottom: 4px; }
+.landscape-theme1-invoice .subtotals-table { width: 45%; margin-left: auto; border-collapse: collapse; }
+.landscape-theme1-invoice .subtotals-table td { padding: 2px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.landscape-theme1-invoice .total-words-row { background: #2196F3; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 6px; }
+.landscape-theme1-invoice .total-value { font-size: 13px; }
+.landscape-theme1-invoice .words-value { font-size: 9px; font-style: italic; text-align: right; flex: 1; margin-left: 10px; opacity: 0.9; }
+.landscape-theme1-invoice .received-balance-row { display: flex; justify-content: space-between; background: #e3f2fd; padding: 5px 10px; margin-bottom: 6px; font-size: 11px; border-radius: 2px; }
+.landscape-theme1-invoice .payment-info { font-size: 10px; padding: 4px 6px; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
+.landscape-theme1-invoice .summary-bar { display: flex; justify-content: space-around; background: #f8f8f8; padding: 4px 0; margin-bottom: 8px; font-size: 10px; font-weight: 600; border-radius: 2px; }
+.landscape-theme1-invoice .bottom-section { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 10px; }
+.landscape-theme1-invoice .terms-column { flex: 1; font-size: 9px; padding-right: 10px; color: #666; }
+.landscape-theme1-invoice .terms-column p { margin: 2px 0 0 0; }
+.landscape-theme1-invoice .signatory-column { flex: 0 0 auto; text-align: center; }
+.landscape-theme1-invoice .signatory-column p { margin: 2px 0; font-size: 10px; }
+.landscape-theme1-invoice .for-company { font-weight: 600; color: #2196F3; }
+.landscape-theme1-invoice .signature-img { max-width: 90px; max-height: 35px; object-fit: contain; display: block; margin: 4px auto; }
+.landscape-theme1-invoice .signatory-line { width: 100px; border-top: 1px solid #333; margin: 4px auto; }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="tally-theme-invoice">
+    <div class="pos-tpl tally-theme-invoice">
         <div class="invoice-title"><h3>Tax Invoice</h3></div>
         <div class="company-box">
             <div class="company-box-inner">
@@ -91,39 +91,39 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .tally-theme-invoice { width: 100%; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #1a1a1a; line-height: 1.5; border: 2px solid #1565c0; padding: 8px; }
-.invoice-title { text-align: center; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #1565c0; }
-.invoice-title h3 { margin: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: #1565c0; }
-.company-box { border: 1px solid #bbdefb; padding: 8px; margin-bottom: 8px; background: #f5f9ff; border-radius: 2px; }
-.company-box-inner { display: flex; align-items: flex-start; }
-.company-logo-section { flex: 0 0 60px; margin-right: 10px; }
-.company-logo { max-width: 55px; max-height: 40px; object-fit: contain; }
-.company-info-section { flex: 1; }
-.company-name { margin: 0 0 3px 0; font-size: 13px; color: #1565c0; font-weight: 700; }
-.company-info-section p { margin: 0; font-size: 9px; color: #555; }
-.details-box { border: 1px solid #bbdefb; padding: 6px 8px; margin-bottom: 8px; border-radius: 2px; }
-.details-table { width: 100%; border-collapse: collapse; }
-.details-table td { padding: 2px 4px; font-size: 10px; vertical-align: top; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.items-table th { background: #e3f2fd; padding: 5px 6px; font-size: 9px; text-align: left; border: 1px solid #bbdefb; font-weight: 700; text-transform: uppercase; color: #1565c0; letter-spacing: 0.3px; }
-.items-table td { padding: 4px 6px; font-size: 10px; border: 1px solid #e0e0e0; vertical-align: top; }
-.items-table tbody tr:nth-child(even) { background: #fafafa; }
-.text-right { text-align: right; }
-.totals-box { margin-bottom: 8px; border-top: 1px solid #1565c0; padding-top: 4px; }
-.totals-table { width: 50%; margin-left: auto; border-collapse: collapse; }
-.totals-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px dotted #ddd; }
-.grand-total-row td { border-top: 2px solid #1565c0; border-bottom: 2px solid #1565c0; padding: 4px 6px; font-size: 12px; color: #1565c0; }
-.amount-words-box { border: 1px solid #bbdefb; padding: 4px 8px; margin-bottom: 8px; font-size: 10px; background: #f5f9ff; border-radius: 2px; }
-.summary-box { display: flex; justify-content: space-around; padding: 4px 0; margin-bottom: 6px; font-size: 10px; font-weight: 700; border-top: 1px dashed #90caf9; border-bottom: 1px dashed #90caf9; }
-.payment-box { font-size: 10px; padding: 4px 0; margin-bottom: 8px; }
-.bottom-section { display: flex; align-items: flex-start; justify-content: space-between; border-top: 1px solid #1565c0; padding-top: 8px; margin-top: 8px; }
-.terms-left { flex: 1; font-size: 9px; padding-right: 10px; color: #666; }
-.terms-left p { margin: 2px 0 0 0; }
-.signatory-right { flex: 0 0 auto; text-align: center; min-width: 120px; }
-.signatory-right p { margin: 2px 0; font-size: 10px; }
-.for-company { font-weight: 700; color: #1565c0; }
-.signature-img { max-width: 90px; max-height: 35px; object-fit: contain; display: block; margin: 4px auto; }
-.signatory-line { width: 110px; border-top: 1px solid #333; margin: 4px auto; }
-.auth-text { font-size: 9px; }
+.tally-theme-invoice .invoice-title { text-align: center; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #1565c0; }
+.tally-theme-invoice .invoice-title h3 { margin: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: #1565c0; }
+.tally-theme-invoice .company-box { border: 1px solid #bbdefb; padding: 8px; margin-bottom: 8px; background: #f5f9ff; border-radius: 2px; }
+.tally-theme-invoice .company-box-inner { display: flex; align-items: flex-start; }
+.tally-theme-invoice .company-logo-section { flex: 0 0 60px; margin-right: 10px; }
+.tally-theme-invoice .company-logo { max-width: 55px; max-height: 40px; object-fit: contain; }
+.tally-theme-invoice .company-info-section { flex: 1; }
+.tally-theme-invoice .company-name { margin: 0 0 3px 0; font-size: 13px; color: #1565c0; font-weight: 700; }
+.tally-theme-invoice .company-info-section p { margin: 0; font-size: 9px; color: #555; }
+.tally-theme-invoice .details-box { border: 1px solid #bbdefb; padding: 6px 8px; margin-bottom: 8px; border-radius: 2px; }
+.tally-theme-invoice .details-table { width: 100%; border-collapse: collapse; }
+.tally-theme-invoice .details-table td { padding: 2px 4px; font-size: 10px; vertical-align: top; }
+.tally-theme-invoice .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.tally-theme-invoice .items-table th { background: #e3f2fd; padding: 5px 6px; font-size: 9px; text-align: left; border: 1px solid #bbdefb; font-weight: 700; text-transform: uppercase; color: #1565c0; letter-spacing: 0.3px; }
+.tally-theme-invoice .items-table td { padding: 4px 6px; font-size: 10px; border: 1px solid #e0e0e0; vertical-align: top; }
+.tally-theme-invoice .items-table tbody tr:nth-child(even) { background: #fafafa; }
+.tally-theme-invoice .text-right { text-align: right; }
+.tally-theme-invoice .totals-box { margin-bottom: 8px; border-top: 1px solid #1565c0; padding-top: 4px; }
+.tally-theme-invoice .totals-table { width: 50%; margin-left: auto; border-collapse: collapse; }
+.tally-theme-invoice .totals-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px dotted #ddd; }
+.tally-theme-invoice .grand-total-row td { border-top: 2px solid #1565c0; border-bottom: 2px solid #1565c0; padding: 4px 6px; font-size: 12px; color: #1565c0; }
+.tally-theme-invoice .amount-words-box { border: 1px solid #bbdefb; padding: 4px 8px; margin-bottom: 8px; font-size: 10px; background: #f5f9ff; border-radius: 2px; }
+.tally-theme-invoice .summary-box { display: flex; justify-content: space-around; padding: 4px 0; margin-bottom: 6px; font-size: 10px; font-weight: 700; border-top: 1px dashed #90caf9; border-bottom: 1px dashed #90caf9; }
+.tally-theme-invoice .payment-box { font-size: 10px; padding: 4px 0; margin-bottom: 8px; }
+.tally-theme-invoice .bottom-section { display: flex; align-items: flex-start; justify-content: space-between; border-top: 1px solid #1565c0; padding-top: 8px; margin-top: 8px; }
+.tally-theme-invoice .terms-left { flex: 1; font-size: 9px; padding-right: 10px; color: #666; }
+.tally-theme-invoice .terms-left p { margin: 2px 0 0 0; }
+.tally-theme-invoice .signatory-right { flex: 0 0 auto; text-align: center; min-width: 120px; }
+.tally-theme-invoice .signatory-right p { margin: 2px 0; font-size: 10px; }
+.tally-theme-invoice .for-company { font-weight: 700; color: #1565c0; }
+.tally-theme-invoice .signature-img { max-width: 90px; max-height: 35px; object-fit: contain; display: block; margin: 4px auto; }
+.tally-theme-invoice .signatory-line { width: 110px; border-top: 1px solid #333; margin: 4px auto; }
+.tally-theme-invoice .auth-text { font-size: 9px; }
 </style>

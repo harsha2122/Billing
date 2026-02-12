@@ -107,3 +107,43 @@
         width: 100%;
     }
 }
+
+/* Invoice template reset - override Ant Design defaults in modal/drawer views */
+.pos-tpl,
+.pos-tpl * {
+    box-sizing: border-box;
+}
+.pos-tpl h1,
+.pos-tpl h2,
+.pos-tpl h3,
+.pos-tpl h4,
+.pos-tpl h5,
+.pos-tpl h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: inherit;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+}
+.pos-tpl p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.pos-tpl table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.pos-tpl td,
+.pos-tpl th {
+    padding: 0;
+    text-align: left;
+    vertical-align: top;
+}
+.pos-tpl img {
+    vertical-align: middle;
+    border-style: none;
+}
+.pos-tpl strong {
+    font-weight: 700;
+}

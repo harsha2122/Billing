@@ -1,5 +1,5 @@
 <template>
-    <div class="double-divine-invoice">
+    <div class="pos-tpl double-divine-invoice">
         <!-- Header Bar -->
         <div class="header-bar">
             <h2 class="header-company-name">
@@ -162,7 +162,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .double-divine-invoice {
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -170,7 +170,7 @@ export default defineComponent({
     color: #1a1a1a;
     line-height: 1.5;
 }
-.header-bar {
+.double-divine-invoice .header-bar {
     background: #dc3545;
     color: #fff;
     padding: 10px 14px;
@@ -179,37 +179,37 @@ export default defineComponent({
     justify-content: space-between;
     align-items: center;
 }
-.header-company-name { margin: 0; font-size: 16px; font-weight: 700; }
-.header-phone { font-size: 11px; opacity: 0.9; }
-.company-details { text-align: center; padding: 6px 0; margin-bottom: 6px; }
-.company-details p { margin: 1px 0; font-size: 10px; color: #555; }
-.company-logo { max-width: 70px; max-height: 45px; object-fit: contain; }
-.invoice-title-section { text-align: center; margin-bottom: 8px; }
-.invoice-title { margin: 0; font-size: 14px; color: #dc3545; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-.title-underline { width: 60px; height: 2px; background: #dc3545; margin: 3px auto 0; }
-.info-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.info-table td { padding: 4px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.text-right { text-align: right; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.items-table thead tr { background: #dc3545; color: #fff; }
-.items-table th { padding: 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
-.items-table tbody tr:nth-child(even) { background: #fafafa; }
-.items-table tfoot td { border: none; border-top: 1px solid #f0f0f0; padding: 3px 6px; font-size: 10px; }
-.amount-words-section { background: #fef2f2; border-left: 3px solid #dc3545; padding: 5px 8px; margin-bottom: 8px; font-size: 10px; }
-.totals-box { border: 1px solid #dc3545; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; }
-.totals-table { width: 100%; border-collapse: collapse; }
-.totals-table td { padding: 4px 0; font-size: 11px; }
-.total-row td { font-size: 13px; color: #dc3545; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
-.payment-info { font-size: 10px; padding: 5px 0; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
-.terms-section { margin-bottom: 10px; font-size: 9px; color: #666; }
-.terms-section p { margin: 2px 0 0 0; }
-.signatory-section { text-align: right; margin-top: 14px; }
-.signatory-block { display: inline-block; text-align: center; }
-.signatory-block p { margin: 2px 0; font-size: 10px; }
-.for-company { font-weight: 600; }
-.signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
-.signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
-.footer-bar { background: #dc3545; color: #fff; text-align: center; padding: 5px 0; margin-top: 10px; }
-.footer-bar p { margin: 0; font-size: 10px; letter-spacing: 0.3px; }
+.double-divine-invoice .header-company-name { margin: 0; font-size: 16px; font-weight: 700; color: #fff; }
+.double-divine-invoice .header-phone { font-size: 11px; opacity: 0.9; }
+.double-divine-invoice .company-details { text-align: center; padding: 6px 0; margin-bottom: 6px; }
+.double-divine-invoice .company-details p { margin: 1px 0; font-size: 10px; color: #555; }
+.double-divine-invoice .company-logo { max-width: 70px; max-height: 45px; object-fit: contain; }
+.double-divine-invoice .invoice-title-section { text-align: center; margin-bottom: 8px; }
+.double-divine-invoice .invoice-title { margin: 0; font-size: 14px; color: #dc3545; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+.double-divine-invoice .title-underline { width: 60px; height: 2px; background: #dc3545; margin: 3px auto 0; }
+.double-divine-invoice .info-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.double-divine-invoice .info-table td { padding: 4px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.double-divine-invoice .text-right { text-align: right; }
+.double-divine-invoice .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.double-divine-invoice .items-table thead tr { background: #dc3545; color: #fff; }
+.double-divine-invoice .items-table th { padding: 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #fff; }
+.double-divine-invoice .items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #f0f0f0; }
+.double-divine-invoice .items-table tbody tr:nth-child(even) { background: #fafafa; }
+.double-divine-invoice .items-table tfoot td { border: none; border-top: 1px solid #f0f0f0; padding: 3px 6px; font-size: 10px; }
+.double-divine-invoice .amount-words-section { background: #fef2f2; border-left: 3px solid #dc3545; padding: 5px 8px; margin-bottom: 8px; font-size: 10px; }
+.double-divine-invoice .totals-box { border: 1px solid #dc3545; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; }
+.double-divine-invoice .totals-table { width: 100%; border-collapse: collapse; }
+.double-divine-invoice .totals-table td { padding: 4px 0; font-size: 11px; }
+.double-divine-invoice .total-row td { font-size: 13px; color: #dc3545; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
+.double-divine-invoice .payment-info { font-size: 10px; padding: 5px 0; margin-bottom: 6px; border-bottom: 1px dashed #e0e0e0; }
+.double-divine-invoice .terms-section { margin-bottom: 10px; font-size: 9px; color: #666; }
+.double-divine-invoice .terms-section p { margin: 2px 0 0 0; }
+.double-divine-invoice .signatory-section { text-align: right; margin-top: 14px; }
+.double-divine-invoice .signatory-block { display: inline-block; text-align: center; }
+.double-divine-invoice .signatory-block p { margin: 2px 0; font-size: 10px; }
+.double-divine-invoice .for-company { font-weight: 600; }
+.double-divine-invoice .signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
+.double-divine-invoice .signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
+.double-divine-invoice .footer-bar { background: #dc3545; color: #fff; text-align: center; padding: 5px 0; margin-top: 10px; }
+.double-divine-invoice .footer-bar p { margin: 0; font-size: 10px; letter-spacing: 0.3px; color: #fff; }
 </style>

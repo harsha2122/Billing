@@ -1,5 +1,5 @@
 <template>
-    <div class="gst-distributor-invoice">
+    <div class="pos-tpl gst-distributor-invoice">
         <!-- Company Header -->
         <div class="invoice-header">
             <div class="header-left">
@@ -214,7 +214,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .gst-distributor-invoice {
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -222,45 +222,45 @@ export default defineComponent({
     color: #1a1a1a;
     line-height: 1.5;
 }
-.invoice-header {
+.gst-distributor-invoice .invoice-header {
     display: flex;
     align-items: flex-start;
     border-bottom: 2px solid #0d9488;
     padding-bottom: 10px;
     margin-bottom: 8px;
 }
-.header-left { flex: 0 0 80px; margin-right: 12px; }
-.company-logo { max-width: 70px; max-height: 50px; object-fit: contain; }
-.header-right { flex: 1; }
-.header-right p { margin: 0; font-size: 10px; color: #555; }
-.company-name { margin: 0 0 3px 0; font-size: 15px; color: #0d9488; font-weight: 700; }
-.invoice-title { text-align: center; background: #0d9488; color: #fff; padding: 5px 0; margin-bottom: 8px; }
-.invoice-title h3 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-.invoice-meta-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; }
-.invoice-meta-table td { padding: 4px 6px; font-size: 11px; border: 1px solid #e0e0e0; }
-.bill-ship-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.bill-ship-table th { background: #f0fdfa; color: #0d9488; padding: 5px 8px; text-align: left; font-size: 11px; border: 1px solid #e0e0e0; font-weight: 600; }
-.bill-ship-table td { padding: 5px 8px; font-size: 10px; border: 1px solid #e0e0e0; vertical-align: top; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.items-table th { background: #0d9488; color: #fff; padding: 5px 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
-.items-table tbody tr:nth-child(even) { background: #fafafa; }
-.text-right { text-align: right; }
-.section-heading { margin: 6px 0 4px; font-size: 11px; color: #0d9488; font-weight: 600; border-bottom: 1px solid #0d9488; padding-bottom: 2px; display: inline-block; }
-.tax-breakup-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.tax-breakup-table th { background: #f0fdfa; padding: 4px 6px; font-size: 9px; text-align: left; border: 1px solid #e0e0e0; color: #0d9488; font-weight: 600; text-transform: uppercase; }
-.tax-breakup-table td { padding: 4px 6px; font-size: 9px; border: 1px solid #e0e0e0; }
-.totals-section { margin-bottom: 8px; }
-.totals-table { width: 50%; margin-left: auto; border-collapse: collapse; }
-.totals-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
-.grand-total-row td { border-top: 2px solid #0d9488; border-bottom: 2px solid #0d9488; padding: 5px 6px; font-size: 12px; color: #0d9488; }
-.amount-words { background: #f0fdfa; padding: 5px 8px; margin-bottom: 8px; font-size: 10px; border-left: 3px solid #0d9488; }
-.payment-info { margin-bottom: 8px; font-size: 10px; padding: 4px 0; border-top: 1px dashed #ddd; border-bottom: 1px dashed #ddd; }
-.terms-section { margin-bottom: 10px; font-size: 9px; color: #666; }
-.terms-section p { margin: 2px 0 0 0; }
-.signatory-section { text-align: right; margin-top: 16px; }
-.signatory-block { display: inline-block; text-align: center; }
-.signatory-block p { margin: 2px 0; font-size: 10px; }
-.signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
-.signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
+.gst-distributor-invoice .header-left { flex: 0 0 80px; margin-right: 12px; }
+.gst-distributor-invoice .company-logo { max-width: 70px; max-height: 50px; object-fit: contain; }
+.gst-distributor-invoice .header-right { flex: 1; }
+.gst-distributor-invoice .header-right p { margin: 0; font-size: 10px; color: #555; }
+.gst-distributor-invoice .company-name { margin: 0 0 3px 0; font-size: 15px; color: #0d9488; font-weight: 700; }
+.gst-distributor-invoice .invoice-title { text-align: center; background: #0d9488; color: #fff; padding: 5px 0; margin-bottom: 8px; }
+.gst-distributor-invoice .invoice-title h3 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #fff; }
+.gst-distributor-invoice .invoice-meta-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; }
+.gst-distributor-invoice .invoice-meta-table td { padding: 4px 6px; font-size: 11px; border: 1px solid #e0e0e0; }
+.gst-distributor-invoice .bill-ship-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.gst-distributor-invoice .bill-ship-table th { background: #f0fdfa; color: #0d9488; padding: 5px 8px; text-align: left; font-size: 11px; border: 1px solid #e0e0e0; font-weight: 600; }
+.gst-distributor-invoice .bill-ship-table td { padding: 5px 8px; font-size: 10px; border: 1px solid #e0e0e0; vertical-align: top; }
+.gst-distributor-invoice .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.gst-distributor-invoice .items-table th { background: #0d9488; color: #fff; padding: 5px 6px; font-size: 9px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.gst-distributor-invoice .items-table td { padding: 5px 6px; font-size: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+.gst-distributor-invoice .items-table tbody tr:nth-child(even) { background: #fafafa; }
+.gst-distributor-invoice .text-right { text-align: right; }
+.gst-distributor-invoice .section-heading { margin: 6px 0 4px; font-size: 11px; color: #0d9488; font-weight: 600; border-bottom: 1px solid #0d9488; padding-bottom: 2px; display: inline-block; }
+.gst-distributor-invoice .tax-breakup-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.gst-distributor-invoice .tax-breakup-table th { background: #f0fdfa; padding: 4px 6px; font-size: 9px; text-align: left; border: 1px solid #e0e0e0; color: #0d9488; font-weight: 600; text-transform: uppercase; }
+.gst-distributor-invoice .tax-breakup-table td { padding: 4px 6px; font-size: 9px; border: 1px solid #e0e0e0; }
+.gst-distributor-invoice .totals-section { margin-bottom: 8px; }
+.gst-distributor-invoice .totals-table { width: 50%; margin-left: auto; border-collapse: collapse; }
+.gst-distributor-invoice .totals-table td { padding: 3px 6px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
+.gst-distributor-invoice .grand-total-row td { border-top: 2px solid #0d9488; border-bottom: 2px solid #0d9488; padding: 5px 6px; font-size: 12px; color: #0d9488; }
+.gst-distributor-invoice .amount-words { background: #f0fdfa; padding: 5px 8px; margin-bottom: 8px; font-size: 10px; border-left: 3px solid #0d9488; }
+.gst-distributor-invoice .payment-info { margin-bottom: 8px; font-size: 10px; padding: 4px 0; border-top: 1px dashed #ddd; border-bottom: 1px dashed #ddd; }
+.gst-distributor-invoice .terms-section { margin-bottom: 10px; font-size: 9px; color: #666; }
+.gst-distributor-invoice .terms-section p { margin: 2px 0 0 0; }
+.gst-distributor-invoice .signatory-section { text-align: right; margin-top: 16px; }
+.gst-distributor-invoice .signatory-block { display: inline-block; text-align: center; }
+.gst-distributor-invoice .signatory-block p { margin: 2px 0; font-size: 10px; }
+.gst-distributor-invoice .signature-img { max-width: 100px; max-height: 40px; object-fit: contain; display: block; margin: 4px auto; }
+.gst-distributor-invoice .signatory-line { width: 120px; border-top: 1px solid #333; margin: 4px auto; }
 </style>
