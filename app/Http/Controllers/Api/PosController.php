@@ -152,7 +152,7 @@ class PosController extends ApiBaseController
         $order->e_way_bill_number = isset($orderDetails['e_way_bill_number']) ? $orderDetails['e_way_bill_number'] : null;
         $order->irn_number = isset($orderDetails['irn_number']) ? $orderDetails['irn_number'] : null;
         $order->qr_code_data = isset($orderDetails['qr_code_data']) ? $orderDetails['qr_code_data'] : null;
-        $order->pos_invoice_template_id = isset($orderDetails['pos_invoice_template_id']) ? $orderDetails['pos_invoice_template_id'] : null;
+        $order->pos_invoice_template_id = isset($orderDetails['pos_invoice_template_id']) && $orderDetails['pos_invoice_template_id'] != '' ? Common::getIdFromHash($orderDetails['pos_invoice_template_id']) : null;
         $order->order_status = $posDefaultStatus;
         $order->staff_user_id = $loggedInUser->id;
         $order->save();
