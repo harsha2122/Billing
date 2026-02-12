@@ -179,22 +179,19 @@
 		<table cellpadding="0" cellspacing="0">
 			<tr class="top">
 				<td>
-					<img src="{{ $company->light_logo_url }}" style="width: 200px; margin-top: 5px;" />
+					<img src="{{ $order->warehouse ? $order->warehouse->logo_url : $company->light_logo_url }}" style="width: 200px; margin-top: 5px;" />
 				</td>
 				<td colspan="2">
 					<table>
 						<tr>
-							<td style="vertical-align: middle;">
-								<img src="{{ $company->logo_url }}" style="width: 150px">
-							</td>
 							<td class="text-right">
 								<span class="company-title">
-									{{ $company->name }} <br>
+									{{ $order->warehouse ? $order->warehouse->name : $company->name }} <br>
 								</span>
 								<span>
-									{{ $company->address }} <br>
-									{{ $company->email }} <br>
-									{{ $company->phone }}
+									{{ $order->warehouse ? $order->warehouse->address : $company->address }} <br>
+									{{ $order->warehouse ? $order->warehouse->email : $company->email }} <br>
+									{{ $order->warehouse ? $order->warehouse->phone : $company->phone }}
 								</span>
 							</td>
 

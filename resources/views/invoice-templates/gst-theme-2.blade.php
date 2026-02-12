@@ -217,25 +217,34 @@
             <table>
                 <tr>
                     <td style="width: 30%; vertical-align: middle;">
-                        @if($company->light_logo_url)
+                        @if($order->warehouse && $order->warehouse->logo_url)
+                            <img src="{{ $order->warehouse->logo_url }}" style="max-width: 140px; max-height: 70px;" />
+                        @elseif($company->light_logo_url)
                             <img src="{{ $company->light_logo_url }}" style="max-width: 140px; max-height: 70px;" />
                         @endif
                     </td>
                     <td style="width: 70%; vertical-align: middle;">
                         <div class="company-box">
-                            <div class="company-name">{{ $company->name }}</div>
-                            @if($company->address)
-                                <div style="margin-top: 3px;">{{ $company->address }}</div>
+                            <div class="company-name">{{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                            @php
+                                $displayAddress = $order->warehouse ? $order->warehouse->address : $company->address;
+                                $displayPhone = $order->warehouse ? $order->warehouse->phone : $company->phone;
+                                $displayEmail = $order->warehouse ? $order->warehouse->email : $company->email;
+                            @endphp
+                            @if($displayAddress)
+                                <div style="margin-top: 3px;">{{ $displayAddress }}</div>
                             @endif
                             <div>
-                                @if($company->phone)
-                                    {{ $traslations['phone'] ?? 'Phone' }}: {{ $company->phone }}
+                                @if($displayPhone)
+                                    {{ $traslations['phone'] ?? 'Phone' }}: {{ $displayPhone }}
                                 @endif
-                                @if($company->email)
-                                    | {{ $company->email }}
+                                @if($displayEmail)
+                                    | {{ $displayEmail }}
                                 @endif
                             </div>
-                            @if($company->gstin)
+                            @if($order->warehouse && $order->warehouse->gstin)
+                                <div class="font-bold">GSTIN: {{ $order->warehouse->gstin }}</div>
+                            @elseif($company->gstin)
                                 <div class="font-bold">GSTIN: {{ $company->gstin }}</div>
                             @endif
                         </div>
@@ -386,7 +395,7 @@
                 </td>
                 <td style="width: 45%; text-align: right; vertical-align: bottom;">
                     <div class="signature-box">
-                        <div class="font-bold accent" style="margin-bottom: 5px;">For {{ $company->name }}</div>
+                        <div class="font-bold accent" style="margin-bottom: 5px;">For {{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
                         @if($order->warehouse && $order->warehouse->signature)
                             <img src="{{ $order->warehouse->signature_url }}" style="max-width: 150px; max-height: 60px;" />
                             <br>
