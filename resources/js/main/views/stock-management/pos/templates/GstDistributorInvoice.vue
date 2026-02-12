@@ -9,12 +9,6 @@
                     :alt="selectedWarehouse.name"
                     class="company-logo"
                 />
-                <img
-                    v-else-if="appSetting && appSetting.light_logo_url"
-                    :src="appSetting.light_logo_url"
-                    :alt="appSetting.name"
-                    class="company-logo"
-                />
             </div>
             <div class="header-right">
                 <h2 class="company-name">

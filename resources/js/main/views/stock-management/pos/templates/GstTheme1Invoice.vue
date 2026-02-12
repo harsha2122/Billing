@@ -11,7 +11,6 @@
             </div>
             <div class="header-logo-box">
                 <img v-if="selectedWarehouse && selectedWarehouse.logo_url" :src="selectedWarehouse.logo_url" :alt="selectedWarehouse.name" class="company-logo" />
-                <img v-else-if="appSetting && appSetting.light_logo_url" :src="appSetting.light_logo_url" :alt="appSetting.name" class="company-logo" />
             </div>
         </div>
         <div class="invoice-title-bar"><h3>Tax Invoice</h3></div>

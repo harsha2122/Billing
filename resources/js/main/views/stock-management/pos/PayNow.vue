@@ -196,11 +196,6 @@
                                         :src="selectedWarehouse.logo_url"
                                         style="max-width: 60px; max-height: 40px; object-fit: contain"
                                     />
-                                    <img
-                                        v-else-if="appSetting && appSetting.light_logo_url"
-                                        :src="appSetting.light_logo_url"
-                                        style="max-width: 60px; max-height: 40px; object-fit: contain"
-                                    />
                                     <h3 style="margin: 4px 0 0">{{ selectedWarehouse ? selectedWarehouse.name : appSetting.name }}</h3>
                                     <p style="font-size: 10px; margin: 0; color: #666">{{ selectedWarehouse ? selectedWarehouse.address : appSetting.address }}</p>
                                 </div>

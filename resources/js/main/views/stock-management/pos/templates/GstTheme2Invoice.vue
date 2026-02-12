@@ -2,8 +2,8 @@
     <div class="gst-theme2-invoice">
         <div class="top-title-bar"><h3>Tax Invoice</h3></div>
         <div class="header-section">
-            <div class="header-logo" v-if="(selectedWarehouse && selectedWarehouse.logo_url) || (appSetting && appSetting.light_logo_url)">
-                <img :src="selectedWarehouse && selectedWarehouse.logo_url ? selectedWarehouse.logo_url : appSetting.light_logo_url" :alt="selectedWarehouse ? selectedWarehouse.name : appSetting.name" class="company-logo" />
+            <div class="header-logo" v-if="selectedWarehouse && selectedWarehouse.logo_url">
+                <img :src="selectedWarehouse.logo_url" :alt="selectedWarehouse.name" class="company-logo" />
             </div>
             <div class="header-company-info">
                 <h2 class="company-name">{{ selectedWarehouse ? selectedWarehouse.name : appSetting.name }}</h2>

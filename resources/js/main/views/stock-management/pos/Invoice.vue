@@ -13,9 +13,10 @@
                 <div v-if="order && order.xid">
                     <div class="invoice-header">
                         <img
+                            v-if="selectedWarehouse && selectedWarehouse.logo_url"
                             class="invoice-logo"
-                            :src="selectedWarehouse && selectedWarehouse.logo_url ? selectedWarehouse.logo_url : appSetting.light_logo_url"
-                            :alt="selectedWarehouse ? selectedWarehouse.name : appSetting.name"
+                            :src="selectedWarehouse.logo_url"
+                            :alt="selectedWarehouse.name"
                         />
                     </div>
                     <div class="company-details">

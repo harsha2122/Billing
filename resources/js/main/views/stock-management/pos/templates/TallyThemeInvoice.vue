@@ -3,8 +3,8 @@
         <div class="invoice-title"><h3>Tax Invoice</h3></div>
         <div class="company-box">
             <div class="company-box-inner">
-                <div class="company-logo-section" v-if="(selectedWarehouse && selectedWarehouse.logo_url) || (appSetting && appSetting.light_logo_url)">
-                    <img :src="selectedWarehouse && selectedWarehouse.logo_url ? selectedWarehouse.logo_url : appSetting.light_logo_url" :alt="selectedWarehouse ? selectedWarehouse.name : appSetting.name" class="company-logo" />
+                <div class="company-logo-section" v-if="selectedWarehouse && selectedWarehouse.logo_url">
+                    <img :src="selectedWarehouse.logo_url" :alt="selectedWarehouse.name" class="company-logo" />
                 </div>
                 <div class="company-info-section">
                     <h2 class="company-name">{{ selectedWarehouse ? selectedWarehouse.name : appSetting.name }}</h2>

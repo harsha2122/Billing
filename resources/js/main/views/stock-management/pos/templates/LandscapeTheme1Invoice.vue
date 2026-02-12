@@ -3,7 +3,6 @@
         <div class="header-section">
             <div class="header-left">
                 <img v-if="selectedWarehouse && selectedWarehouse.logo_url" :src="selectedWarehouse.logo_url" :alt="selectedWarehouse.name" class="company-logo" />
-                <img v-else-if="appSetting && appSetting.light_logo_url" :src="appSetting.light_logo_url" :alt="appSetting.name" class="company-logo" />
             </div>
             <div class="header-center">
                 <h2 class="company-name">{{ selectedWarehouse ? selectedWarehouse.name : appSetting.name }}</h2>

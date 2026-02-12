@@ -12,10 +12,10 @@
 
         <!-- Company Details -->
         <div class="company-details">
-            <div v-if="(selectedWarehouse && selectedWarehouse.logo_url) || (appSetting && appSetting.light_logo_url)" style="margin-bottom: 4px">
+            <div v-if="selectedWarehouse && selectedWarehouse.logo_url" style="margin-bottom: 4px">
                 <img
-                    :src="selectedWarehouse && selectedWarehouse.logo_url ? selectedWarehouse.logo_url : appSetting.light_logo_url"
-                    :alt="selectedWarehouse ? selectedWarehouse.name : appSetting.name"
+                    :src="selectedWarehouse.logo_url"
+                    :alt="selectedWarehouse.name"
                     class="company-logo"
                 />
             </div>
