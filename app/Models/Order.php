@@ -38,6 +38,7 @@ class Order extends BaseModel
         'user_id' => Hash::class . ':hash',
         'tax_id' => Hash::class . ':hash',
         'cancelled_by' => Hash::class . ':hash',
+        'pos_invoice_template_id' => Hash::class . ':hash',
         'cancelled' => 'integer',
         'is_deletable' => 'integer',
     ];
