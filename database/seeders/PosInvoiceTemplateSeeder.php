@@ -10,12 +10,26 @@ class PosInvoiceTemplateSeeder extends Seeder
 {
     public function run()
     {
-        // Only seed if table is empty
-        if (PosInvoiceTemplate::count() > 0) {
+        // Seed templates for all companies that don't have any
+        $companyIds = DB::table('companies')
+            ->where('is_global', 0)
+            ->pluck('id');
+
+        foreach ($companyIds as $companyId) {
+            self::seedForCompany($companyId);
+        }
+    }
+
+    public static function seedForCompany($companyId)
+    {
+        // Skip if this company already has templates
+        $exists = DB::table('pos_invoice_templates')
+            ->where('company_id', $companyId)
+            ->exists();
+
+        if ($exists) {
             return;
         }
-
-        $companyId = DB::table('companies')->first()->id ?? null;
 
         $templates = [
             [
@@ -117,7 +131,12 @@ class PosInvoiceTemplateSeeder extends Seeder
         ];
 
         foreach ($templates as $template) {
-            PosInvoiceTemplate::create($template);
+            DB::table('pos_invoice_templates')->insert(
+                array_merge($template, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
         }
     }
 }

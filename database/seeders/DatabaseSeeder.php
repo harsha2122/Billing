@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             $this->call(FrontWebsiteSettingsDatabaseSeeder::class);
             $this->call(FrontProductCardDatabaseSeeder::class);
 
+            $this->call(PosInvoiceTemplateSeeder::class);
+
             // Remove All Settings created from migrations
             Model::unguard();
             DB::table('settings')->delete();

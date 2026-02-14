@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Scopes\CompanyScope;
+use Database\Seeders\PosInvoiceTemplateSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -95,6 +96,9 @@ class CreateAdminCompany extends Command
 
             // Create walk-in customer
             Common::createCompanyWalkInCustomer($company);
+
+            // Seed default invoice templates for the new company
+            PosInvoiceTemplateSeeder::seedForCompany($company->id);
 
             DB::commit();
 
