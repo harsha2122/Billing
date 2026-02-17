@@ -145,7 +145,7 @@ class PosController extends ApiBaseController
         $order->tax_amount = $orderDetails['tax_amount'];
         $order->discount = $orderDetails['discount'];
         $order->shipping = $orderDetails['shipping'];
-        $order->subtotal = 0;
+        $order->subtotal = $orderDetails['subtotal'];
         $order->total = $orderDetails['subtotal'];
         $order->paid_amount = 0;
         $order->due_amount = $order->total;
@@ -194,7 +194,7 @@ class PosController extends ApiBaseController
         Common::updateOrderAmount($order->id);
 
         $savedOrder = Order::select('id', 'unique_id', 'invoice_number', 'user_id', 'staff_user_id', 'order_date', 'discount', 'shipping', 'tax_amount', 'tax_rate', 'subtotal', 'total', 'paid_amount', 'due_amount', 'total_items', 'total_quantity', 'e_way_bill_number', 'irn_number', 'qr_code_data', 'pos_invoice_template_id', 'terms_condition')
-            ->with(['user:id,name,phone,tax_number', 'items:id,order_id,product_id,unit_id,unit_price,single_unit_price,subtotal,quantity,tax_rate,tax_type,total_tax,total_discount,hsn_sac_code', 'items.product:id,name,hsn_sac_code', 'items.unit:id,name,short_name', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name', 'staffMember:id,name', 'warehouse:id,name,phone,email,address,gstin,state,state_code,signature,terms_condition'])
+            ->with(['user:id,name,phone,tax_number', 'items:id,order_id,product_id,unit_id,unit_price,single_unit_price,subtotal,quantity,tax_rate,tax_type,total_tax,total_discount,hsn_sac_code', 'items.product:id,name,hsn_sac_code', 'items.unit:id,name,short_name', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name', 'staffMember:id,name', 'warehouse:id,name,phone,email,address,logo,signature,terms_condition,bank_details,gstin,state,state_code,show_email_on_invoice,show_phone_on_invoice'])
             ->find($order->id);
 
         return ApiResponse::make('Data fetched', [

@@ -150,6 +150,9 @@ class CompaniesController extends ApiBaseController
             // Create walk-in customer
             Common::createCompanyWalkInCustomer($company);
 
+            // Insert default payment modes (Cash, Bank Transfer, UPI)
+            Common::insertDefaultPaymentModes($company);
+
             // Seed default invoice templates for the new company
             PosInvoiceTemplateSeeder::seedForCompany($company->id);
 

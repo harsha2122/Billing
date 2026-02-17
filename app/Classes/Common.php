@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
 use App\Models\Payment;
+use App\Models\PaymentMode;
 use App\Models\Product;
 use App\Models\ProductCustomField;
 use App\Models\ProductDetails;
@@ -1083,6 +1084,29 @@ class Common
         $allCompanies = Company::all();
         foreach ($allCompanies as $company) {
             self::createCompanyWalkInCustomer($company);
+        }
+    }
+
+    public static function insertDefaultPaymentModes($company)
+    {
+        $existingCount = PaymentMode::withoutGlobalScope(CompanyScope::class)
+            ->where('company_id', $company->id)
+            ->count();
+
+        if ($existingCount == 0) {
+            $defaultModes = [
+                ['name' => 'Cash', 'mode_type' => 'cash'],
+                ['name' => 'Bank Transfer', 'mode_type' => 'bank'],
+                ['name' => 'UPI', 'mode_type' => 'bank'],
+            ];
+
+            foreach ($defaultModes as $mode) {
+                $paymentMode = new PaymentMode();
+                $paymentMode->company_id = $company->id;
+                $paymentMode->name = $mode['name'];
+                $paymentMode->mode_type = $mode['mode_type'];
+                $paymentMode->save();
+            }
         }
     }
 }

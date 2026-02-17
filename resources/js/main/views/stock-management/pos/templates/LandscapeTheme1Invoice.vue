@@ -76,6 +76,10 @@
             </span>
         </div>
         <div class="summary-bar"><span>Items: {{ order.total_items }}</span><span>Qty: {{ order.total_quantity }}</span></div>
+        <div class="bank-details-section" v-if="selectedWarehouse && selectedWarehouse.bank_details" style="margin-bottom:8px;font-size:10px;">
+            <strong>Bank Details:</strong>
+            <p style="white-space:pre-line;margin:2px 0 0 0;">{{ selectedWarehouse.bank_details }}</p>
+        </div>
         <div class="bottom-section">
             <div class="terms-column" v-if="order.terms_condition || (selectedWarehouse && selectedWarehouse.terms_condition)">
                 <strong>Terms & Conditions:</strong>

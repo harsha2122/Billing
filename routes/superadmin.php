@@ -24,4 +24,9 @@ ApiRoute::group([
 
     // Dashboard stats
     ApiRoute::get('dashboard/stats', ['as' => 'api.superadmin.dashboard.stats', 'uses' => 'DashboardController@stats']);
+
+    // OTP Mail Settings (SuperAdmin only)
+    ApiRoute::get('otp-settings', ['as' => 'api.superadmin.otp-settings.get', 'uses' => 'OtpSettingsController@get']);
+    ApiRoute::post('otp-settings', ['as' => 'api.superadmin.otp-settings.update', 'uses' => 'OtpSettingsController@update']);
+    ApiRoute::post('otp-settings/toggle', ['as' => 'api.superadmin.otp-settings.toggle', 'uses' => 'OtpSettingsController@toggle']);
 });

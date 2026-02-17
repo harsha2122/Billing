@@ -12,6 +12,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
     // Authentication routes
     ApiRoute::group(['prefix' => 'auth'], function () {
         ApiRoute::post('login', ['as' => 'api.extra.login', 'uses' => 'AuthController@login']);
+        ApiRoute::post('verify-otp', ['as' => 'api.extra.verify-otp', 'uses' => 'AuthController@verifyOtp']);
         ApiRoute::post('refresh-token', ['as' => 'api.extra.refresh-token', 'uses' => 'AuthController@refreshToken']);
         ApiRoute::post('logout', ['as' => 'api.extra.logout', 'uses' => 'AuthController@logout']);
     });

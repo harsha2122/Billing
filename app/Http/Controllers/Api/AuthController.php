@@ -13,6 +13,7 @@ use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Lang;
+use App\Models\LoginOtp;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -23,12 +24,14 @@ use App\Models\Translation;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\AppSettings;
+use App\Scopes\CompanyScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Examyou\RestAPI\ApiResponse;
 use Examyou\RestAPI\Exceptions\ApiException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 
 class AuthController extends ApiBaseController
@@ -219,6 +222,25 @@ class AuthController extends ApiBaseController
             throw new ApiException('Account deactivated.');
         }
 
+        // Check if OTP is enabled (only for non-superadmin users)
+        if (!$authenticatedUser->is_superadmin && $this->isOtpEnabled()) {
+            // Logout the temporary auth so token is not usable yet
+            auth('api')->logout();
+
+            // Generate and send OTP
+            $otp = $this->generateAndSendOtp($authenticatedUser);
+
+            if (!$otp) {
+                throw new ApiException('Failed to send OTP. Please contact administrator.');
+            }
+
+            return ApiResponse::make('OTP sent to your email', [
+                'requires_otp' => true,
+                'user_uid' => $authenticatedUser->xid,
+                'email_hint' => $this->maskEmail($authenticatedUser->email),
+            ]);
+        }
+
         // Get company - for superadmin, use first company
         $company = company();
         if (!$company && $authenticatedUser->is_superadmin) {
@@ -235,6 +257,152 @@ class AuthController extends ApiBaseController
         $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
 
         return ApiResponse::make('Loggged in successfull', $response);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'user_uid' => 'required',
+            'otp' => 'required|string|size:6',
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        // Find user by xid
+        $userId = Common::getIdFromHash($request->user_uid);
+        $user = User::find($userId);
+
+        if (!$user) {
+            throw new ApiException('Invalid request.');
+        }
+
+        // Verify OTP
+        $otpRecord = LoginOtp::where('user_id', $user->id)
+            ->where('otp', $request->otp)
+            ->where('used', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->latest()
+            ->first();
+
+        if (!$otpRecord) {
+            throw new ApiException('Invalid or expired OTP.');
+        }
+
+        // Mark OTP as used
+        $otpRecord->used = true;
+        $otpRecord->save();
+
+        // Re-authenticate user with credentials
+        $credentials = ['password' => $request->password];
+        if (is_numeric($request->email)) {
+            $credentials['phone'] = $request->email;
+        } else {
+            $credentials['email'] = $request->email;
+        }
+
+        if (!$token = auth('api')->attempt($credentials)) {
+            throw new ApiException('Authentication failed.');
+        }
+
+        $authenticatedUser = auth('api')->user();
+
+        // Get company
+        $company = company();
+        if (!$company && $authenticatedUser->is_superadmin) {
+            $company = Company::with(['currency', 'warehouse'])->first();
+        }
+
+        $response = $this->respondWithToken($token);
+        $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
+        $appSettings = AppSettings::first();
+        $response['app'] = $company;
+        $response['app_settings'] = $appSettings;
+        $response['shortcut_menus'] = $addMenuSetting;
+        $response['email_setting_verified'] = $this->emailSettingVerified();
+        $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
+
+        return ApiResponse::make('Loggged in successfull', $response);
+    }
+
+    protected function isOtpEnabled()
+    {
+        $setting = Settings::withoutGlobalScope(CompanyScope::class)
+            ->where('setting_type', 'otp_mail')
+            ->where('is_global', 1)
+            ->where('status', 1)
+            ->where('verified', 1)
+            ->first();
+
+        return $setting ? true : false;
+    }
+
+    protected function generateAndSendOtp($user)
+    {
+        // Invalidate old OTPs
+        LoginOtp::where('user_id', $user->id)->where('used', false)->update(['used' => true]);
+
+        // Generate 6-digit OTP
+        $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $otpRecord = LoginOtp::create([
+            'user_id' => $user->id,
+            'otp' => $otpCode,
+            'expires_at' => Carbon::now()->addMinutes(5),
+        ]);
+
+        // Get OTP mail settings
+        $setting = Settings::withoutGlobalScope(CompanyScope::class)
+            ->where('setting_type', 'otp_mail')
+            ->where('is_global', 1)
+            ->where('status', 1)
+            ->first();
+
+        if (!$setting || !$setting->credentials) {
+            return false;
+        }
+
+        $creds = $setting->credentials;
+
+        try {
+            $transport = new \Swift_SmtpTransport($creds['host'], $creds['port'], $creds['encryption']);
+            $transport->setUsername($creds['username']);
+            $transport->setPassword($creds['password']);
+
+            $mailer = new \Swift_Mailer($transport);
+
+            $message = (new \Swift_Message('Login OTP Verification'))
+                ->setFrom([$creds['from_email'] => $creds['from_name']])
+                ->setTo([$user->email])
+                ->setBody(
+                    '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px;">' .
+                    '<h2 style="color:#5254cf;">Login Verification</h2>' .
+                    '<p>Hello ' . e($user->name) . ',</p>' .
+                    '<p>Your One-Time Password (OTP) for login is:</p>' .
+                    '<div style="background:#f0efff;padding:15px;text-align:center;border-radius:8px;margin:20px 0;">' .
+                    '<span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#5254cf;">' . $otpCode . '</span>' .
+                    '</div>' .
+                    '<p>This OTP is valid for <strong>5 minutes</strong>.</p>' .
+                    '<p>If you did not request this, please ignore this email.</p>' .
+                    '</div>',
+                    'text/html'
+                );
+
+            $mailer->send($message);
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('OTP Mail Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    protected function maskEmail($email)
+    {
+        if (!$email) return '';
+        $parts = explode('@', $email);
+        $name = $parts[0];
+        $domain = $parts[1] ?? '';
+        $masked = substr($name, 0, 2) . str_repeat('*', max(strlen($name) - 2, 2));
+        return $masked . '@' . $domain;
     }
 
     protected function respondWithToken($token)

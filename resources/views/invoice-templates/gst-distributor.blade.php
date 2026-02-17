@@ -531,6 +531,14 @@
             </div>
         @endif
 
+        {{-- BANK DETAILS --}}
+        @if($order->warehouse && $order->warehouse->bank_details)
+            <div class="terms-section">
+                <div class="font-bold accent">{{ $traslations['bank_details'] ?? 'Bank Details' }}:</div>
+                <div style="margin-top: 3px;">{!! nl2br(e($order->warehouse->bank_details)) !!}</div>
+            </div>
+        @endif
+
         {{-- TERMS & CONDITIONS --}}
         @php
             $terms = $order->terms_condition ?? ($order->warehouse ? $order->warehouse->terms_condition : '');

@@ -363,6 +363,14 @@
 
         <div class="clearfix"></div>
 
+        {{-- BANK DETAILS --}}
+        @if($order->warehouse && $order->warehouse->bank_details)
+            <div class="terms-section" style="margin-top: 15px;">
+                <div class="terms-title">{{ $traslations['bank_details'] ?? 'Bank Details' }}:</div>
+                <div>{!! nl2br(e($order->warehouse->bank_details)) !!}</div>
+            </div>
+        @endif
+
         {{-- TERMS & CONDITIONS + SIGNATORY --}}
         <table style="margin-top: 20px;">
             <tr>
