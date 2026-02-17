@@ -1,7 +1,18 @@
 <template>
 	<AdminPageHeader>
 		<template #header>
-			<a-page-header :title="$t(`menu.email_settings`)" class="p-0" />
+			<a-page-header :title="$t(`menu.email_settings`)" class="p-0">
+				<template #extra>
+					<a-button
+						type="primary"
+						@click="onSubmit"
+						:loading="settingRef && settingRef.loading ? true : false"
+					>
+						<template #icon> <SaveOutlined /> </template>
+						{{ $t("common.update") }}
+					</a-button>
+				</template>
+			</a-page-header>
 		</template>
 		<template #breadcrumb>
 			<a-breadcrumb separator="-" style="font-size: 12px">
@@ -25,42 +36,34 @@
 			<SettingSidebar />
 		</a-col>
 		<a-col :xs="24" :sm="24" :md="24" :lg="20" :xl="20">
-			<a-row>
-				<a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-					<SendMailSetting
-						v-if="warehouseSendMailSettings && warehouseSendMailSettings.xid"
-						:sendMailSettings="warehouseSendMailSettings"
-					/>
-				</a-col>
-			</a-row>
+			<EmailSettings ref="settingRef" />
 		</a-col>
 	</a-row>
 </template>
 <script>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import SettingSidebar from "../SettingSidebar.vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
-import SendMailSetting from "./SendMailSetting.vue";
+import EmailSettings from "../../common/settings/email/Edit.vue";
 
 export default {
 	components: {
 		SaveOutlined,
 		SettingSidebar,
 		AdminPageHeader,
-		SendMailSetting,
+		EmailSettings,
 	},
 	setup() {
-		const warehouseSendMailSettings = ref([]);
+		const settingRef = ref(null);
 
-		onMounted(() => {
-			axiosAdmin.get("settings/email").then((response) => {
-				warehouseSendMailSettings.value = response.data.sendMailSettings;
-			});
-		});
+		const onSubmit = () => {
+			settingRef.value.onSubmit();
+		};
 
 		return {
-			warehouseSendMailSettings,
+			onSubmit,
+			settingRef,
 		};
 	},
 };
