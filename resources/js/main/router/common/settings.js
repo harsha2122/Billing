@@ -50,6 +50,7 @@ export default [
         name: `${routePrefix}.settings.email.index`,
         meta: {
             requireAuth: true,
+            requiresSuperAdmin: true,
             menuParent: "settings",
             menuKey: route => "email_settings",
             permission: appType == "non-saas" ? "email_edit" : "superadmin"
