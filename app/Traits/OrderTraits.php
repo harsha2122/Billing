@@ -144,7 +144,10 @@ trait OrderTraits
         }
 
         // Created by user
-        $order->staff_user_id = auth('api')->user()->id;
+        $loggedUser = auth('api')->user();
+        if ($loggedUser) {
+            $order->staff_user_id = $loggedUser->id;
+        }
         $order->save();
 
         $order = Common::storeAndUpdateOrder($order, $oldOrderId);

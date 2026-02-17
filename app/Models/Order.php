@@ -48,6 +48,14 @@ class Order extends BaseModel
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        // Auto-generate invoice number after order is created
+        static::created(function ($order) {
+            if ($order->invoice_number == '' || $order->invoice_number === null) {
+                $order->invoice_number = Common::getTransactionNumber($order->order_type, $order->id);
+                $order->saveQuietly();
+            }
+        });
     }
 
     public function getDocumentUrlAttribute()

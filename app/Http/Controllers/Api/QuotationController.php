@@ -38,6 +38,7 @@ class QuotationController extends ApiBaseController
         if ($order->order_type == "quotations") {
             $order->order_type = 'sales';
             $order->order_status = 'confirmed';
+            $order->invoice_number = Common::getTransactionNumber('sales', $order->id);
             $order->save();
 
             Common::storeAndUpdateOrder($order, "");
