@@ -18,6 +18,34 @@
 			</div>
 			<a-card class="email-page-content-container">
 				<a-form layout="vertical">
+					<!-- OTP & Notification Toggles -->
+					<a-row :gutter="16" style="margin-bottom: 16px;">
+						<a-col :xs="24" :sm="24" :md="12" :lg="12">
+							<div style="display: flex; align-items: center; padding: 12px 16px; background: #f6f6ff; border-radius: 6px; border: 1px solid #e8e8f5;">
+								<div style="flex: 1;">
+									<div style="font-weight: 600; font-size: 13px; color: #1a1a1a;">Require OTP for Sign-in</div>
+									<div style="font-size: 11px; color: #888; margin-top: 2px;">Users must verify via email OTP during login</div>
+								</div>
+								<a-switch
+									v-model:checked="formData.require_otp_signin"
+									:disabled="formData.mail_driver !== 'smtp'"
+								/>
+							</div>
+						</a-col>
+						<a-col :xs="24" :sm="24" :md="12" :lg="12">
+							<div style="display: flex; align-items: center; padding: 12px 16px; background: #f6fff6; border-radius: 6px; border: 1px solid #e8f5e8;">
+								<div style="flex: 1;">
+									<div style="font-weight: 600; font-size: 13px; color: #1a1a1a;">Enable Email Notifications</div>
+									<div style="font-size: 11px; color: #888; margin-top: 2px;">Send email alerts for orders, payments &amp; activities</div>
+								</div>
+								<a-switch
+									v-model:checked="formData.enable_email_notifications"
+									:disabled="formData.mail_driver !== 'smtp'"
+								/>
+							</div>
+						</a-col>
+					</a-row>
+
 					<a-row :gutter="16">
 						<a-col :span="24">
 							<a-form-item

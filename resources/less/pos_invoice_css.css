@@ -70,9 +70,57 @@
 }
 
 /* Print size classes */
+/* Thermal: use 80mm (≈302px) to match physical receipt printer */
 .print-thermal {
-    max-width: 400px;
+    width: 302px;
+    max-width: 302px;
     margin: 0 auto;
+    font-size: 12px;
+    line-height: 1.4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #000;
+}
+
+.print-thermal * {
+    font-size: 12px;
+}
+
+.print-thermal h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.print-thermal h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.print-thermal h4 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.print-thermal p {
+    margin: 0;
+}
+
+.print-thermal table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.print-thermal td,
+.print-thermal th {
+    padding: 2px 3px;
+    font-size: 12px;
+    vertical-align: top;
+}
+
+.print-thermal .invoice-logo {
+    width: 150px;
 }
 
 .print-a4 {
@@ -86,10 +134,27 @@
         width: 80mm;
         margin: 0;
         padding: 0;
+        font-size: 12px;
     }
 
     body.print-thermal * {
         font-size: 12px;
+    }
+
+    body.print-thermal h2 {
+        font-size: 16px;
+    }
+
+    body.print-thermal h3 {
+        font-size: 13px;
+    }
+
+    body.print-thermal h4 {
+        font-size: 12px;
+    }
+
+    body.print-thermal .invoice-logo {
+        width: 150px;
     }
 
     body.print-a4 {

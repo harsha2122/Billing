@@ -87,9 +87,16 @@ class SettingsController extends ApiBaseController
                 $settingData['password'] = $emailSetting->credentials['password'];
                 $settingData['enable_mail_queue'] = isset($emailSetting->credentials['enable_mail_queue']) ? $emailSetting->credentials['enable_mail_queue'] : 'no';
             }
+
+            // Get OTP and notification flags from other_data
+            $otherData = $emailSetting->other_data;
+            $settingData['require_otp_signin'] = isset($otherData['require_otp_signin']) ? (bool)$otherData['require_otp_signin'] : false;
+            $settingData['enable_email_notifications'] = isset($otherData['enable_email_notifications']) ? (bool)$otherData['enable_email_notifications'] : false;
         } else {
             $settingData = [
                 'mail_driver' => 'none',
+                'require_otp_signin' => false,
+                'enable_email_notifications' => false,
             ];
             $verified = '';
         }
@@ -138,11 +145,17 @@ class SettingsController extends ApiBaseController
             $setting = Settings::where('name_key', $mailDriver)->first();
             $setting->credentials = $settingData;
             $setting->status = 1;
+
+            // Save OTP and notification flags in other_data
+            $otherData = $setting->other_data ?? [];
+            $otherData['require_otp_signin'] = $request->has('require_otp_signin') ? (bool)$request->require_otp_signin : false;
+            $otherData['enable_email_notifications'] = $request->has('enable_email_notifications') ? (bool)$request->enable_email_notifications : false;
+            $setting->other_data = $otherData;
+
             $setting->save();
 
             $response = $setting->verifySmtp();
         }
-
 
         return ApiResponse::make('Success', $response);
     }

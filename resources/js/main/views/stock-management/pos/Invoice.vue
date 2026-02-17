@@ -9,7 +9,7 @@
     >
         <div id="pos-invoice" :class="printSizeClass">
             <!-- Default Thermal Template -->
-            <div v-if="activeSlug === 'default'" style="max-width: 400px; margin: 0px auto" >
+            <div v-if="activeSlug === 'default'" >
                 <div v-if="order && order.xid">
                     <div class="invoice-header">
                         <img
@@ -27,7 +27,9 @@
                         <h4 style="margin-bottom: 0px">
                             {{ $t("common.phone") }}: {{ selectedWarehouse ? selectedWarehouse.phone : appSetting.phone }}
                         </h4>
-                        <h4>{{ $t("common.email") }}: {{ selectedWarehouse ? selectedWarehouse.email : appSetting.email }}</h4>
+                        <h4 style="margin-bottom: 0px">{{ $t("common.email") }}: {{ selectedWarehouse ? selectedWarehouse.email : appSetting.email }}</h4>
+                        <h4 v-if="selectedWarehouse && selectedWarehouse.gstin" style="margin-bottom: 0px">GSTIN: {{ selectedWarehouse.gstin }}</h4>
+                        <h4 v-if="selectedWarehouse && selectedWarehouse.state" style="margin-bottom: 0px">State: {{ selectedWarehouse.state }} <span v-if="selectedWarehouse.state_code">({{ selectedWarehouse.state_code }})</span></h4>
                     </div>
                     <div class="tax-invoice-details">
                         <h3 class="tax-invoice-title">{{ $t("sales.tax_invoice") }}</h3>
@@ -186,6 +188,22 @@
                             </tr>
                         </table>
                     </div>
+                    <div v-if="selectedWarehouse && selectedWarehouse.bank_details" style="margin-top: 8px; padding: 5px 0; border-top: 1px dotted #ddd; font-size: 11px;">
+                        <strong>Bank Details:</strong>
+                        <p style="white-space: pre-line; margin: 2px 0 0 0;">{{ selectedWarehouse.bank_details }}</p>
+                    </div>
+                    <div v-if="order.terms_condition || (selectedWarehouse && selectedWarehouse.terms_condition)" style="margin-top: 5px; padding: 5px 0; border-top: 1px dotted #ddd; font-size: 11px;">
+                        <strong>Terms &amp; Conditions:</strong>
+                        <p style="white-space: pre-line; margin: 2px 0 0 0;">{{ order.terms_condition || (selectedWarehouse ? selectedWarehouse.terms_condition : '') }}</p>
+                    </div>
+                    <div v-if="selectedWarehouse && selectedWarehouse.signature_url" style="text-align: right; margin-top: 8px; padding-top: 5px; border-top: 1px dotted #ddd;">
+                        <div style="display: inline-block; text-align: center;">
+                            <p style="font-size: 10px; margin-bottom: 2px;">For {{ selectedWarehouse.name }}</p>
+                            <img :src="selectedWarehouse.signature_url" alt="Signature" style="max-width: 80px; max-height: 30px; object-fit: contain;" />
+                            <div style="width: 90px; border-top: 1px solid #333; margin: 2px auto;"></div>
+                            <p style="font-size: 10px; margin: 0;">Authorized Signatory</p>
+                        </div>
+                    </div>
                     <div class="barcode-details">
                         <vue-barcode
                             :value="order.invoice_number"
@@ -281,7 +299,7 @@ export default defineComponent({
                 return "900px";
             }
             if (isThermal.value) {
-                return "450px";
+                return "380px";
             }
             return "850px";
         });
@@ -302,7 +320,7 @@ export default defineComponent({
         const printInvoice = () => {
             var invoiceContent = document.getElementById("pos-invoice").innerHTML;
             var printClass = isThermal.value ? "print-thermal" : "print-a4";
-            var windowWidth = isThermal.value ? 400 : 900;
+            var windowWidth = isThermal.value ? 350 : 900;
             var windowHeight = isThermal.value ? 600 : 1000;
 
             // Collect all stylesheets and inline styles from the current page

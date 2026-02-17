@@ -326,6 +326,20 @@ class AuthController extends ApiBaseController
 
     protected function isOtpEnabled()
     {
+        // Check the company's email settings for require_otp_signin flag
+        $emailSetting = Settings::where('setting_type', 'email')
+            ->where('status', 1)
+            ->where('verified', 1)
+            ->first();
+
+        if ($emailSetting && $emailSetting->other_data) {
+            $otherData = $emailSetting->other_data;
+            if (isset($otherData['require_otp_signin']) && $otherData['require_otp_signin']) {
+                return true;
+            }
+        }
+
+        // Fallback: check legacy global otp_mail setting
         $setting = Settings::withoutGlobalScope(CompanyScope::class)
             ->where('setting_type', 'otp_mail')
             ->where('is_global', 1)
@@ -350,18 +364,33 @@ class AuthController extends ApiBaseController
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
-        // Get OTP mail settings
-        $setting = Settings::withoutGlobalScope(CompanyScope::class)
-            ->where('setting_type', 'otp_mail')
-            ->where('is_global', 1)
+        // First try company email SMTP settings (admin-configured)
+        $creds = null;
+        $emailSetting = Settings::where('setting_type', 'email')
             ->where('status', 1)
+            ->where('verified', 1)
             ->first();
 
-        if (!$setting || !$setting->credentials) {
-            return false;
+        if ($emailSetting && $emailSetting->name_key == 'smtp' && $emailSetting->credentials) {
+            $creds = $emailSetting->credentials;
         }
 
-        $creds = $setting->credentials;
+        // Fallback: legacy global otp_mail setting
+        if (!$creds) {
+            $setting = Settings::withoutGlobalScope(CompanyScope::class)
+                ->where('setting_type', 'otp_mail')
+                ->where('is_global', 1)
+                ->where('status', 1)
+                ->first();
+
+            if ($setting && $setting->credentials) {
+                $creds = $setting->credentials;
+            }
+        }
+
+        if (!$creds) {
+            return false;
+        }
 
         try {
             $transport = new \Swift_SmtpTransport($creds['host'], $creds['port'], $creds['encryption']);
