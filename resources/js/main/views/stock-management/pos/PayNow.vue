@@ -203,7 +203,11 @@
                                     <strong style="font-size: 11px">TAX INVOICE</strong>
                                 </div>
                                 <table style="width: 100%; font-size: 10px; margin-bottom: 6px">
-                                    <tr><td>Invoice: PREVIEW</td><td style="text-align: right">Date: {{ formatDate(new Date()) }}</td></tr>
+                                    <tr><td>Invoice: SALE-XXXX</td><td style="text-align: right">Date: {{ formatDate(new Date()) }}</td></tr>
+                                    <tr>
+                                        <td>Customer: {{ selectedCustomer ? selectedCustomer.name : '-' }}</td>
+                                        <td style="text-align: right">Sold By: {{ loggedInUser ? loggedInUser.name : '-' }}</td>
+                                    </tr>
                                 </table>
                                 <table style="width: 100%; font-size: 10px; border-collapse: collapse">
                                     <thead>
@@ -261,6 +265,7 @@ import {
     DeleteOutlined,
 } from "@ant-design/icons-vue";
 import { useI18n } from "vue-i18n";
+import { useStore } from "vuex";
 import { find, filter, sumBy } from "lodash-es";
 import common from "../../../../common/composable/common";
 import apiAdmin from "../../../../common/composable/apiAdmin";
@@ -306,7 +311,7 @@ function convertNumberToWords(num) {
 }
 
 export default {
-    props: ["visible", "data", "selectedProducts"],
+    props: ["visible", "data", "selectedProducts", "customers"],
     emits: ["closed", "success"],
     components: {
         CheckOutlined,
@@ -324,6 +329,7 @@ export default {
     setup(props, { emit }) {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { appSetting, selectedWarehouse, formatAmountCurrency, formatDate } = common();
+        const store = useStore();
         const paymentModes = ref([]);
         const invoiceTemplates = ref([]);
         const selectedTemplateSlug = ref("default");
@@ -360,6 +366,13 @@ export default {
             return templateComponentMap[selectedTemplateSlug.value] || null;
         });
 
+        const selectedCustomer = computed(() => {
+            if (!props.data || !props.data.user_id || !props.customers) return null;
+            return find(props.customers, ["xid", props.data.user_id]) || null;
+        });
+
+        const loggedInUser = computed(() => store.state.auth.user);
+
         const previewOrder = computed(() => {
             const items = (props.selectedProducts || []).map((p, i) => ({
                 product: { name: p.name, hsn_sac_code: p.hsn_sac_code || "" },
@@ -376,9 +389,12 @@ export default {
             const paidAmount = sumBy(allPaymentRecords.value, (r) => parseFloat(r.amount || 0));
             const total = props.data ? props.data.subtotal : 0;
 
+            const customer = selectedCustomer.value;
+            const staffUser = loggedInUser.value;
+
             return {
                 xid: "preview",
-                invoice_number: "PREVIEW",
+                invoice_number: "SALE-XXXX",
                 order_date: new Date().toISOString(),
                 items: items,
                 subtotal: total,
@@ -391,8 +407,12 @@ export default {
                 due_amount: Math.max(0, total - paidAmount),
                 total_items: items.length,
                 total_quantity: items.reduce((sum, i) => sum + (i.quantity || 0), 0),
-                user: { name: "Customer", phone: "" },
-                staff_member: { name: "Staff" },
+                user: customer
+                    ? { name: customer.name, phone: customer.phone || "", tax_number: customer.tax_number || "" }
+                    : { name: "-", phone: "", tax_number: "" },
+                staff_member: staffUser
+                    ? { name: staffUser.name }
+                    : { name: "-" },
                 order_payments: allPaymentRecords.value.map((r) => ({
                     amount: r.amount,
                     payment: {
@@ -510,6 +530,8 @@ export default {
             previewOrder,
             previewAmountInWords,
             onTemplateChange,
+            selectedCustomer,
+            loggedInUser,
         };
     },
 };

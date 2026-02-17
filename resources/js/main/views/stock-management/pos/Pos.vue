@@ -948,6 +948,7 @@
         @success="payNowSuccess"
         :data="formData"
         :selectedProducts="selectedProducts"
+        :customers="customers"
     />
 
     <InvoiceModal
