@@ -32,7 +32,10 @@ class OnlineOrdersController extends ApiBaseController
 		}
 
 		// Can see only order of warehouses which is assigned to him
-		$query = $query->where('orders.warehouse_id', $warehouse->id);
+		// Superadmin can see all orders
+		if ($warehouse) {
+			$query = $query->where('orders.warehouse_id', $warehouse->id);
+		}
 
 		return $query;
 	}
