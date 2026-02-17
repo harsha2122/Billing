@@ -41,8 +41,10 @@
 	</a-row>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { SaveOutlined } from "@ant-design/icons-vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import SettingSidebar from "../SettingSidebar.vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
 import EmailSettings from "../../common/settings/email/Edit.vue";
@@ -55,7 +57,16 @@ export default {
 		EmailSettings,
 	},
 	setup() {
+		const router = useRouter();
+		const store = useStore();
 		const settingRef = ref(null);
+
+		onMounted(() => {
+			const user = store.state.auth.user;
+			if (!user || !user.is_superadmin) {
+				router.replace({ name: "admin.dashboard.index" });
+			}
+		});
 
 		const onSubmit = () => {
 			settingRef.value.onSubmit();
