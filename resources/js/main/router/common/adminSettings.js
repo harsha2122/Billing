@@ -13,6 +13,7 @@ const allRoutes = appType == 'saas' ?
             name: 'admin.settings.email.index',
             meta: {
                 requireAuth: true,
+                requiresSuperAdmin: true,
                 menuParent: "settings",
                 menuKey: route => "email_settings",
                 permission: "email_edit"

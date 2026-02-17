@@ -21,10 +21,10 @@ if ($appType == 'non-saas') {
 Route::get('langs/download/{xid?}', ['as' => 'api.extra.langs.download', 'uses' => 'Api\Common\LangsController@downloadLang']);
 
 // If appType is saas version
-// Then we only define routes
-// for send email settings not email settings
+// Email settings (SMTP, OTP, notifications) are managed by superadmin only
+// Tenant admins cannot see or update email settings
 if ($appType == 'saas') {
-    ApiRoute::group(['namespace' => 'App\Http\Controllers\Api\Common', 'prefix' => 'settings', 'middleware' => ['api.permission.check', 'api.auth.check']], function () {
+    ApiRoute::group(['namespace' => 'App\Http\Controllers\Api\Common', 'prefix' => 'settings', 'middleware' => ['api.superadmin.check', 'license-expire']], function () {
         ApiRoute::post('email/send-mail-settings', ['as' => 'api.settings.send-mail-settings', 'uses' => 'SettingsController@sendMailSettings']);
         ApiRoute::get('email', ['as' => 'api.settings.email.index', 'uses' => 'SettingsController@getEmailSetting']);
     });

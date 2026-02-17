@@ -209,8 +209,7 @@
                     key="email_settings"
                     v-if="
                         appType == 'saas' &&
-                        (permsArray.includes('email_edit') ||
-                            permsArray.includes('admin'))
+                        user && user.is_superadmin
                     "
                     @click="$router.push({ name: 'admin.settings.email.index' })"
                 >
