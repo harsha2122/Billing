@@ -344,13 +344,26 @@ class Common
             $folderString = "websiteImagePath";
         }
 
+        if ($folderString == "") {
+            throw new \Exception("Invalid upload folder");
+        }
+
         $folderPath = self::getFolderPath($folderString);
 
-        if ($request->hasFile('image') || $request->hasFile('file')) {
-            $largeLogo  = $request->hasFile('image') ? $request->file('image') : $request->file('file');
+        if (!$request->hasFile('image') && !$request->hasFile('file')) {
+            throw new \Exception("No file received. Check server upload_max_filesize and post_max_size limits.");
+        }
 
-            $fileName   = $folder . '_' . strtolower(Str::random(20)) . '.' . $largeLogo->getClientOriginalExtension();
-            $largeLogo->storePubliclyAs($folderPath, $fileName);
+        $largeLogo = $request->hasFile('image') ? $request->file('image') : $request->file('file');
+        $fileName = $folder . '_' . strtolower(Str::random(20)) . '.' . $largeLogo->getClientOriginalExtension();
+        $largeLogo->storePubliclyAs($folderPath, $fileName);
+
+        // Delete old file if provided
+        if ($request->has('old_file') && $request->old_file != null && $request->old_file != '') {
+            $oldFilePath = $folderPath . '/' . $request->old_file;
+            if (Storage::exists($oldFilePath)) {
+                Storage::delete($oldFilePath);
+            }
         }
 
         return [

@@ -52,6 +52,12 @@ export default defineComponent({
 			formData.append("image", info.file);
 			formData.append("folder", props.folder);
 
+			// Send old filename so server can delete it
+			const oldFile = props.formData ? props.formData[props.imageField] : null;
+			if (oldFile) {
+				formData.append("old_file", oldFile);
+			}
+
 			loading.value = true;
 
 			axiosAdmin
