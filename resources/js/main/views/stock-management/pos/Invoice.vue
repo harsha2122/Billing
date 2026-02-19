@@ -325,6 +325,8 @@ export default defineComponent({
 
             // Collect all stylesheets and inline styles from the current page
             var allStyles = "";
+            // Force browsers to print background colors and images
+            allStyles += "<style>* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; } @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; } }</style>";
             // 1. Link the pos_invoice_css
             allStyles += '<link rel="stylesheet" href="' + posInvoiceCssUrl + '">';
             // 2. Copy all <style> tags (includes Vue scoped component styles)
@@ -347,7 +349,10 @@ export default defineComponent({
             newWindow.document.close();
             // Wait for stylesheets to load before printing
             newWindow.onload = function() {
-                newWindow.print();
+                // Small delay to ensure all CSS is rendered
+                setTimeout(function() {
+                    newWindow.print();
+                }, 300);
             };
         };
 
