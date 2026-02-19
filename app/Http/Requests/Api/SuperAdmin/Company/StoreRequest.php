@@ -16,6 +16,7 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'short_name' => 'nullable|string|max:100',
+            'business_type' => 'required|in:wholesaler,distributor,retailer,manufacturer',
             'email' => 'required|email|unique:companies,email',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:1000',

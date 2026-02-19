@@ -35,6 +35,12 @@
 				@change="handleTableChange"
 			>
 				<template #bodyCell="{ column, record }">
+					<template v-if="column.dataIndex === 'business_type'">
+						<a-tag v-if="record.business_type" :color="getBusinessTypeColor(record.business_type)">
+							{{ record.business_type }}
+						</a-tag>
+						<span v-else>-</span>
+					</template>
 					<template v-if="column.dataIndex === 'status'">
 						<a-tag :color="getStatusColor(record.status)">
 							{{ record.status }}
@@ -107,10 +113,22 @@
 				</a-row>
 				<a-row :gutter="16">
 					<a-col :span="12">
+						<a-form-item label="Business Type" required>
+							<a-select v-model:value="formData.business_type" placeholder="Select business type">
+								<a-select-option value="wholesaler">Wholesaler</a-select-option>
+								<a-select-option value="distributor">Distributor</a-select-option>
+								<a-select-option value="retailer">Retailer</a-select-option>
+								<a-select-option value="manufacturer">Manufacturer</a-select-option>
+							</a-select>
+						</a-form-item>
+					</a-col>
+					<a-col :span="12">
 						<a-form-item label="Email" required>
 							<a-input v-model:value="formData.email" type="email" placeholder="company@example.com" />
 						</a-form-item>
 					</a-col>
+				</a-row>
+				<a-row :gutter="16">
 					<a-col :span="12">
 						<a-form-item label="Phone">
 							<a-input v-model:value="formData.phone" placeholder="+1234567890" />
@@ -180,6 +198,12 @@
 			<a-descriptions bordered :column="2" v-if="viewingCompany">
 				<a-descriptions-item label="Company Name" :span="2">
 					{{ viewingCompany.name }}
+				</a-descriptions-item>
+				<a-descriptions-item label="Business Type">
+					<a-tag v-if="viewingCompany.business_type" :color="getBusinessTypeColor(viewingCompany.business_type)">
+						{{ viewingCompany.business_type }}
+					</a-tag>
+					<span v-else>-</span>
 				</a-descriptions-item>
 				<a-descriptions-item label="Email">
 					{{ viewingCompany.email }}
@@ -266,6 +290,7 @@ export default defineComponent({
 		const formData = ref({
 			name: "",
 			short_name: "",
+			business_type: null,
 			email: "",
 			phone: "",
 			address: "",
@@ -291,6 +316,10 @@ export default defineComponent({
 			{
 				title: "Company Name",
 				dataIndex: "name",
+			},
+			{
+				title: "Business Type",
+				dataIndex: "business_type",
 			},
 			{
 				title: "Email",
@@ -356,6 +385,7 @@ export default defineComponent({
 				xid: record.xid,
 				name: record.name,
 				short_name: record.short_name,
+				business_type: record.business_type,
 				email: record.email,
 				phone: record.phone,
 				address: record.address,
@@ -437,6 +467,7 @@ export default defineComponent({
 			formData.value = {
 				name: "",
 				short_name: "",
+				business_type: null,
 				email: "",
 				phone: "",
 				address: "",
@@ -455,6 +486,16 @@ export default defineComponent({
 				license_expired: "red",
 			};
 			return colors[status] || "default";
+		};
+
+		const getBusinessTypeColor = (type) => {
+			const colors = {
+				wholesaler: "blue",
+				distributor: "purple",
+				retailer: "cyan",
+				manufacturer: "volcano",
+			};
+			return colors[type] || "default";
 		};
 
 		const formatDate = (date) => {
@@ -507,6 +548,7 @@ export default defineComponent({
 			deleteCompany,
 			handleCancel,
 			getStatusColor,
+			getBusinessTypeColor,
 			formatDate,
 		};
 	},

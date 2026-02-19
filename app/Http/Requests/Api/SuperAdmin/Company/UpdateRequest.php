@@ -18,6 +18,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'short_name' => 'nullable|string|max:100',
+            'business_type' => 'nullable|in:wholesaler,distributor,retailer,manufacturer',
             'email' => 'required|email|unique:companies,email,' . $companyId,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:1000',

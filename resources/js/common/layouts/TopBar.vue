@@ -1,12 +1,16 @@
 <template>
     <a-layout-header class="topbar-menu bg-color" :style="{ padding: '0 16px' }">
         <a-row>
-            <a-col :span="4">
+            <a-col :span="8">
                 <a-space>
                     <MenuOutlined class="trigger" @click="showHideMenu" />
+                    <span v-if="appSetting && appSetting.name" class="topbar-company-info">
+                        <strong>{{ appSetting.name }}</strong>
+                        <a-tag v-if="appSetting.business_type" size="small" :style="{ marginLeft: '6px', fontSize: '11px', textTransform: 'capitalize' }">{{ appSetting.business_type }}</a-tag>
+                    </span>
                 </a-space>
             </a-col>
-            <a-col :span="20">
+            <a-col :span="16">
                 <HeaderRightIcons>
                     <a-space>
                         <template
@@ -188,5 +192,13 @@ export default {
 
 .trigger:hover {
     color: #1890ff;
+}
+
+.topbar-company-info {
+    font-size: 14px;
+    line-height: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
