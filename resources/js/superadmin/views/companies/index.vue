@@ -134,6 +134,11 @@
 							<a-input v-model:value="formData.phone" placeholder="+1234567890" />
 						</a-form-item>
 					</a-col>
+					<a-col :span="12">
+						<a-form-item label="Max Devices Allowed">
+							<a-input-number v-model:value="formData.max_devices" :min="1" :max="100" placeholder="1" style="width: 100%" />
+						</a-form-item>
+					</a-col>
 				</a-row>
 				<a-form-item label="Address">
 					<a-textarea v-model:value="formData.address" :rows="2" placeholder="Enter address" />
@@ -210,6 +215,9 @@
 				</a-descriptions-item>
 				<a-descriptions-item label="Phone">
 					{{ viewingCompany.phone || '-' }}
+				</a-descriptions-item>
+				<a-descriptions-item label="Max Devices">
+					{{ viewingCompany.max_devices || 1 }}
 				</a-descriptions-item>
 				<a-descriptions-item label="Address" :span="2">
 					{{ viewingCompany.address || '-' }}
@@ -291,6 +299,7 @@ export default defineComponent({
 			name: "",
 			short_name: "",
 			business_type: null,
+			max_devices: 1,
 			email: "",
 			phone: "",
 			address: "",
@@ -386,6 +395,7 @@ export default defineComponent({
 				name: record.name,
 				short_name: record.short_name,
 				business_type: record.business_type,
+				max_devices: record.max_devices,
 				email: record.email,
 				phone: record.phone,
 				address: record.address,
@@ -468,6 +478,7 @@ export default defineComponent({
 				name: "",
 				short_name: "",
 				business_type: null,
+				max_devices: 1,
 				email: "",
 				phone: "",
 				address: "",

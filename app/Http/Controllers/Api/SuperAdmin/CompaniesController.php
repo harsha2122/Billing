@@ -72,6 +72,7 @@ class CompaniesController extends ApiBaseController
             $company->name = $request->name;
             $company->short_name = $request->short_name ?? $request->name;
             $company->business_type = $request->business_type;
+            $company->max_devices = $request->max_devices ?? 1;
             $company->email = trim($request->email);
             $company->phone = $request->phone;
             $company->address = $request->address;
@@ -182,6 +183,7 @@ class CompaniesController extends ApiBaseController
         $company->name = $request->name;
         $company->short_name = $request->short_name ?? $request->name;
         $company->business_type = $request->business_type;
+        $company->max_devices = $request->max_devices ?? $company->max_devices;
         $company->email = $request->email;
         $company->phone = $request->phone;
         $company->address = $request->address;

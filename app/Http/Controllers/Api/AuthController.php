@@ -22,6 +22,7 @@ use App\Models\Product;
 use App\Models\Settings;
 use App\Models\Translation;
 use App\Models\User;
+use App\Models\UserSession;
 use App\Models\Warehouse;
 use App\Models\AppSettings;
 use App\Scopes\CompanyScope;
@@ -222,6 +223,18 @@ class AuthController extends ApiBaseController
             throw new ApiException('Account deactivated.');
         }
 
+        // Check device limit (only for non-superadmin users)
+        if (!$authenticatedUser->is_superadmin) {
+            $userCompanyForLimit = $userCompany ?? Company::where('id', $authenticatedUser->company_id)->first();
+            if ($userCompanyForLimit && $userCompanyForLimit->max_devices > 0) {
+                $activeSessions = UserSession::where('company_id', $userCompanyForLimit->id)->count();
+                if ($activeSessions >= $userCompanyForLimit->max_devices) {
+                    auth('api')->logout();
+                    throw new ApiException('Device limit reached (' . $userCompanyForLimit->max_devices . '). Please logout from a previous device to continue.');
+                }
+            }
+        }
+
         // Check if OTP is enabled (only for non-superadmin users)
         if (!$authenticatedUser->is_superadmin && $this->isOtpEnabled()) {
             // Logout the temporary auth so token is not usable yet
@@ -248,6 +261,10 @@ class AuthController extends ApiBaseController
         }
 
         $response = $this->respondWithToken($token);
+
+        // Track device session
+        $this->createDeviceSession($authenticatedUser, $token);
+
         $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
         $appSettings = AppSettings::first();
         $response['app'] = $company;
@@ -306,6 +323,18 @@ class AuthController extends ApiBaseController
 
         $authenticatedUser = auth('api')->user();
 
+        // Check device limit
+        if (!$authenticatedUser->is_superadmin) {
+            $userCompany = Company::where('id', $authenticatedUser->company_id)->first();
+            if ($userCompany && $userCompany->max_devices > 0) {
+                $activeSessions = UserSession::where('company_id', $userCompany->id)->count();
+                if ($activeSessions >= $userCompany->max_devices) {
+                    auth('api')->logout();
+                    throw new ApiException('Device limit reached (' . $userCompany->max_devices . '). Please logout from a previous device to continue.');
+                }
+            }
+        }
+
         // Get company
         $company = company();
         if (!$company && $authenticatedUser->is_superadmin) {
@@ -313,6 +342,10 @@ class AuthController extends ApiBaseController
         }
 
         $response = $this->respondWithToken($token);
+
+        // Track device session
+        $this->createDeviceSession($authenticatedUser, $token);
+
         $addMenuSetting = $company ? Settings::where('setting_type', 'shortcut_menus')->first() : null;
         $appSettings = AppSettings::first();
         $response['app'] = $company;
@@ -451,12 +484,31 @@ class AuthController extends ApiBaseController
         $request = request();
 
         if (auth('api')->user() && $request->bearerToken() != '') {
+            // Remove device session
+            $sessionToken = hash('sha256', $request->bearerToken());
+            UserSession::where('session_token', $sessionToken)->delete();
+
             auth('api')->logout();
         }
 
         session()->flush();
 
         return ApiResponse::make(__('Session closed successfully'));
+    }
+
+    protected function createDeviceSession($user, $token)
+    {
+        $request = request();
+        $sessionToken = hash('sha256', $token);
+
+        UserSession::create([
+            'user_id' => $user->id,
+            'company_id' => $user->company_id,
+            'session_token' => $sessionToken,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'last_active_at' => Carbon::now(),
+        ]);
     }
 
     public function user()
