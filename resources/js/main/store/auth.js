@@ -207,6 +207,18 @@ export default {
             return axiosAdmin.get('/warehouses?limit=10000')
                 .then(function (response) {
                     context.commit('updateAllWarehouses', response.data);
+
+                    // Sync selectedWarehouse with fresh data so settings
+                    // changes (name, terms, bank details, etc.) reflect immediately
+                    var currentWarehouse = context.state.warehouse;
+                    if (currentWarehouse && currentWarehouse.xid) {
+                        var freshWarehouse = response.data.find(function (w) {
+                            return w.xid === currentWarehouse.xid;
+                        });
+                        if (freshWarehouse) {
+                            context.commit('updateWarehouse', freshWarehouse);
+                        }
+                    }
                 })
                 .catch(function (error) {
 
