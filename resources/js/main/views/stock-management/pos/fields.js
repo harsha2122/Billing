@@ -89,10 +89,20 @@ const fields = () => {
                 brands.value = brandsResponse.data;
                 productLists.value = productResponse.data.products;
 
-                var defaultWalkInCustomer = find(customers.value, ["xid", defaultWalkinCustomerResponse.data.customer.xid]);
-                if (defaultWalkInCustomer) {
-                    posDefaultCustomer.value = defaultWalkInCustomer;
-                    formData.value = { ...formData.value, user_id: defaultWalkInCustomer.xid };
+                if (defaultWalkinCustomerResponse.data && defaultWalkinCustomerResponse.data.customer) {
+                    var walkinXid = defaultWalkinCustomerResponse.data.customer.xid;
+                    var defaultWalkInCustomer = find(customers.value, ["xid", walkinXid]);
+                    if (defaultWalkInCustomer) {
+                        posDefaultCustomer.value = defaultWalkInCustomer;
+                        formData.value = { ...formData.value, user_id: defaultWalkInCustomer.xid };
+                    } else if (customers.value.length > 0) {
+                        // Fallback: find walk-in customer by name
+                        var walkinByName = find(customers.value, ["is_walkin_customer", 1]);
+                        if (walkinByName) {
+                            posDefaultCustomer.value = walkinByName;
+                            formData.value = { ...formData.value, user_id: walkinByName.xid };
+                        }
+                    }
                 }
             }
         );

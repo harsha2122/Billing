@@ -1047,7 +1047,6 @@ class AuthController extends ApiBaseController
     public function getDefaultWalkinCustomer()
     {
         $walkinCustomer = Customer::select('id', 'name')
-            ->withoutGlobalScope(CompanyScope::class)
             ->where('is_walkin_customer', '=', 1)
             ->first();
 
