@@ -1,16 +1,16 @@
 <template>
     <a-layout-header class="topbar-menu bg-color" :style="{ padding: '0 16px' }">
-        <a-row>
-            <a-col :xs="4" :sm="6" :md="8" :lg="8">
-                <a-space>
+        <a-row :wrap="false">
+            <a-col :xs="4" :sm="8" :md="8" :lg="8" style="min-width: 0; overflow: hidden;">
+                <div class="topbar-left">
                     <MenuOutlined class="trigger" @click="showHideMenu" />
                     <span v-if="appSetting && appSetting.name" class="topbar-company-info">
                         <strong>{{ appSetting.name }}</strong>
-                        <a-tag v-if="appSetting.business_type" size="small" :style="{ marginLeft: '6px', fontSize: '11px', textTransform: 'capitalize' }">{{ appSetting.business_type }}</a-tag>
+                        <a-tag v-if="appSetting.business_type" size="small" :style="{ marginLeft: '6px', fontSize: '11px', textTransform: 'capitalize', flexShrink: 0 }">{{ appSetting.business_type }}</a-tag>
                     </span>
-                </a-space>
+                </div>
             </a-col>
-            <a-col :xs="20" :sm="18" :md="16" :lg="16">
+            <a-col :xs="20" :sm="16" :md="16" :lg="16">
                 <HeaderRightIcons>
                     <a-space>
                         <template
@@ -194,11 +194,34 @@ export default {
     color: #1890ff;
 }
 
-.topbar-company-info {
-    font-size: 14px;
-    line-height: 64px;
-    white-space: nowrap;
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 64px;
+    min-width: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.topbar-company-info {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    min-width: 0;
+    overflow: hidden;
+
+    strong {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+    }
+}
+
+/* Hide company name on mobile — hamburger icon only */
+@media (max-width: 575px) {
+    .topbar-company-info {
+        display: none;
+    }
 }
 </style>
