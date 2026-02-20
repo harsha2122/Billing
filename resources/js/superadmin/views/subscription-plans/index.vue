@@ -19,7 +19,7 @@
 					<a-input-search
 						v-model:value="searchText"
 						placeholder="Search plans..."
-						style="width: 300px"
+						style="width: 100%; max-width: 300px"
 						@search="fetchPlans"
 						allow-clear
 					/>
@@ -91,12 +91,12 @@
 		>
 			<a-form :model="formData" layout="vertical">
 				<a-row :gutter="16">
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Plan Name" required>
 							<a-input v-model:value="formData.name" placeholder="e.g. Basic Plan" />
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Max Products" required>
 							<a-input-number
 								v-model:value="formData.max_products"
@@ -113,7 +113,7 @@
 				</a-form-item>
 
 				<a-row :gutter="16">
-					<a-col :span="8">
+					<a-col :xs="24" :sm="8">
 						<a-form-item label="Max Users">
 							<a-input-number
 								v-model:value="formData.max_users"
@@ -123,7 +123,7 @@
 							/>
 						</a-form-item>
 					</a-col>
-					<a-col :span="8">
+					<a-col :xs="24" :sm="8">
 						<a-form-item label="Max Warehouses">
 							<a-input-number
 								v-model:value="formData.max_warehouses"
@@ -136,7 +136,7 @@
 				</a-row>
 
 				<a-row :gutter="16">
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Monthly Price">
 							<a-input-number
 								v-model:value="formData.monthly_price"
@@ -147,7 +147,7 @@
 							/>
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Annual Price">
 							<a-input-number
 								v-model:value="formData.annual_price"
@@ -163,7 +163,7 @@
 				<a-form-item label="Modules">
 					<a-checkbox-group v-model:value="formData.modules" style="width: 100%">
 						<a-row>
-							<a-col :span="8" v-for="module in availableModules" :key="module.value">
+							<a-col :xs="12" :sm="8" v-for="module in availableModules" :key="module.value">
 								<a-checkbox :value="module.value">{{ module.label }}</a-checkbox>
 							</a-col>
 						</a-row>
@@ -179,7 +179,7 @@
 			:width="700"
 			:footer="null"
 		>
-			<a-descriptions bordered :column="2" v-if="viewingPlan">
+			<a-descriptions bordered :column="{ xs: 1, sm: 2 }" v-if="viewingPlan">
 				<a-descriptions-item label="Plan Name" :span="2">
 					{{ viewingPlan.name }}
 				</a-descriptions-item>

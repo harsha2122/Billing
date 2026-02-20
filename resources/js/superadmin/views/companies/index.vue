@@ -19,7 +19,7 @@
 					<a-input-search
 						v-model:value="searchText"
 						placeholder="Search companies..."
-						style="width: 300px"
+						style="width: 100%; max-width: 300px"
 						@search="fetchCompanies"
 						allow-clear
 					/>
@@ -100,19 +100,19 @@
 		>
 			<a-form :model="formData" layout="vertical">
 				<a-row :gutter="16">
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Company Name" required>
 							<a-input v-model:value="formData.name" placeholder="Enter company name" />
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Short Name">
 							<a-input v-model:value="formData.short_name" placeholder="Enter short name" />
 						</a-form-item>
 					</a-col>
 				</a-row>
 				<a-row :gutter="16">
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Business Type" required>
 							<a-select v-model:value="formData.business_type" placeholder="Select business type">
 								<a-select-option value="wholesaler">Wholesaler</a-select-option>
@@ -122,19 +122,19 @@
 							</a-select>
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Email" required>
 							<a-input v-model:value="formData.email" type="email" placeholder="company@example.com" />
 						</a-form-item>
 					</a-col>
 				</a-row>
 				<a-row :gutter="16">
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Phone">
 							<a-input v-model:value="formData.phone" placeholder="+1234567890" />
 						</a-form-item>
 					</a-col>
-					<a-col :span="12">
+					<a-col :xs="24" :sm="12">
 						<a-form-item label="Max Devices Allowed">
 							<a-input-number v-model:value="formData.max_devices" :min="1" :max="100" placeholder="1" style="width: 100%" />
 						</a-form-item>
@@ -175,12 +175,12 @@
 				<template v-if="!isEdit">
 					<a-divider>Admin Details</a-divider>
 					<a-row :gutter="16">
-						<a-col :span="12">
+						<a-col :xs="24" :sm="12">
 							<a-form-item label="Admin Name" required>
 								<a-input v-model:value="formData.admin_name" placeholder="Admin name" />
 							</a-form-item>
 						</a-col>
-						<a-col :span="12">
+						<a-col :xs="24" :sm="12">
 							<a-form-item label="Admin Email" required>
 								<a-input v-model:value="formData.admin_email" type="email" placeholder="admin@example.com" />
 							</a-form-item>
@@ -200,7 +200,7 @@
 			:width="800"
 			:footer="null"
 		>
-			<a-descriptions bordered :column="2" v-if="viewingCompany">
+			<a-descriptions bordered :column="{ xs: 1, sm: 2 }" v-if="viewingCompany">
 				<a-descriptions-item label="Company Name" :span="2">
 					{{ viewingCompany.name }}
 				</a-descriptions-item>
