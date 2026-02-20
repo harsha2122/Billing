@@ -126,7 +126,7 @@
                     </a-col>
                 </a-row>
             </a-col>
-            <a-col :xs="0" :sm="0" :md="24" :lg="16">
+            <a-col :xs="0" :sm="0" :md="0" :lg="16">
                 <div class="right-login-div">
                     <img class="right-image" :src="loginBackground" />
                 </div>

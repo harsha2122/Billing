@@ -307,3 +307,140 @@
         border-left: none !important;
     }
 }
+
+// ============================================
+// MOBILE RESPONSIVE STYLES
+// ============================================
+
+// Mobile sidebar overlay backdrop
+.mobile-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 997;
+}
+
+@media only screen and (max-width: 991px) {
+    // Sidebar stays on top of overlay
+    .ant-layout-sider {
+        z-index: 998 !important;
+    }
+
+    // Settings sidebar - compact scrollable on mobile/tablet
+    .setting-sidebar .ps {
+        height: auto !important;
+        max-height: 220px;
+        overflow-y: auto !important;
+    }
+
+    .bg-setting-sidebar {
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 8px;
+    }
+
+    .dark_theme .bg-setting-sidebar {
+        border-bottom: 1px solid #303030;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    // All Ant Design tables - horizontal scroll on mobile
+    .ant-table-wrapper {
+        overflow-x: auto;
+
+        .ant-table-content {
+            overflow-x: auto;
+        }
+
+        .ant-table-cell,
+        tbody td {
+            white-space: nowrap;
+        }
+    }
+
+    // Topbar - hide company name on small screens to save space
+    .topbar-company-info {
+        display: none;
+    }
+
+    // Modals - full width on mobile
+    .ant-modal {
+        max-width: calc(100vw - 16px) !important;
+        margin: 8px auto !important;
+    }
+
+    // Page content card body - reduce padding on mobile
+    .page-content-container .ant-card-body,
+    .setup-page-content-container .ant-card-body,
+    .email-page-content-container .ant-card-body {
+        padding: 0px !important;
+        margin: 0px 8px 0 !important;
+        padding-top: 16px !important;
+    }
+
+    // Dashboard content area
+    .dashboard-page-content-container {
+        margin: 0px 8px 0 !important;
+    }
+
+    // Dashboard stock history stats - remove right border on mobile
+    .col-border-right {
+        border-right: none !important;
+    }
+
+    // Card body - reduce default padding
+    .ant-card-body {
+        padding: 12px;
+    }
+
+    // Breadcrumb header padding
+    .breadcrumb-header .ant-card-body {
+        padding: 8px 12px !important;
+        margin: 0 !important;
+        padding-top: 8px !important;
+    }
+
+    // Login page - ensure it fits on small screens
+    .login-main-container {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .login-left-div {
+        padding: 20px 0;
+    }
+
+    // Ensure form items are full width on mobile
+    .ant-form-item-control {
+        max-width: 100%;
+    }
+
+    // Prevent drawer from being too wide on mobile
+    .ant-drawer-content-wrapper {
+        max-width: 100vw !important;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    // Extra small screens
+    .ant-card-body {
+        padding: 8px;
+    }
+
+    .dashboard-page-content-container {
+        margin: 0px 4px 0 !important;
+    }
+
+    .page-content-container .ant-card-body {
+        margin: 0px 4px 0 !important;
+    }
+
+    // Login card - compact on very small screens
+    .login-div .ant-card-body {
+        padding: 16px;
+    }
+}

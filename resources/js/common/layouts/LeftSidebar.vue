@@ -727,6 +727,11 @@
             </perfect-scrollbar>
         </div>
     </a-layout-sider>
+    <div
+        v-if="!menuCollapsed && innerWidth <= 991"
+        class="mobile-sidebar-overlay"
+        @click="menuSelected"
+    />
 </template>
 
 <script>

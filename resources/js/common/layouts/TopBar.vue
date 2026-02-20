@@ -1,7 +1,7 @@
 <template>
     <a-layout-header class="topbar-menu bg-color" :style="{ padding: '0 16px' }">
         <a-row>
-            <a-col :span="8">
+            <a-col :xs="4" :sm="6" :md="8" :lg="8">
                 <a-space>
                     <MenuOutlined class="trigger" @click="showHideMenu" />
                     <span v-if="appSetting && appSetting.name" class="topbar-company-info">
@@ -10,7 +10,7 @@
                     </span>
                 </a-space>
             </a-col>
-            <a-col :span="16">
+            <a-col :xs="20" :sm="18" :md="16" :lg="16">
                 <HeaderRightIcons>
                     <a-space>
                         <template
