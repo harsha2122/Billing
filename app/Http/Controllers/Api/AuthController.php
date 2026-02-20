@@ -498,8 +498,9 @@ class AuthController extends ApiBaseController
 
     protected function createDeviceSession($user, $token)
     {
-        // Superadmins have no company_id; device-limit tracking is not applicable to them
-        if ($user->is_superadmin) {
+        // Skip session tracking when there is no company context (superadmins, or
+        // any user without a company_id) — device-limit enforcement does not apply.
+        if ($user->is_superadmin || !$user->company_id) {
             return;
         }
 
