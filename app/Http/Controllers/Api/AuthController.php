@@ -498,6 +498,11 @@ class AuthController extends ApiBaseController
 
     protected function createDeviceSession($user, $token)
     {
+        // Superadmins have no company_id; device-limit tracking is not applicable to them
+        if ($user->is_superadmin) {
+            return;
+        }
+
         $request = request();
         $sessionToken = hash('sha256', $token);
 
