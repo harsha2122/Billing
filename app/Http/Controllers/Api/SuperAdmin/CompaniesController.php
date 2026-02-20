@@ -14,6 +14,7 @@ use App\Models\Lang;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserSession;
 use App\Models\Warehouse;
 use App\Scopes\CompanyScope;
 use Database\Seeders\PosInvoiceTemplateSeeder;
@@ -247,5 +248,56 @@ class CompaniesController extends ApiBaseController
             'company' => $company,
             'stats' => $stats
         ]);
+    }
+
+    public function clearSessions(...$args)
+    {
+        $xid = $args[0] ?? null;
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
+        Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+
+        $count = UserSession::where('company_id', $id)->delete();
+
+        return ApiResponse::make("Logged out {$count} active session(s) successfully", [
+            'count' => $count
+        ]);
+    }
+
+    public function changeAdminPassword(...$args)
+    {
+        $request = $args[0] ?? request();
+        $xid = $args[1] ?? null;
+
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
+        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+
+        $request->validate([
+            'password' => 'required|min:8',
+        ]);
+
+        $admin = User::withoutGlobalScope(CompanyScope::class)
+            ->where('id', $company->admin_id)
+            ->first();
+
+        if (!$admin) {
+            return ApiResponse::make('Admin user not found', [], 404);
+        }
+
+        $admin->password = $request->password;
+        $admin->save();
+
+        return ApiResponse::make('Admin password updated successfully', []);
     }
 }

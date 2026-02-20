@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(\App\SuperAdmin\Commands\UpdateLicenseExpiry::class)->daily();
             $schedule->command(\App\SuperAdmin\Commands\NotifyLicenseExpiryPre::class)->daily();
         }
+        // Remove sessions inactive for more than 30 days
+        $schedule->command('sessions:clean')->daily();
     }
 
     /**

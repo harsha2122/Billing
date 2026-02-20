@@ -59,7 +59,7 @@
 						{{ formatDate(record.created_at) }}
 					</template>
 					<template v-if="column.dataIndex === 'action'">
-						<a-space>
+						<a-space wrap>
 							<a-button
 								type="link"
 								size="small"
@@ -74,6 +74,23 @@
 							>
 								<EyeOutlined /> View
 							</a-button>
+							<a-button
+								type="link"
+								size="small"
+								@click="showChangePassword(record)"
+							>
+								<KeyOutlined /> Password
+							</a-button>
+							<a-popconfirm
+								title="Logout all active devices for this company?"
+								ok-text="Yes"
+								cancel-text="No"
+								@confirm="clearSessions(record.xid)"
+							>
+								<a-button type="link" size="small" style="color: #fa8c16">
+									<LogoutOutlined /> Logout All
+								</a-button>
+							</a-popconfirm>
 							<a-popconfirm
 								title="Are you sure you want to delete this company?"
 								ok-text="Yes"
@@ -253,6 +270,34 @@
 				</a-descriptions-item>
 			</a-descriptions>
 		</a-modal>
+
+		<!-- Change Admin Password Modal -->
+		<a-modal
+			v-model:visible="changePasswordVisible"
+			title="Change Tenant Admin Password"
+			:width="420"
+			:confirm-loading="changePasswordLoading"
+			ok-text="Update Password"
+			@ok="handleChangePassword"
+			@cancel="changePasswordVisible = false"
+		>
+			<a-form layout="vertical">
+				<a-form-item label="New Password" required>
+					<a-input-password
+						v-model:value="changePasswordData.password"
+						placeholder="Minimum 8 characters"
+						autocomplete="new-password"
+					/>
+				</a-form-item>
+				<a-form-item label="Confirm Password" required>
+					<a-input-password
+						v-model:value="changePasswordData.confirm"
+						placeholder="Re-enter new password"
+						autocomplete="new-password"
+					/>
+				</a-form-item>
+			</a-form>
+		</a-modal>
 	</div>
 </template>
 
@@ -263,6 +308,8 @@ import {
 	EditOutlined,
 	DeleteOutlined,
 	EyeOutlined,
+	KeyOutlined,
+	LogoutOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
@@ -275,6 +322,8 @@ export default defineComponent({
 		EditOutlined,
 		DeleteOutlined,
 		EyeOutlined,
+		KeyOutlined,
+		LogoutOutlined,
 		AdminPageHeader,
 	},
 	setup() {
@@ -288,6 +337,12 @@ export default defineComponent({
 		const viewingStats = ref(null);
 		const subscriptionPlans = ref([]);
 		const plansLoading = ref(false);
+
+		// Change password state
+		const changePasswordVisible = ref(false);
+		const changePasswordLoading = ref(false);
+		const changePasswordXid = ref(null);
+		const changePasswordData = ref({ password: "", confirm: "" });
 
 		const pagination = ref({
 			current: 1,
@@ -349,7 +404,6 @@ export default defineComponent({
 			{
 				title: "Action",
 				dataIndex: "action",
-				width: 250,
 			},
 		];
 
@@ -424,7 +478,6 @@ export default defineComponent({
 
 		const handleSubmit = () => {
 			if (isEdit.value) {
-				// Update
 				axiosAdmin
 					.put(`superadmin/companies/${formData.value.xid}`, formData.value)
 					.then(() => {
@@ -437,7 +490,6 @@ export default defineComponent({
 						console.error(error);
 					});
 			} else {
-				// Create
 				axiosAdmin
 					.post("superadmin/companies", formData.value)
 					.then(() => {
@@ -489,6 +541,59 @@ export default defineComponent({
 				status: "active",
 			};
 		};
+
+		// ── Session management ──────────────────────────────────────────
+
+		const clearSessions = (xid) => {
+			axiosAdmin
+				.delete(`superadmin/companies/${xid}/sessions`)
+				.then((response) => {
+					const count = response.data.count ?? 0;
+					message.success(`Logged out ${count} active session(s) successfully`);
+				})
+				.catch(() => {
+					message.error("Failed to logout sessions");
+				});
+		};
+
+		// ── Admin password change ───────────────────────────────────────
+
+		const showChangePassword = (record) => {
+			changePasswordXid.value = record.xid;
+			changePasswordData.value = { password: "", confirm: "" };
+			changePasswordVisible.value = true;
+		};
+
+		const handleChangePassword = () => {
+			const { password, confirm } = changePasswordData.value;
+			if (!password || password.length < 8) {
+				message.error("Password must be at least 8 characters");
+				return;
+			}
+			if (password !== confirm) {
+				message.error("Passwords do not match");
+				return;
+			}
+			changePasswordLoading.value = true;
+			axiosAdmin
+				.post(`superadmin/companies/${changePasswordXid.value}/change-admin-password`, {
+					password,
+				})
+				.then(() => {
+					message.success("Admin password updated successfully");
+					changePasswordVisible.value = false;
+				})
+				.catch((error) => {
+					message.error(
+						error.response?.data?.message || "Failed to update password"
+					);
+				})
+				.finally(() => {
+					changePasswordLoading.value = false;
+				});
+		};
+
+		// ── Helpers ────────────────────────────────────────────────────
 
 		const getStatusColor = (status) => {
 			const colors = {
@@ -549,6 +654,9 @@ export default defineComponent({
 			viewingStats,
 			subscriptionPlans,
 			plansLoading,
+			changePasswordVisible,
+			changePasswordLoading,
+			changePasswordData,
 			fetchCompanies,
 			fetchSubscriptionPlans,
 			handleTableChange,
@@ -558,6 +666,9 @@ export default defineComponent({
 			handleSubmit,
 			deleteCompany,
 			handleCancel,
+			clearSessions,
+			showChangePassword,
+			handleChangePassword,
 			getStatusColor,
 			getBusinessTypeColor,
 			formatDate,

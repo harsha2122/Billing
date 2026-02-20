@@ -26,7 +26,7 @@ class ProfileRequest extends FormRequest
 		$rules = [
 			'name' => 'required',
 			'email' => 'required|email',
-			'phone' => 'integer',
+			'phone' => 'nullable',
 		];
 
 		if ($this->has('password') && $this->password != '') {

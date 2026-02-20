@@ -22,6 +22,10 @@ ApiRoute::group([
         'as' => 'api.superadmin'
     ]);
 
+    // Company session management
+    ApiRoute::delete('companies/{id}/sessions', ['as' => 'api.superadmin.companies.clear-sessions', 'uses' => 'CompaniesController@clearSessions']);
+    ApiRoute::post('companies/{id}/change-admin-password', ['as' => 'api.superadmin.companies.change-admin-password', 'uses' => 'CompaniesController@changeAdminPassword']);
+
     // Dashboard stats
     ApiRoute::get('dashboard/stats', ['as' => 'api.superadmin.dashboard.stats', 'uses' => 'DashboardController@stats']);
 
