@@ -35,10 +35,6 @@
                             <a-divider type="vertical" />
                         </template>
                         <template v-if="selectedWarehouse && selectedWarehouse.name">
-                            <template v-if="appSetting.shortcut_menus != 'bottom'">
-                                <AffixButton position="top" />
-                                <a-divider type="vertical" />
-                            </template>
                             <ChangeWarehouse />
                             <a-divider type="vertical" />
                         </template>
@@ -99,8 +95,6 @@ import { HeaderRightIcons } from "./style";
 import common from "../../common/composable/common";
 import MenuMode from "./MenuMode.vue";
 import ChangeWarehouse from "./ChangeWarehouse.vue";
-import AffixButton from "./AffixButton.vue";
-
 export default {
     components: {
         MenuOutlined,
@@ -108,7 +102,6 @@ export default {
         HeaderRightIcons,
         MenuMode,
         ChangeWarehouse,
-        AffixButton,
         ShoppingCartOutlined,
     },
     setup(props, { emit }) {

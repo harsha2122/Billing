@@ -735,7 +735,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, onMounted, computed } from "vue";
+import { defineComponent, ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { Layout } from "ant-design-vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
@@ -853,6 +853,10 @@ export default defineComponent({
             selectedKeys.value = [menuKey];
         });
 
+        onUnmounted(() => {
+            document.body.style.overflow = "";
+        });
+
         const logout = () => {
             store.dispatch("auth/logout");
         };
@@ -920,6 +924,11 @@ export default defineComponent({
                 } else {
                     selectedKeys.value = [menuKey];
                 }
+
+                // Lock body scroll when mobile sidebar is open
+                if (innerWidth <= 991) {
+                    document.body.style.overflow = newVal ? "" : "hidden";
+                }
             }
         );
 
@@ -947,6 +956,12 @@ export default defineComponent({
 <style lang="less">
 .main-sidebar .ps {
     height: calc(100vh - 62px);
+}
+
+@media only screen and (max-width: 991px) {
+    .main-sidebar .ps {
+        padding-bottom: 80px;
+    }
 }
 
 @media only screen and (max-width: 1150px) {
