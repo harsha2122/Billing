@@ -234,6 +234,12 @@
 
         <template #footer>
             <div class="footer-button">
+                <a-button @click="downloadInvoice">
+                    <template #icon>
+                        <DownloadOutlined />
+                    </template>
+                    {{ $t("common.download_invoice") }}
+                </a-button>
                 <a-button type="primary" @click="printInvoice">
                     <template #icon>
                         <PrinterOutlined />
@@ -247,7 +253,7 @@
 
 <script>
 import { defineComponent, computed } from "vue";
-import { PrinterOutlined } from "@ant-design/icons-vue";
+import { PrinterOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import common from "../../../../common/composable/common";
 import GstDistributorInvoice from "./templates/GstDistributorInvoice.vue";
 import DoubleDivineInvoice from "./templates/DoubleDivineInvoice.vue";
@@ -272,6 +278,7 @@ export default defineComponent({
     emits: ["closed", "success"],
     components: {
         PrinterOutlined,
+        DownloadOutlined,
         GstDistributorInvoice,
         DoubleDivineInvoice,
         GstTheme2Invoice,
@@ -315,6 +322,15 @@ export default defineComponent({
 
         const onClose = () => {
             emit("closed");
+        };
+
+        const downloadInvoice = () => {
+            if (props.order && props.order.unique_id) {
+                window.open(
+                    window.config.path + "/api/v1/pdf/" + props.order.unique_id,
+                    "_blank"
+                );
+            }
         };
 
         const printInvoice = () => {
@@ -363,6 +379,7 @@ export default defineComponent({
             formatDate,
             formatAmountCurrency,
             printInvoice,
+            downloadInvoice,
             activeSlug,
             isThermal,
             currentTemplateComponent,

@@ -64,6 +64,7 @@ class LangTrans
             'change_order_status' => 'Change Order Status',
             'total' => 'Total',
             'print_invoice' => 'Print Invoice',
+            'download_invoice' => 'Download Invoice',
             'email' => 'Email',
             'phone' => 'Phone',
             'item' => 'Item',
