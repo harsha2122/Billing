@@ -57,6 +57,9 @@ class DatabaseSeeder extends Seeder
             $company = Company::first();
             Common::assignCompanyForNonSaas($company);
 
+            // Seed default payment modes (Cash, Bank Transfer, UPI) per company
+            $this->call(DefaultPaymentModesSeeder::class);
+
             // Seed translations
             LangTrans::seedMainTranslations();
 
