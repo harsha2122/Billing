@@ -95,6 +95,69 @@
 			</a-row>
 		</div>
 
+		<!-- Plan Info: Days Remaining & Products Used -->
+		<div
+			v-if="responseData.planInfo && (responseData.planInfo.days_remaining !== null || responseData.planInfo.products_limit !== null)"
+			class="mt-20 mb-20"
+		>
+			<a-row :gutter="[15, 15]">
+				<a-col
+					v-if="responseData.planInfo.days_remaining !== null"
+					:xs="24" :sm="24" :md="12" :lg="12" :xl="12"
+				>
+					<a-card class="plan-info-card">
+						<a-row align="middle" :gutter="16">
+							<a-col :span="4" style="text-align: center">
+								<CalendarOutlined :style="{ fontSize: '32px', color: daysRemainingColor }" />
+							</a-col>
+							<a-col :span="20">
+								<div class="plan-info-label">{{ $t("dashboard.plan_days_remaining") }}</div>
+								<div class="plan-info-value" :style="{ color: daysRemainingColor }">
+									{{ responseData.planInfo.days_remaining }} {{ $t("dashboard.days") }}
+								</div>
+								<div v-if="responseData.planInfo.licence_expire_on" class="plan-info-sub">
+									{{ $t("dashboard.expires_on") }}: {{ responseData.planInfo.licence_expire_on }}
+								</div>
+								<div v-if="responseData.planInfo.plan_name" class="plan-info-sub">
+									{{ $t("dashboard.plan") }}: {{ responseData.planInfo.plan_name }}
+								</div>
+							</a-col>
+						</a-row>
+					</a-card>
+				</a-col>
+
+				<a-col
+					v-if="responseData.planInfo.products_limit !== null"
+					:xs="24" :sm="24" :md="12" :lg="12" :xl="12"
+				>
+					<a-card class="plan-info-card">
+						<a-row align="middle" :gutter="16">
+							<a-col :span="4" style="text-align: center">
+								<AppstoreOutlined :style="{ fontSize: '32px', color: productsUsedColor }" />
+							</a-col>
+							<a-col :span="20">
+								<div class="plan-info-label">{{ $t("dashboard.products_limit") }}</div>
+								<div class="plan-info-value">
+									{{ responseData.planInfo.products_used }} / {{ responseData.planInfo.products_limit }}
+								</div>
+								<a-progress
+									:percent="productsPercent"
+									:stroke-color="productsUsedColor"
+									:show-info="false"
+									size="small"
+									style="margin: 4px 0"
+								/>
+								<div class="plan-info-sub">
+									{{ responseData.planInfo.products_limit - responseData.planInfo.products_used }}
+									{{ $t("dashboard.products_remaining") }}
+								</div>
+							</a-col>
+						</a-row>
+					</a-card>
+				</a-col>
+			</a-row>
+		</div>
+
 		<a-row :gutter="[18, 18]" class="mt-30 mb-20">
 			<a-col :xs="24" :sm="24" :md="12" :lg="6" :xl="6">
 				<a-card :title="$t('dashboard.top_selling_product')">
@@ -364,7 +427,7 @@
 </template>
 
 <script>
-import { ref, onMounted, reactive, toRef, watch } from "vue";
+import { ref, onMounted, reactive, toRef, watch, computed } from "vue";
 import {
 	EyeOutlined,
 	ArrowUpOutlined,
@@ -374,6 +437,8 @@ import {
 	ShoppingOutlined,
 	TagOutlined,
 	DoubleRightOutlined,
+	CalendarOutlined,
+	AppstoreOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 import { useI18n } from "vue-i18n";
@@ -407,6 +472,8 @@ export default {
 		BankOutlined,
 		ShoppingOutlined,
 		TagOutlined,
+		CalendarOutlined,
+		AppstoreOutlined,
 		DateRangePicker,
 		UpdateAppAlert,
 		AdminPageHeader,
@@ -486,6 +553,27 @@ export default {
 			});
 		});
 
+		const daysRemainingColor = computed(() => {
+			const days = responseData.value.planInfo?.days_remaining;
+			if (days === null || days === undefined) return "#52c41a";
+			if (days <= 7) return "#ff4d4f";
+			if (days <= 30) return "#faad14";
+			return "#52c41a";
+		});
+
+		const productsPercent = computed(() => {
+			const info = responseData.value.planInfo;
+			if (!info || !info.products_limit) return 0;
+			return Math.min(100, Math.round((info.products_used / info.products_limit) * 100));
+		});
+
+		const productsUsedColor = computed(() => {
+			const p = productsPercent.value;
+			if (p >= 90) return "#ff4d4f";
+			if (p >= 70) return "#faad14";
+			return "#52c41a";
+		});
+
 		return {
 			filters,
 			activeOrderType,
@@ -496,6 +584,10 @@ export default {
 			formatAmountCurrency,
 			permsArray,
 			appSetting,
+
+			daysRemainingColor,
+			productsPercent,
+			productsUsedColor,
 		};
 	},
 };
@@ -536,6 +628,31 @@ export default {
 		background: #f5f0df;
 		padding: 15px;
 		border-radius: 10px;
+	}
+}
+
+.plan-info-card {
+	border-radius: 8px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+	.plan-info-label {
+		font-size: 12px;
+		color: #888;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		margin-bottom: 2px;
+	}
+
+	.plan-info-value {
+		font-size: 22px;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	.plan-info-sub {
+		font-size: 12px;
+		color: #555;
+		margin-top: 2px;
 	}
 }
 </style>

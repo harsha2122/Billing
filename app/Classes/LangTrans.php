@@ -210,6 +210,12 @@ class LangTrans
             'total_sales_returns_items' => 'Total Sales Returns Items',
             'total_purchases_items' => 'Total Purchase Items',
             'total_purchase_returns_items' => 'Total Purchase Returns Items',
+            'plan_days_remaining' => 'Plan Validity',
+            'days' => 'Days Remaining',
+            'expires_on' => 'Expires On',
+            'plan' => 'Plan',
+            'products_limit' => 'Products Limit',
+            'products_remaining' => 'Products Remaining',
         ],
         'user' => [
             'email_phone' => 'Email or Phone',

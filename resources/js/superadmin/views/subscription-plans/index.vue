@@ -46,6 +46,9 @@
 					<template v-if="column.dataIndex === 'max_products'">
 						<a-tag color="green">{{ record.max_products }} products</a-tag>
 					</template>
+					<template v-if="column.dataIndex === 'duration'">
+						<a-tag color="orange">{{ record.duration || 30 }} days</a-tag>
+					</template>
 					<template v-if="column.dataIndex === 'created_at'">
 						{{ formatDate(record.created_at) }}
 					</template>
@@ -133,6 +136,16 @@
 							/>
 						</a-form-item>
 					</a-col>
+					<a-col :xs="24" :sm="8">
+						<a-form-item label="Plan Validity (Days)" required>
+							<a-input-number
+								v-model:value="formData.duration"
+								:min="1"
+								placeholder="e.g. 30"
+								style="width: 100%"
+							/>
+						</a-form-item>
+					</a-col>
 				</a-row>
 
 				<a-row :gutter="16">
@@ -194,6 +207,9 @@
 				</a-descriptions-item>
 				<a-descriptions-item label="Max Warehouses">
 					{{ viewingPlan.max_warehouses }}
+				</a-descriptions-item>
+				<a-descriptions-item label="Plan Validity">
+					{{ viewingPlan.duration || 30 }} days
 				</a-descriptions-item>
 				<a-descriptions-item label="Monthly Price">
 					${{ viewingPlan.monthly_price || 0 }}
@@ -263,6 +279,7 @@ export default defineComponent({
 			max_products: 100,
 			max_users: 0,
 			max_warehouses: 1,
+			duration: 30,
 			monthly_price: 0,
 			annual_price: 0,
 			modules: [],
@@ -289,6 +306,11 @@ export default defineComponent({
 				title: "Max Products",
 				dataIndex: "max_products",
 				key: "max_products",
+			},
+			{
+				title: "Validity",
+				dataIndex: "duration",
+				key: "duration",
 			},
 			{
 				title: "Modules",
@@ -340,6 +362,7 @@ export default defineComponent({
 				max_products: 100,
 				max_users: 0,
 				max_warehouses: 1,
+				duration: 30,
 				monthly_price: 0,
 				annual_price: 0,
 				modules: [],
@@ -356,6 +379,7 @@ export default defineComponent({
 				max_products: plan.max_products,
 				max_users: plan.max_users,
 				max_warehouses: plan.max_warehouses,
+				duration: plan.duration || 30,
 				monthly_price: plan.monthly_price,
 				annual_price: plan.annual_price,
 				modules: plan.modules || [],
@@ -413,6 +437,7 @@ export default defineComponent({
 				max_products: 100,
 				max_users: 0,
 				max_warehouses: 1,
+				duration: 30,
 				monthly_price: 0,
 				annual_price: 0,
 				modules: [],

@@ -41,6 +41,7 @@ class SubscriptionPlansController extends ApiBaseController
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'max_products' => 'required|integer|min:0',
+                'duration' => 'nullable|integer|min:1',
                 'modules' => 'nullable|array',
                 'modules.*' => 'string',
             ]);
@@ -54,6 +55,7 @@ class SubscriptionPlansController extends ApiBaseController
             $plan->name = $request->name;
             $plan->description = $request->description ?? '';
             $plan->max_products = $request->max_products;
+            $plan->duration = $request->duration ?? 30;
             $plan->modules = $request->modules ?? [];
             $plan->annual_price = $request->annual_price ?? 0;
             $plan->monthly_price = $request->monthly_price ?? 0;
@@ -112,6 +114,7 @@ class SubscriptionPlansController extends ApiBaseController
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'max_products' => 'required|integer|min:0',
+            'duration' => 'nullable|integer|min:1',
             'modules' => 'nullable|array',
             'modules.*' => 'string',
         ]);
@@ -125,6 +128,7 @@ class SubscriptionPlansController extends ApiBaseController
         $plan->name = $request->name;
         $plan->description = $request->description;
         $plan->max_products = $request->max_products;
+        $plan->duration = $request->duration ?? 30;
         $plan->modules = $request->modules ?? [];
         $plan->annual_price = $request->annual_price ?? 0;
         $plan->monthly_price = $request->monthly_price ?? 0;

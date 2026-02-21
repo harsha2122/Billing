@@ -20,6 +20,7 @@ use App\Models\Payment;
 use App\Models\PaymentMode;
 use App\Models\Product;
 use App\Models\Settings;
+use App\Models\SubscriptionPlan;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\UserSession;
@@ -600,6 +601,7 @@ class AuthController extends ApiBaseController
             'stockHistoryStatsData' => $this->getStockHistoryStatsData(),
             'stateData' => $this->getStatsData(),
             'paymentChartData' => $this->getPaymentChartData(),
+            'planInfo' => $this->getPlanInfo(),
         ];
 
         return ApiResponse::make('Data fetched', $data);
@@ -612,6 +614,48 @@ class AuthController extends ApiBaseController
         ];
 
         return ApiResponse::make('Data fetched', $data);
+    }
+
+    public function getPlanInfo(): array
+    {
+        $company = company();
+
+        if (!$company) {
+            return [];
+        }
+
+        // Days remaining (only meaningful when licence_expire_on is set)
+        $daysRemaining = null;
+        if ($company->licence_expire_on) {
+            $daysRemaining = max(0, (int) Carbon::now()->diffInDays($company->licence_expire_on, false));
+        }
+
+        // Products used by this company (bypass CompanyScope since we need raw count)
+        $productsUsed = Product::withoutGlobalScope(CompanyScope::class)
+            ->where('company_id', $company->id)
+            ->count();
+
+        // Plan limits from the subscription plan
+        $planName    = null;
+        $maxProducts = null;
+
+        if ($company->subscription_plan_id) {
+            $plan = SubscriptionPlan::find($company->subscription_plan_id);
+            if ($plan) {
+                $planName    = $plan->name;
+                $maxProducts = $plan->max_products;
+            }
+        }
+
+        return [
+            'plan_name'        => $planName,
+            'days_remaining'   => $daysRemaining,
+            'licence_expire_on' => $company->licence_expire_on
+                ? $company->licence_expire_on->format('d M Y')
+                : null,
+            'products_used'    => $productsUsed,
+            'products_limit'   => $maxProducts,
+        ];
     }
 
     public function getStockAlerts($limit = null)

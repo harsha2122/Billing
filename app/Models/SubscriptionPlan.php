@@ -8,7 +8,7 @@ class SubscriptionPlan extends BaseModel
 {
     protected $table = 'subscription_plans';
 
-    protected $default = ['id', 'xid', 'name', 'description', 'modules'];
+    protected $default = ['id', 'xid', 'name', 'description', 'modules', 'duration', 'max_products', 'max_users', 'max_warehouses'];
 
     protected $guarded = ['id', 'created_at', 'updated_at', 'default'];
 
