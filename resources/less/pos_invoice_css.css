@@ -4,7 +4,10 @@
 }
 
 .invoice-logo {
-    width: 200px;
+    max-width: 100%;
+    width: auto;
+    max-height: 80px;
+    object-fit: contain;
 }
 
 .company-details {
@@ -13,8 +16,11 @@
     border-bottom: 2px dotted #ddd !important;
 }
 
+/* KEY FIX: pre caused the address to overflow the 80mm thermal width */
 .company-address {
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
     margin-bottom: 0px;
 }
 
@@ -23,6 +29,7 @@
 
 .invoice-customer-details {
     width: 100%;
+    table-layout: fixed;
     margin-bottom: 5px;
 }
 
@@ -63,14 +70,19 @@
 .barcode-details {
     margin-top: 10px;
     text-align: center;
+    overflow: hidden;
+}
+
+.barcode-details svg {
+    max-width: 100%;
+    height: auto;
 }
 
 .footer-button {
     text-align: center !important;
 }
 
-/* Print size classes */
-/* Thermal: use 80mm (≈302px) to match physical receipt printer */
+/* === Thermal (80mm / 302px) === */
 .print-thermal {
     width: 302px;
     max-width: 302px;
@@ -79,37 +91,48 @@
     line-height: 1.4;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #000;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .print-thermal * {
     font-size: 12px;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 .print-thermal h2 {
     font-size: 16px;
     font-weight: 700;
     margin: 0;
+    word-break: break-word;
 }
 
 .print-thermal h3 {
     font-size: 13px;
     font-weight: 600;
     margin: 0;
+    word-break: break-word;
 }
 
 .print-thermal h4 {
     font-size: 12px;
     font-weight: 600;
     margin: 0;
+    word-break: break-word;
 }
 
 .print-thermal p {
     margin: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .print-thermal table {
     border-collapse: collapse;
     border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
 }
 
 .print-thermal td,
@@ -117,18 +140,24 @@
     padding: 2px 3px;
     font-size: 12px;
     vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .print-thermal .invoice-logo {
-    width: 150px;
+    max-width: 150px;
+    width: auto;
+    max-height: 60px;
+    object-fit: contain;
 }
 
+/* === A4 === */
 .print-a4 {
     width: 100%;
     margin: 0 auto;
 }
 
-/* Print media rules */
+/* === Print media === */
 @media print {
     * {
         -webkit-print-color-adjust: exact !important;
@@ -141,26 +170,31 @@
         margin: 0;
         padding: 0;
         font-size: 12px;
+        overflow-x: hidden;
     }
 
     body.print-thermal * {
         font-size: 12px;
+        box-sizing: border-box;
+        max-width: 100%;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
-    body.print-thermal h2 {
-        font-size: 16px;
-    }
+    body.print-thermal h2 { font-size: 16px; }
+    body.print-thermal h3 { font-size: 13px; }
+    body.print-thermal h4 { font-size: 12px; }
 
-    body.print-thermal h3 {
-        font-size: 13px;
-    }
-
-    body.print-thermal h4 {
-        font-size: 12px;
+    body.print-thermal table {
+        width: 100%;
+        table-layout: fixed;
     }
 
     body.print-thermal .invoice-logo {
-        width: 150px;
+        max-width: 150px;
+        width: auto;
+        max-height: 60px;
+        object-fit: contain;
     }
 
     body.print-a4 {
@@ -179,11 +213,12 @@
     }
 }
 
-/* Invoice template reset - override Ant Design defaults in modal/drawer views */
+/* === A4 template base reset (overrides Ant Design defaults) === */
 .pos-tpl,
 .pos-tpl * {
     box-sizing: border-box;
 }
+
 .pos-tpl h1,
 .pos-tpl h2,
 .pos-tpl h3,
@@ -196,25 +231,38 @@
     font-size: inherit;
     color: inherit;
     line-height: inherit;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
+
 .pos-tpl p {
     margin-top: 0;
     margin-bottom: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
+
 .pos-tpl table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
 .pos-tpl td,
 .pos-tpl th {
     padding: 0;
     text-align: left;
     vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
+
 .pos-tpl img {
     vertical-align: middle;
     border-style: none;
+    max-width: 100%;
+    height: auto;
 }
+
 .pos-tpl strong {
     font-weight: 700;
 }
