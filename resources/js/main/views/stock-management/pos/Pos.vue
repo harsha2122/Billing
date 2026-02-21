@@ -259,7 +259,7 @@
                         <a-card>
                             <div class="bill-footer">
                                 <a-row :gutter="[16, 16]">
-                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                    <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
                                         <a-form-item :label="$t('stock.order_tax')">
                                             <a-select
                                                 v-model:value="formData.tax_id"
@@ -283,10 +283,25 @@
                                             </a-select>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                    <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
+                                        <a-form-item label="GST %">
+                                            <a-input-number
+                                                v-model:value="formData.manual_gst_rate"
+                                                placeholder="0 – 18"
+                                                :min="0"
+                                                :max="18"
+                                                :precision="0"
+                                                @change="manualGstChanged"
+                                                style="width: 100%"
+                                            >
+                                                <template #addonAfter>%</template>
+                                            </a-input-number>
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
                                         <a-form-item :label="$t('stock.discount')">
                                             <a-input-number
-                                                v-model:value="formData.discount"
+                                                v-model:value="discountInput"
                                                 :placeholder="
                                                     $t(
                                                         'common.placeholder_default_text',
@@ -298,12 +313,19 @@
                                                 style="width: 100%"
                                             >
                                                 <template #addonBefore>
-                                                    {{ appSetting.currency.symbol }}
+                                                    <a-select
+                                                        v-model:value="formData.discount_type"
+                                                        style="width: 55px"
+                                                        @change="recalculateFinalTotal"
+                                                    >
+                                                        <a-select-option value="flat">{{ appSetting.currency.symbol }}</a-select-option>
+                                                        <a-select-option value="percent">%</a-select-option>
+                                                    </a-select>
                                                 </template>
                                             </a-input-number>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                    <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
                                         <a-form-item :label="$t('stock.shipping')">
                                             <a-input-number
                                                 v-model:value="formData.shipping"
@@ -665,7 +687,7 @@
                         <a-card>
                             <div class="bill-footer">
                                 <a-row :gutter="[16, 16]">
-                                    <a-col :span="8">
+                                    <a-col :xs="12" :sm="12" :span="6">
                                         <a-form-item :label="$t('stock.order_tax')">
                                             <a-select
                                                 v-model:value="formData.tax_id"
@@ -689,10 +711,25 @@
                                             </a-select>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="8">
+                                    <a-col :xs="12" :sm="12" :span="6">
+                                        <a-form-item label="GST %">
+                                            <a-input-number
+                                                v-model:value="formData.manual_gst_rate"
+                                                placeholder="0 – 18"
+                                                :min="0"
+                                                :max="18"
+                                                :precision="0"
+                                                @change="manualGstChanged"
+                                                style="width: 100%"
+                                            >
+                                                <template #addonAfter>%</template>
+                                            </a-input-number>
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :xs="12" :sm="12" :span="6">
                                         <a-form-item :label="$t('stock.discount')">
                                             <a-input-number
-                                                v-model:value="formData.discount"
+                                                v-model:value="discountInput"
                                                 :placeholder="
                                                     $t(
                                                         'common.placeholder_default_text',
@@ -704,12 +741,19 @@
                                                 style="width: 100%"
                                             >
                                                 <template #addonBefore>
-                                                    {{ appSetting.currency.symbol }}
+                                                    <a-select
+                                                        v-model:value="formData.discount_type"
+                                                        style="width: 55px"
+                                                        @change="recalculateFinalTotal"
+                                                    >
+                                                        <a-select-option value="flat">{{ appSetting.currency.symbol }}</a-select-option>
+                                                        <a-select-option value="percent">%</a-select-option>
+                                                    </a-select>
                                                 </template>
                                             </a-input-number>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="8">
+                                    <a-col :xs="12" :sm="12" :span="6">
                                         <a-form-item :label="$t('stock.shipping')">
                                             <a-input-number
                                                 v-model:value="formData.shipping"
@@ -960,7 +1004,7 @@
 </template>
 
 <script>
-import { ref, onMounted, reactive, toRefs, nextTick } from "vue";
+import { ref, computed, onMounted, reactive, toRefs, nextTick } from "vue";
 import {
     PlusOutlined,
     EditOutlined,
@@ -1238,20 +1282,32 @@ export default {
             selectedProducts.value.map((selectedProduct) => {
                 total += selectedProduct.subtotal;
             });
-            const discountAmount =
-                formData.value.discount != "" ? parseFloat(formData.value.discount) : 0;
-            const taxRate =
-                formData.value.tax_rate != "" ? parseFloat(formData.value.tax_rate) : 0;
+
+            // Discount: flat amount or percentage of items total
+            let discountAmount = 0;
+            if (formData.value.discount_type === "percent") {
+                const pct = parseFloat(formData.value.discount_percent) || 0;
+                discountAmount = (total * pct) / 100;
+            } else {
+                discountAmount = parseFloat(formData.value.discount) || 0;
+            }
+
+            // Effective GST rate: manual (1-18) takes priority over dropdown
+            const effectiveTaxRate =
+                formData.value.manual_gst_rate !== null &&
+                formData.value.manual_gst_rate !== undefined &&
+                formData.value.manual_gst_rate !== ""
+                    ? parseFloat(formData.value.manual_gst_rate) || 0
+                    : parseFloat(formData.value.tax_rate) || 0;
 
             total = total - discountAmount;
-
-            const tax = total * (taxRate / 100);
-
-            total = total + parseFloat(formData.value.shipping);
+            const tax = total * (effectiveTaxRate / 100);
+            total = total + (parseFloat(formData.value.shipping) || 0);
 
             formData.value.subtotal = formatAmount(total + tax);
             formData.value.tax_amount = formatAmount(tax);
-            formData.value.discount = discountAmount;
+            formData.value.discount = formatAmount(discountAmount);
+            formData.value.tax_rate = effectiveTaxRate;
         };
 
         const showDeleteConfirm = (product) => {
@@ -1292,6 +1348,12 @@ export default {
 
         const taxChanged = (value, option) => {
             formData.value.tax_rate = value == undefined ? 0 : option.tax.rate;
+            formData.value.manual_gst_rate = null; // clear manual when dropdown selected
+            recalculateFinalTotal();
+        };
+
+        const manualGstChanged = () => {
+            formData.value.tax_id = undefined; // clear dropdown when manual GST is typed
             recalculateFinalTotal();
         };
 
@@ -1325,10 +1387,12 @@ export default {
                 tax_id: undefined,
                 category_id: undefined,
                 brand_id: undefined,
-                tax_id: undefined,
                 tax_rate: 0,
                 tax_amount: 0,
                 discount: 0,
+                discount_type: "flat",
+                discount_percent: 0,
+                manual_gst_rate: null,
                 shipping: 0,
                 subtotal: 0,
             };
@@ -1368,6 +1432,22 @@ export default {
             addEditVisible.value = false;
         };
 
+        // Computed v-model for discount input: reads % field or flat field based on type
+        const discountInput = computed({
+            get() {
+                return formData.value.discount_type === "percent"
+                    ? formData.value.discount_percent
+                    : formData.value.discount;
+            },
+            set(val) {
+                if (formData.value.discount_type === "percent") {
+                    formData.value.discount_percent = val || 0;
+                } else {
+                    formData.value.discount = val || 0;
+                }
+            },
+        });
+
         // Customer
         const customerAdded = () => {
             axiosAdmin.get(customerUrl).then((response) => {
@@ -1406,8 +1486,10 @@ export default {
             selectSaleProduct,
 
             taxChanged,
+            manualGstChanged,
             quantityChanged,
             recalculateFinalTotal,
+            discountInput,
 
             // Pay Now
             payNow,
