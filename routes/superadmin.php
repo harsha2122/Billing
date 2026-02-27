@@ -26,6 +26,10 @@ ApiRoute::group([
     ApiRoute::delete('companies/{id}/sessions', ['as' => 'api.superadmin.companies.clear-sessions', 'uses' => 'CompaniesController@clearSessions']);
     ApiRoute::post('companies/{id}/change-admin-password', ['as' => 'api.superadmin.companies.change-admin-password', 'uses' => 'CompaniesController@changeAdminPassword']);
 
+    // Subscription lifecycle: renew expired plan, upgrade plan mid-cycle
+    ApiRoute::post('companies/{id}/renew-subscription', ['as' => 'api.superadmin.companies.renew-subscription', 'uses' => 'CompaniesController@renewSubscription']);
+    ApiRoute::post('companies/{id}/upgrade-subscription', ['as' => 'api.superadmin.companies.upgrade-subscription', 'uses' => 'CompaniesController@upgradeSubscription']);
+
     // Dashboard stats
     ApiRoute::get('dashboard/stats', ['as' => 'api.superadmin.dashboard.stats', 'uses' => 'DashboardController@stats']);
 

@@ -13,10 +13,12 @@ use App\Models\Currency;
 use App\Models\Lang;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\UserSession;
 use App\Models\Warehouse;
 use App\Scopes\CompanyScope;
+use Carbon\Carbon;
 use Database\Seeders\PosInvoiceTemplateSeeder;
 use Examyou\RestAPI\ApiResponse;
 use Illuminate\Support\Facades\DB;
@@ -299,5 +301,117 @@ class CompaniesController extends ApiBaseController
         $admin->save();
 
         return ApiResponse::make('Admin password updated successfully', []);
+    }
+
+    /**
+     * Renew an expired (or active) subscription for a company/vendor.
+     * Extends licence_expire_on by the plan's duration from today (if expired)
+     * or from the current expiry date (if still active).
+     */
+    public function renewSubscription(...$args)
+    {
+        $xid = $args[0] ?? null;
+
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
+        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+
+        if (!$company->subscription_plan_id) {
+            return ApiResponse::make('No subscription plan assigned to this company. Please assign a plan first.', [], 422);
+        }
+
+        $plan = SubscriptionPlan::find($company->subscription_plan_id);
+
+        if (!$plan) {
+            return ApiResponse::make('Assigned subscription plan not found.', [], 404);
+        }
+
+        $duration = $plan->duration ?? 30;
+        $now = Carbon::now();
+
+        // If plan is already expired or no expiry set, renew from today.
+        // If plan is still active, extend from the current expiry date.
+        if ($company->licence_expire_on && $company->licence_expire_on->greaterThan($now)) {
+            $newExpiry = $company->licence_expire_on->copy()->addDays($duration);
+        } else {
+            $newExpiry = $now->copy()->addDays($duration);
+        }
+
+        $company->licence_expire_on = $newExpiry->format('Y-m-d');
+        $company->status = 'active';
+        $company->save();
+
+        return ApiResponse::make('Subscription renewed successfully', [
+            'company_id'        => $company->xid,
+            'plan'              => $plan->name,
+            'duration_days'     => $duration,
+            'licence_expire_on' => $newExpiry->format('d M Y'),
+        ]);
+    }
+
+    /**
+     * Upgrade (or downgrade) a company's subscription plan mid-cycle.
+     * Remaining days on the current plan are carried over to the new plan.
+     */
+    public function upgradeSubscription(...$args)
+    {
+        $request = $args[0] ?? request();
+        $xid     = $args[1] ?? null;
+
+        $id = Hashids::decode($xid);
+        $id = $id[0] ?? null;
+
+        if (!$id) {
+            return ApiResponse::make('Invalid company ID', [], 400);
+        }
+
+        $request->validate([
+            'subscription_plan_id' => 'required|string',
+        ]);
+
+        // Decode new plan's hashed ID
+        $newPlanId = Hashids::decode($request->subscription_plan_id);
+        $newPlanId = $newPlanId[0] ?? null;
+
+        if (!$newPlanId) {
+            return ApiResponse::make('Invalid subscription plan ID', [], 400);
+        }
+
+        $newPlan = SubscriptionPlan::find($newPlanId);
+
+        if (!$newPlan) {
+            return ApiResponse::make('Subscription plan not found', [], 404);
+        }
+
+        $company = Company::withoutGlobalScope(CompanyScope::class)->findOrFail($id);
+
+        $now = Carbon::now();
+        $newDuration = $newPlan->duration ?? 30;
+
+        // Calculate remaining days on current plan and carry them over
+        $remainingDays = 0;
+        if ($company->licence_expire_on && $company->licence_expire_on->greaterThan($now)) {
+            $remainingDays = (int) $now->diffInDays($company->licence_expire_on, false);
+        }
+
+        $newExpiry = $now->copy()->addDays($newDuration + $remainingDays);
+
+        $company->subscription_plan_id = $newPlanId;
+        $company->licence_expire_on    = $newExpiry->format('Y-m-d');
+        $company->status               = 'active';
+        $company->save();
+
+        return ApiResponse::make('Subscription upgraded successfully', [
+            'company_id'        => $company->xid,
+            'new_plan'          => $newPlan->name,
+            'carried_over_days' => $remainingDays,
+            'new_duration_days' => $newDuration,
+            'licence_expire_on' => $newExpiry->format('d M Y'),
+        ]);
     }
 }
