@@ -77,67 +77,38 @@
 						{{ formatDate(record.created_at) }}
 					</template>
 					<template v-if="column.dataIndex === 'action'">
-						<a-space wrap>
-							<a-button
-								type="link"
-								size="small"
-								@click="editCompany(record)"
-							>
-								<EditOutlined /> Edit
+						<a-dropdown :trigger="['click']">
+							<a-button type="text" size="small">
+								<EllipsisOutlined style="font-size: 20px" />
 							</a-button>
-							<a-button
-								type="link"
-								size="small"
-								@click="viewCompany(record)"
-							>
-								<EyeOutlined /> View
-							</a-button>
-							<a-button
-								type="link"
-								size="small"
-								@click="showChangePassword(record)"
-							>
-								<KeyOutlined /> Password
-							</a-button>
-							<a-button
-								type="link"
-								size="small"
-								style="color: #722ed1"
-								@click="showChangePlan(record)"
-							>
-								<SwapOutlined /> Change Plan
-							</a-button>
-							<a-popconfirm
-								:title="`Renew subscription for ${record.name}? This will extend the plan by its duration.`"
-								ok-text="Renew"
-								cancel-text="Cancel"
-								@confirm="renewSubscription(record.xid)"
-							>
-								<a-button type="link" size="small" style="color: #13c2c2">
-									<RedoOutlined /> Renew
-								</a-button>
-							</a-popconfirm>
-							<a-popconfirm
-								title="Logout all active devices for this company?"
-								ok-text="Yes"
-								cancel-text="No"
-								@confirm="clearSessions(record.xid)"
-							>
-								<a-button type="link" size="small" style="color: #fa8c16">
-									<LogoutOutlined /> Logout All
-								</a-button>
-							</a-popconfirm>
-							<a-popconfirm
-								title="Are you sure you want to delete this company?"
-								ok-text="Yes"
-								cancel-text="No"
-								@confirm="deleteCompany(record.xid)"
-							>
-								<a-button type="link" size="small" danger>
-									<DeleteOutlined /> Delete
-								</a-button>
-							</a-popconfirm>
-						</a-space>
+							<template #overlay>
+								<a-menu>
+									<a-menu-item key="edit" @click="editCompany(record)">
+										<EditOutlined /> Edit
+									</a-menu-item>
+									<a-menu-item key="view" @click="viewCompany(record)">
+										<EyeOutlined /> View
+									</a-menu-item>
+									<a-menu-item key="password" @click="showChangePassword(record)">
+										<KeyOutlined /> Change Password
+									</a-menu-item>
+									<a-menu-divider />
+									<a-menu-item key="change-plan" @click="showChangePlan(record)" style="color: #722ed1">
+										<SwapOutlined /> Change Plan
+									</a-menu-item>
+									<a-menu-item key="renew" @click="confirmRenew(record)" style="color: #13c2c2">
+										<RedoOutlined /> Renew Subscription
+									</a-menu-item>
+									<a-menu-divider />
+									<a-menu-item key="logout" @click="confirmClearSessions(record)" style="color: #fa8c16">
+										<LogoutOutlined /> Logout All Devices
+									</a-menu-item>
+									<a-menu-item key="delete" @click="confirmDelete(record)" style="color: #ff4d4f">
+										<DeleteOutlined /> Delete
+									</a-menu-item>
+								</a-menu>
+							</template>
+						</a-dropdown>
 					</template>
 				</template>
 			</a-table>
@@ -403,8 +374,9 @@ import {
 	LogoutOutlined,
 	RedoOutlined,
 	SwapOutlined,
+	EllipsisOutlined,
 } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
+import { message, Modal } from "ant-design-vue";
 import dayjs from "dayjs";
 import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
 import axiosAdmin from "../../../common/plugins/axiosAdmin";
@@ -419,6 +391,7 @@ export default defineComponent({
 		LogoutOutlined,
 		RedoOutlined,
 		SwapOutlined,
+		EllipsisOutlined,
 		AdminPageHeader,
 	},
 	setup() {
@@ -760,11 +733,43 @@ export default defineComponent({
 				});
 		};
 
+		// ── Confirm dialogs for destructive actions ───────────────────
+
+		const confirmRenew = (record) => {
+			Modal.confirm({
+				title: `Renew subscription for ${record.name}?`,
+				content: "This will extend the plan by its full duration.",
+				okText: "Renew",
+				cancelText: "Cancel",
+				onOk: () => renewSubscription(record.xid),
+			});
+		};
+
+		const confirmClearSessions = (record) => {
+			Modal.confirm({
+				title: "Logout all active devices for this company?",
+				okText: "Yes",
+				cancelText: "No",
+				onOk: () => clearSessions(record.xid),
+			});
+		};
+
+		const confirmDelete = (record) => {
+			Modal.confirm({
+				title: "Are you sure you want to delete this company?",
+				okText: "Delete",
+				okType: "danger",
+				cancelText: "Cancel",
+				onOk: () => deleteCompany(record.xid),
+			});
+		};
+
 		// ── Helpers ────────────────────────────────────────────────────
 
 		const isExpired = (date) => {
 			if (!date) return false;
-			return dayjs(date).isBefore(dayjs(), "day");
+			// Expired when the expiry date is today or in the past
+			return !dayjs(date).isAfter(dayjs(), "day");
 		};
 
 		const getStatusColor = (status) => {
@@ -847,6 +852,9 @@ export default defineComponent({
 			renewSubscription,
 			showChangePlan,
 			handleChangePlan,
+			confirmRenew,
+			confirmClearSessions,
+			confirmDelete,
 			isExpired,
 			getStatusColor,
 			getBusinessTypeColor,
