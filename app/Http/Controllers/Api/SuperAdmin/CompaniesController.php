@@ -310,7 +310,8 @@ class CompaniesController extends ApiBaseController
      */
     public function renewSubscription(...$args)
     {
-        $xid = $args[0] ?? null;
+        // POST route: $args[0] = request, $args[1] = {id} (same pattern as changeAdminPassword)
+        $xid = $args[1] ?? null;
 
         $id = Hashids::decode($xid);
         $id = $id[0] ?? null;
