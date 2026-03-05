@@ -46,8 +46,16 @@ class CompaniesController extends ApiBaseController
             ->orderBy('created_at', 'desc')
             ->paginate(request('per_page', 10));
 
+        $data = collect($companies->items())->map(function ($company) {
+            $item = $company->toArray();
+            // licence_expire_on is in $guarded so it's excluded from toArray()
+            // — inject it manually as a plain date string
+            $item['licence_expire_on'] = $company->getRawOriginal('licence_expire_on');
+            return $item;
+        })->values()->toArray();
+
         return ApiResponse::make('Success', [
-            'data' => $companies->items(),
+            'data' => $data,
             'total' => $companies->total(),
             'per_page' => $companies->perPage(),
             'current_page' => $companies->currentPage(),
