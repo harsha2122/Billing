@@ -111,10 +111,19 @@ class CompaniesController extends ApiBaseController
             // Update company warehouse and subscription plan
             $company->warehouse_id = $warehouse->id;
 
-            // Assign subscription plan if provided
+            // Assign subscription plan and set expiry date if provided
             if ($request->has('subscription_plan_id') && $request->subscription_plan_id) {
                 $subscriptionPlanId = Hashids::decode($request->subscription_plan_id);
-                $company->subscription_plan_id = $subscriptionPlanId[0] ?? null;
+                $planId = $subscriptionPlanId[0] ?? null;
+                $company->subscription_plan_id = $planId;
+
+                if ($planId) {
+                    $plan = SubscriptionPlan::find($planId);
+                    if ($plan) {
+                        $duration = $plan->duration ?? 30;
+                        $company->licence_expire_on = Carbon::now()->addDays($duration)->format('Y-m-d');
+                    }
+                }
             }
 
             $company->save();
