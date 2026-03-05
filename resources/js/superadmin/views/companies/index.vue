@@ -55,6 +55,24 @@
 						</div>
 						<span v-else>-</span>
 					</template>
+					<template v-if="column.dataIndex === 'subscription_plan'">
+						<div v-if="record.subscription_plan">
+							<div>{{ record.subscription_plan.name }}</div>
+						</div>
+						<span v-else style="color: #999">No Plan</span>
+					</template>
+					<template v-if="column.dataIndex === 'licence_expire_on'">
+						<div v-if="record.licence_expire_on">
+							<div>{{ formatDate(record.licence_expire_on) }}</div>
+							<a-tag
+								:color="isExpired(record.licence_expire_on) ? 'red' : 'green'"
+								style="margin-top: 4px; font-size: 11px"
+							>
+								{{ isExpired(record.licence_expire_on) ? 'Expired' : 'Active' }}
+							</a-tag>
+						</div>
+						<span v-else style="color: #999">-</span>
+					</template>
 					<template v-if="column.dataIndex === 'created_at'">
 						{{ formatDate(record.created_at) }}
 					</template>
@@ -81,6 +99,24 @@
 							>
 								<KeyOutlined /> Password
 							</a-button>
+							<a-button
+								type="link"
+								size="small"
+								style="color: #722ed1"
+								@click="showChangePlan(record)"
+							>
+								<SwapOutlined /> Change Plan
+							</a-button>
+							<a-popconfirm
+								:title="`Renew subscription for ${record.name}? This will extend the plan by its duration.`"
+								ok-text="Renew"
+								cancel-text="Cancel"
+								@confirm="renewSubscription(record.xid)"
+							>
+								<a-button type="link" size="small" style="color: #13c2c2">
+									<RedoOutlined /> Renew
+								</a-button>
+							</a-popconfirm>
 							<a-popconfirm
 								title="Logout all active devices for this company?"
 								ok-text="Yes"
@@ -247,6 +283,24 @@
 				<a-descriptions-item label="Created At">
 					{{ formatDate(viewingCompany.created_at) }}
 				</a-descriptions-item>
+				<a-descriptions-item label="Subscription Plan">
+					<span v-if="viewingCompany.subscription_plan">
+						{{ viewingCompany.subscription_plan.name }}
+					</span>
+					<span v-else style="color: #999">No Plan Assigned</span>
+				</a-descriptions-item>
+				<a-descriptions-item label="Plan Expiry">
+					<div v-if="viewingCompany.licence_expire_on">
+						{{ formatDate(viewingCompany.licence_expire_on) }}
+						<a-tag
+							:color="isExpired(viewingCompany.licence_expire_on) ? 'red' : 'green'"
+							style="margin-left: 8px"
+						>
+							{{ isExpired(viewingCompany.licence_expire_on) ? 'Expired' : 'Active' }}
+						</a-tag>
+					</div>
+					<span v-else style="color: #999">-</span>
+				</a-descriptions-item>
 				<a-descriptions-item label="Admin Name">
 					{{ viewingCompany.admin ? viewingCompany.admin.name : '-' }}
 				</a-descriptions-item>
@@ -298,6 +352,43 @@
 				</a-form-item>
 			</a-form>
 		</a-modal>
+
+		<!-- Change Plan Modal -->
+		<a-modal
+			v-model:visible="changePlanVisible"
+			title="Change Subscription Plan"
+			:width="480"
+			:confirm-loading="changePlanLoading"
+			ok-text="Update Plan"
+			@ok="handleChangePlan"
+			@cancel="changePlanVisible = false"
+		>
+			<a-alert
+				type="info"
+				show-icon
+				message="Remaining days on the current plan will be carried over to the new plan."
+				style="margin-bottom: 16px"
+			/>
+			<a-form layout="vertical">
+				<a-form-item label="Select New Plan" required>
+					<a-select
+						v-model:value="changePlanData.subscription_plan_id"
+						placeholder="Select a subscription plan"
+						:loading="plansLoading"
+						style="width: 100%"
+					>
+						<a-select-option
+							v-for="plan in subscriptionPlans"
+							:key="plan.xid"
+							:value="plan.xid"
+						>
+							{{ plan.name }} — {{ plan.duration || 30 }} days
+							<span v-if="plan.max_products"> | Max {{ plan.max_products }} products</span>
+						</a-select-option>
+					</a-select>
+				</a-form-item>
+			</a-form>
+		</a-modal>
 	</div>
 </template>
 
@@ -310,6 +401,8 @@ import {
 	EyeOutlined,
 	KeyOutlined,
 	LogoutOutlined,
+	RedoOutlined,
+	SwapOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
@@ -324,6 +417,8 @@ export default defineComponent({
 		EyeOutlined,
 		KeyOutlined,
 		LogoutOutlined,
+		RedoOutlined,
+		SwapOutlined,
 		AdminPageHeader,
 	},
 	setup() {
@@ -343,6 +438,12 @@ export default defineComponent({
 		const changePasswordLoading = ref(false);
 		const changePasswordXid = ref(null);
 		const changePasswordData = ref({ password: "", confirm: "" });
+
+		// Change plan state
+		const changePlanVisible = ref(false);
+		const changePlanLoading = ref(false);
+		const changePlanXid = ref(null);
+		const changePlanData = ref({ subscription_plan_id: null });
 
 		const pagination = ref({
 			current: 1,
@@ -392,6 +493,14 @@ export default defineComponent({
 			{
 				title: "Admin",
 				dataIndex: "admin",
+			},
+			{
+				title: "Subscription Plan",
+				dataIndex: "subscription_plan",
+			},
+			{
+				title: "Plan Expiry",
+				dataIndex: "licence_expire_on",
 			},
 			{
 				title: "Status",
@@ -593,7 +702,70 @@ export default defineComponent({
 				});
 		};
 
+		// ── Subscription: Renew ─────────────────────────────────────────
+
+		const renewSubscription = (xid) => {
+			axiosAdmin
+				.post(`superadmin/companies/${xid}/renew-subscription`)
+				.then((response) => {
+					const data = response.data;
+					message.success(
+						`Subscription renewed! New expiry: ${data.licence_expire_on}`
+					);
+					fetchCompanies();
+				})
+				.catch((error) => {
+					message.error(
+						error.response?.data?.message || "Failed to renew subscription"
+					);
+				});
+		};
+
+		// ── Subscription: Change Plan ───────────────────────────────────
+
+		const showChangePlan = (record) => {
+			changePlanXid.value = record.xid;
+			changePlanData.value = {
+				subscription_plan_id: record.subscription_plan ? record.x_subscription_plan_id : null,
+			};
+			changePlanVisible.value = true;
+		};
+
+		const handleChangePlan = () => {
+			if (!changePlanData.value.subscription_plan_id) {
+				message.error("Please select a subscription plan");
+				return;
+			}
+			changePlanLoading.value = true;
+			axiosAdmin
+				.post(`superadmin/companies/${changePlanXid.value}/upgrade-subscription`, {
+					subscription_plan_id: changePlanData.value.subscription_plan_id,
+				})
+				.then((response) => {
+					const data = response.data;
+					message.success(
+						`Plan changed to "${data.new_plan}"! New expiry: ${data.licence_expire_on}` +
+						(data.carried_over_days > 0 ? ` (${data.carried_over_days} days carried over)` : "")
+					);
+					changePlanVisible.value = false;
+					fetchCompanies();
+				})
+				.catch((error) => {
+					message.error(
+						error.response?.data?.message || "Failed to change plan"
+					);
+				})
+				.finally(() => {
+					changePlanLoading.value = false;
+				});
+		};
+
 		// ── Helpers ────────────────────────────────────────────────────
+
+		const isExpired = (date) => {
+			if (!date) return false;
+			return dayjs(date).isBefore(dayjs(), "day");
+		};
 
 		const getStatusColor = (status) => {
 			const colors = {
@@ -615,7 +787,7 @@ export default defineComponent({
 		};
 
 		const formatDate = (date) => {
-			return dayjs(date).format("DD-MM-YYYY HH:mm");
+			return dayjs(date).format("DD-MM-YYYY");
 		};
 
 		const fetchSubscriptionPlans = () => {
@@ -657,6 +829,9 @@ export default defineComponent({
 			changePasswordVisible,
 			changePasswordLoading,
 			changePasswordData,
+			changePlanVisible,
+			changePlanLoading,
+			changePlanData,
 			fetchCompanies,
 			fetchSubscriptionPlans,
 			handleTableChange,
@@ -669,6 +844,10 @@ export default defineComponent({
 			clearSessions,
 			showChangePassword,
 			handleChangePassword,
+			renewSubscription,
+			showChangePlan,
+			handleChangePlan,
+			isExpired,
 			getStatusColor,
 			getBusinessTypeColor,
 			formatDate,
