@@ -79,6 +79,21 @@
 			>
 				{{ $t("menu.products") }}
 			</a-menu-item>
+			<a-menu-item
+				@click="
+					() => {
+						menuSelected();
+						$router.push({ name: 'admin.products.bulk_barcode_print' });
+					}
+				"
+				key="bulk_barcode_print"
+				v-if="
+					permsArray.includes('products_view') || permsArray.includes('admin')
+				"
+			>
+				<BarcodeOutlined />
+				{{ $t("product.bulk_barcode_print") }}
+			</a-menu-item>
 		</a-sub-menu>
 
 		<a-sub-menu
@@ -431,6 +446,7 @@ import {
 	BarChartOutlined,
 	CalculatorOutlined,
 	ApartmentOutlined,
+	BarcodeOutlined,
 } from "@ant-design/icons-vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import common from "../../common/composable/common";
@@ -455,6 +471,7 @@ export default defineComponent({
 		BarChartOutlined,
 		CalculatorOutlined,
 		ApartmentOutlined,
+		BarcodeOutlined,
 	},
 	setup(props, { emit }) {
 		const { appSetting, user, permsArray, appModules, cssSettings } = common();
@@ -471,6 +488,7 @@ export default defineComponent({
 			"settings",
 			"online_orders",
 			"website_setup",
+			"bulk_barcode_print",
 		];
 		const store = useStore();
 		const route = useRoute();

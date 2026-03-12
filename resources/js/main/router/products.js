@@ -2,6 +2,7 @@ import Admin from '../../common/layouts/Admin.vue';
 import Brands from '../views/product-manager/brands/index.vue';
 import Categories from '../views/product-manager/categories/index.vue';
 import Products from '../views/product-manager/products/index.vue';
+import BulkBarcodePrint from '../views/product-manager/products/BulkBarcodePrint.vue';
 
 export default [
 	{
@@ -38,6 +39,17 @@ export default [
 					requireAuth: true,
 					menuParent: "product_manager",
 					menuKey: route => "products",
+					permission: "products_view",
+				}
+			},
+			{
+				path: '/admin/products/bulk-barcode-print',
+				component: BulkBarcodePrint,
+				name: 'admin.products.bulk_barcode_print',
+				meta: {
+					requireAuth: true,
+					menuParent: "product_manager",
+					menuKey: route => "bulk_barcode_print",
 					permission: "products_view",
 				}
 			},
