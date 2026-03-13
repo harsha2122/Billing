@@ -91,8 +91,8 @@
 					permsArray.includes('products_view') || permsArray.includes('admin')
 				"
 			>
-				<BarcodeOutlined />
-				Bulk Barcode Print
+				<TagOutlined />
+				<span>Bulk Barcode Print</span>
 			</a-menu-item>
 		</a-sub-menu>
 
@@ -446,7 +446,7 @@ import {
 	BarChartOutlined,
 	CalculatorOutlined,
 	ApartmentOutlined,
-	BarcodeOutlined,
+	TagOutlined,
 } from "@ant-design/icons-vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import common from "../../common/composable/common";
@@ -471,7 +471,7 @@ export default defineComponent({
 		BarChartOutlined,
 		CalculatorOutlined,
 		ApartmentOutlined,
-		BarcodeOutlined,
+		TagOutlined,
 	},
 	setup(props, { emit }) {
 		const { appSetting, user, permsArray, appModules, cssSettings } = common();

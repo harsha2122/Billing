@@ -286,6 +286,7 @@ import {
 	PlusOutlined,
 	PrinterOutlined,
 	DeleteOutlined,
+	TagOutlined,
 } from "@ant-design/icons-vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
 import common from "../../../../common/composable/common";
@@ -296,6 +297,7 @@ export default {
 		PlusOutlined,
 		PrinterOutlined,
 		DeleteOutlined,
+		TagOutlined,
 	},
 	setup() {
 		const { permsArray, formatAmountCurrency, getRecursiveCategories, filterTreeNode } = common();
