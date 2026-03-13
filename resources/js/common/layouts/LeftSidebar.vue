@@ -238,6 +238,19 @@
                         </a-menu-item>
                     </a-sub-menu>
 
+                    <a-menu-item
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.bulk_barcode_print' });
+                            }
+                        "
+                        key="bulk_barcode_print"
+                    >
+                        <TagOutlined />
+                        <span>Bulk Barcode Print</span>
+                    </a-menu-item>
+
                     <a-sub-menu
                         key="sales"
                         v-if="
@@ -759,6 +772,7 @@ import {
     CarOutlined,
     DollarCircleOutlined,
     ApartmentOutlined,
+    TagOutlined,
 } from "@ant-design/icons-vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import common from "../../common/composable/common";
@@ -789,6 +803,7 @@ export default defineComponent({
         CarOutlined,
         DollarCircleOutlined,
         ApartmentOutlined,
+        TagOutlined,
     },
     setup(props, { emit }) {
         const {
@@ -804,6 +819,7 @@ export default defineComponent({
             "dashboard",
             "superadmin-dashboard",
             "product_manager",
+            "bulk_barcode_print",
             "stock_management",
             "pos",
             "stock_transfer",
