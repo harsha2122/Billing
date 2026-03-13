@@ -92,7 +92,7 @@
 				"
 			>
 				<BarcodeOutlined />
-				{{ $t("product.bulk_barcode_print") }}
+				Bulk Barcode Print
 			</a-menu-item>
 		</a-sub-menu>
 
