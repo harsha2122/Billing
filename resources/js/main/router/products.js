@@ -43,12 +43,12 @@ export default [
 				}
 			},
 			{
-				path: '/admin/products/bulk-barcode-print',
+				path: '/admin/bulk-barcode-print',
 				component: BulkBarcodePrint,
-				name: 'admin.products.bulk_barcode_print',
+				name: 'admin.bulk_barcode_print',
 				meta: {
 					requireAuth: true,
-					menuParent: "product_manager",
+					menuParent: "bulk_barcode_print",
 					menuKey: route => "bulk_barcode_print",
 					permission: "products_view",
 				}

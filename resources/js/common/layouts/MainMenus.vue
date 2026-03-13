@@ -79,22 +79,21 @@
 			>
 				{{ $t("menu.products") }}
 			</a-menu-item>
-			<a-menu-item
-				@click="
-					() => {
-						menuSelected();
-						$router.push({ name: 'admin.products.bulk_barcode_print' });
-					}
-				"
-				key="bulk_barcode_print"
-				v-if="
-					permsArray.includes('products_view') || permsArray.includes('admin')
-				"
-			>
-				<TagOutlined />
-				<span>Bulk Barcode Print</span>
-			</a-menu-item>
 		</a-sub-menu>
+
+		<a-menu-item
+			@click="
+				() => {
+					menuSelected();
+					$router.push({ name: 'admin.bulk_barcode_print' });
+				}
+			"
+			key="bulk_barcode_print"
+			v-if="permsArray.includes('products_view') || permsArray.includes('admin')"
+		>
+			<TagOutlined />
+			<span>Bulk Barcode Print</span>
+		</a-menu-item>
 
 		<a-sub-menu
 			key="stock_management"

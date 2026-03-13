@@ -10,7 +10,6 @@
 						{{ $t("menu.dashboard") }}
 					</router-link>
 				</a-breadcrumb-item>
-				<a-breadcrumb-item>{{ $t("menu.product_manager") }}</a-breadcrumb-item>
 				<a-breadcrumb-item>Bulk Barcode Print</a-breadcrumb-item>
 			</a-breadcrumb>
 		</template>
