@@ -255,17 +255,17 @@
                         @endif
                     </td>
                     <td style="width: 55%; vertical-align: middle;">
-                        <div class="header-company-name">{{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                        <div class="header-company-name">{{ $vendorInfo['name'] }}</div>
                         @php
-                            $headerAddress = $order->warehouse ? $order->warehouse->address : $company->address;
+                            $headerAddress = $vendorInfo['address'];
                         @endphp
                         @if($headerAddress)
                             <div style="margin-top: 3px;">{{ $headerAddress }}</div>
                         @endif
                         <div>
                             @php
-                                $headerPhone = $order->warehouse ? $order->warehouse->phone : $company->phone;
-                                $headerEmail = $order->warehouse ? $order->warehouse->email : $company->email;
+                                $headerPhone = $vendorInfo['phone'];
+                                $headerEmail = $vendorInfo['email'];
                             @endphp
                             @if($headerPhone)
                                 {{ $traslations['phone'] ?? 'Phone' }}: {{ $headerPhone }}
@@ -580,7 +580,7 @@
                 </td>
                 <td style="width: 40%; text-align: right; vertical-align: bottom;">
                     <div>
-                        <div class="font-bold" style="margin-bottom: 5px;">For {{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                        <div class="font-bold" style="margin-bottom: 5px;">For {{ $vendorInfo['name'] }}</div>
                         @if($order->warehouse && $order->warehouse->signature)
                             <img src="{{ $order->warehouse->signature_url }}" style="max-width: 150px; max-height: 60px;" />
                             <br>

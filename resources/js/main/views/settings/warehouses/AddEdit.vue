@@ -264,6 +264,26 @@
                     </a-row>
 
                     <a-row :gutter="16">
+                        <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                            <a-form-item
+                                :label="$t('warehouse.city')"
+                                name="city"
+                                :help="rules.city ? rules.city.message : null"
+                                :validateStatus="rules.city ? 'error' : null"
+                            >
+                                <a-input
+                                    v-model:value="formData.city"
+                                    :placeholder="
+                                        $t('common.placeholder_default_text', [
+                                            $t('warehouse.city'),
+                                        ])
+                                    "
+                                />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+
+                    <a-row :gutter="16">
                         <a-col :xs="24" :sm="24" :md="24" :lg="24">
                             <a-form-item>
                                 <a-typography-paragraph type="warning" strong>

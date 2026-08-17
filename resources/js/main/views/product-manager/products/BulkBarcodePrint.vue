@@ -156,13 +156,32 @@
 					</a-form-item>
 					<a-row :gutter="16">
 						<a-col :span="12">
-							<a-form-item label="Show Price">
+							<a-form-item label="Show Name">
+								<a-switch v-model:checked="showProductName" />
+							</a-form-item>
+						</a-col>
+						<a-col :span="12">
+							<a-form-item label="Show MRP">
+								<a-switch v-model:checked="showMrp" />
+							</a-form-item>
+						</a-col>
+					</a-row>
+					<a-row :gutter="16">
+						<a-col :span="12">
+							<a-form-item label="Show Sales Price">
 								<a-switch v-model:checked="showPrice" />
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-item label="Show Name">
-								<a-switch v-model:checked="showProductName" />
+							<a-form-item label="Show Shop Name">
+								<a-switch v-model:checked="showShopName" />
+							</a-form-item>
+						</a-col>
+					</a-row>
+					<a-row :gutter="16">
+						<a-col :span="12">
+							<a-form-item label="Show City">
+								<a-switch v-model:checked="showCity" />
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -187,7 +206,11 @@
 						</div>
 						<div class="mock-code">123456789</div>
 						<div v-if="showProductName" class="mock-name">Product Name</div>
+						<div v-if="showMrp" class="mock-mrp">MRP: ₹ 349.00</div>
 						<div v-if="showPrice" class="mock-price">₹ 299.00</div>
+						<div v-if="showShopName || showCity" class="mock-shop">
+							<template v-if="showShopName">My Shop</template><template v-if="showShopName && showCity">, </template><template v-if="showCity">City</template>
+						</div>
 					</div>
 				</div>
 				<div class="preview-hint">
@@ -270,8 +293,14 @@
 						tag="svg"
 					/>
 					<div v-if="showProductName" class="label-product-name">{{ item.name }}</div>
+					<div v-if="showMrp && item.details && item.details.mrp" class="label-mrp">
+						MRP: {{ formatAmountCurrency(item.details.mrp) }}
+					</div>
 					<div v-if="showPrice && item.details" class="label-price">
 						{{ formatAmountCurrency(item.details.sales_price) }}
+					</div>
+					<div v-if="showShopName || showCity" class="label-shop">
+						<template v-if="showShopName">{{ shopName }}</template><template v-if="showShopName && showCity && shopCity">, </template><template v-if="showCity">{{ shopCity }}</template>
 					</div>
 				</div>
 			</template>
@@ -287,6 +316,7 @@ import {
 	DeleteOutlined,
 	TagOutlined,
 } from "@ant-design/icons-vue";
+import { useStore } from "vuex";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
 import common from "../../../../common/composable/common";
 
@@ -300,6 +330,7 @@ export default {
 	},
 	setup() {
 		const { permsArray, formatAmountCurrency, getRecursiveCategories, filterTreeNode } = common();
+		const store = useStore();
 
 		const searchString    = ref("");
 		const filterBrandId   = ref(undefined);
@@ -318,6 +349,17 @@ export default {
 		const columnsPerRow  = ref(3);
 		const showPrice      = ref(true);
 		const showProductName = ref(true);
+		const showMrp        = ref(false);
+		const showShopName   = ref(true);
+		const showCity       = ref(false);
+
+		// Shop / vendor identity shown on the label - defaults to the
+		// currently selected warehouse (falls back to the company name).
+		const selectedWarehouse = computed(() => store.state.auth.warehouse);
+		const shopName = computed(() =>
+			selectedWarehouse.value ? selectedWarehouse.value.name : (store.state.auth.app ? store.state.auth.app.short_name : "")
+		);
+		const shopCity = computed(() => (selectedWarehouse.value ? selectedWarehouse.value.city : ""));
 
 		// ── preview ──────────────────────────────────────────────
 		const previewCells = computed(() => columnsPerRow.value * 2);
@@ -355,7 +397,7 @@ export default {
 		const fetchProducts = () => {
 			loading.value = true;
 			const params = {
-				fields: "id,xid,name,item_code,barcode_symbology,image_url,category_id,x_category_id,category{id,xid,name},brand_id,x_brand_id,brand{id,xid,name},details{sales_price}",
+				fields: "id,xid,name,item_code,barcode_symbology,image_url,category_id,x_category_id,category{id,xid,name},brand_id,x_brand_id,brand{id,xid,name},details{sales_price,mrp}",
 				limit: pagination.value.pageSize,
 				page: pagination.value.current,
 			};
@@ -418,11 +460,14 @@ export default {
 				.bulk-print-page{display:flex;flex-wrap:wrap;padding:10px}
 				.barcode-label{display:inline-flex;flex-direction:column;align-items:center;
 					justify-content:center;border:1px dashed #ccc;padding:4px;page-break-inside:avoid}
-				.label-small{height:80px}.label-medium{height:110px}.label-large{height:140px}
+				.label-small{height:100px}.label-medium{height:135px}.label-large{height:170px}
 				.label-small svg{height:40px!important}.label-medium svg{height:60px!important}.label-large svg{height:80px!important}
 				.label-product-name{font-size:10px;font-weight:700;text-align:center;margin-top:2px;
 					max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-				.label-price{font-size:10px;color:#333;text-align:center}
+				.label-mrp{font-size:9px;color:#666;text-align:center;text-decoration:line-through}
+				.label-price{font-size:11px;font-weight:700;color:#000;text-align:center}
+				.label-shop{font-size:8px;color:#555;text-align:center;margin-top:1px;
+					max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 				@media print{body{margin:0}.bulk-print-page{padding:5px}}
 			</style></head><body>${content}</body></html>`);
 			win.document.close();
@@ -448,7 +493,8 @@ export default {
 			selectedProducts, isAllSelected, isIndeterminate,
 			toggleProduct, toggleSelectAll,
 			printQueue, addSelectedToQueue, removeFromQueue, printBarcodes,
-			labelSize, columnsPerRow, showPrice, showProductName,
+			labelSize, columnsPerRow, showPrice, showProductName, showMrp, showShopName, showCity,
+			shopName, shopCity,
 			barcodeOptions, previewCells, labelSizeLabel,
 			fetchProducts, handleTableChange,
 		};
@@ -485,9 +531,9 @@ export default {
 	background: #fafafa;
 	overflow: hidden;
 
-	&.preview-small  { height: 72px; }
-	&.preview-medium { height: 96px; }
-	&.preview-large  { height: 120px; }
+	&.preview-small  { height: 92px; }
+	&.preview-medium { height: 116px; }
+	&.preview-large  { height: 140px; }
 }
 
 /* Mock barcode made with CSS stripes */
@@ -509,7 +555,9 @@ export default {
 }
 .mock-code  { font-size: 8px; color: #333; letter-spacing: 1px; }
 .mock-name  { font-size: 7px; font-weight: 700; color: #444; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 90%; text-overflow: ellipsis; }
-.mock-price { font-size: 7px; color: #666; }
+.mock-mrp   { font-size: 6px; color: #888; text-decoration: line-through; }
+.mock-price { font-size: 8px; font-weight: 700; color: #333; }
+.mock-shop  { font-size: 6px; color: #666; white-space: nowrap; overflow: hidden; max-width: 90%; text-overflow: ellipsis; }
 
 .preview-hint {
 	text-align: center;

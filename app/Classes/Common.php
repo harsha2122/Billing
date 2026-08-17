@@ -399,6 +399,45 @@ class Common
         return Str::random(20);
     }
 
+    /**
+     * Sends an email using the SuperAdmin configured global SMTP settings
+     * (App Settings). Used for login OTP and password reset emails so
+     * they work centrally without relying on any per-company mail setup.
+     *
+     * @return bool
+     */
+    public static function sendGlobalSmtpMail($toEmail, $subject, $htmlBody)
+    {
+        $appSettings = \App\Models\AppSettings::first();
+
+        if (!$appSettings || !$appSettings->smtp_enabled || !$appSettings->smtp_host || !$appSettings->smtp_username || !$appSettings->smtp_password) {
+            return false;
+        }
+
+        try {
+            $transport = new \Swift_SmtpTransport($appSettings->smtp_host, $appSettings->smtp_port ?: 587, $appSettings->smtp_encryption ?: null);
+            $transport->setUsername($appSettings->smtp_username);
+            $transport->setPassword($appSettings->smtp_password);
+
+            $mailer = new \Swift_Mailer($transport);
+
+            $fromEmail = $appSettings->smtp_from_email ?: $appSettings->smtp_username;
+            $fromName = $appSettings->smtp_from_name ?: ($appSettings->site_name ?: 'App');
+
+            $message = (new \Swift_Message($subject))
+                ->setFrom([$fromEmail => $fromName])
+                ->setTo([$toEmail])
+                ->setBody($htmlBody, 'text/html');
+
+            $mailer->send($message);
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Global SMTP Mail Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public static function getSalesOrderTax($taxRate, $salesPrice, $taxType)
     {
         if ($taxRate != 0) {

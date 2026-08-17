@@ -32,7 +32,6 @@
         }
 
         .accent { color: #5b57d1; }
-        .accent-bg { background-color: #5b57d1; color: #fff; }
 
         table {
             width: 100%;
@@ -45,17 +44,11 @@
         .font-bold { font-weight: bold; }
         .font-sm { font-size: 10px; }
 
-        .mt-5 { margin-top: 5px; }
-        .mt-10 { margin-top: 10px; }
-        .mt-15 { margin-top: 15px; }
-        .mb-5 { margin-bottom: 5px; }
-
         /* Company info dark box top-left */
         .header-dark-box {
             background-color: #2d2a6e;
             color: #fff;
             padding: 12px 15px;
-            border-radius: 0;
         }
 
         .header-dark-box .company-name {
@@ -69,7 +62,7 @@
             opacity: 0.9;
         }
 
-        /* Tax Invoice centered */
+        /* Quotation title */
         .invoice-title {
             text-align: center;
             font-size: 18px;
@@ -79,9 +72,9 @@
             border-bottom: 2px solid #5b57d1;
             border-top: 2px solid #5b57d1;
             margin: 10px 0;
+            letter-spacing: 1px;
         }
 
-        /* Bill To / Invoice Details */
         .info-label {
             font-weight: bold;
             color: #5b57d1;
@@ -95,7 +88,6 @@
             padding: 5px 0;
         }
 
-        /* Items table */
         .items-table {
             margin-top: 10px;
             border: 1px solid #d4d2f7;
@@ -110,9 +102,7 @@
             border-right: 1px solid rgba(255,255,255,0.2);
         }
 
-        .items-table th:last-child {
-            border-right: none;
-        }
+        .items-table th:last-child { border-right: none; }
 
         .items-table td {
             padding: 6px;
@@ -122,9 +112,7 @@
             text-align: center;
         }
 
-        .items-table td:last-child {
-            border-right: none;
-        }
+        .items-table td:last-child { border-right: none; }
 
         .items-table .total-row td {
             background-color: #f0efff;
@@ -132,7 +120,6 @@
             border-top: 2px solid #5b57d1;
         }
 
-        /* Amount in words */
         .amount-words-box {
             background-color: #f0efff;
             border: 1px solid #5b57d1;
@@ -141,7 +128,6 @@
             margin-top: 10px;
         }
 
-        /* Totals */
         .totals-table {
             margin-top: 10px;
             width: 45%;
@@ -170,10 +156,6 @@
             font-weight: bold;
         }
 
-        .totals-table tr:nth-child(even):not(.grand-total) {
-            background-color: #f5f4ff;
-        }
-
         .terms-section {
             margin-top: 12px;
             font-size: 10px;
@@ -187,7 +169,6 @@
             margin-bottom: 3px;
         }
 
-        /* Dashed signature box */
         .signature-box-dashed {
             border: 1px dashed #5b57d1;
             padding: 10px;
@@ -203,6 +184,13 @@
             margin-top: 5px;
         }
 
+        .validity-note {
+            font-size: 10px;
+            color: #888;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
         .clearfix::after {
             content: "";
             display: table;
@@ -214,7 +202,7 @@
 <body>
     <div class="invoice-wrapper">
 
-        {{-- HEADER: Company dark box left, Logo right --}}
+        {{-- HEADER: Vendor details left, Logo right --}}
         <table>
             <tr>
                 <td style="width: 65%; vertical-align: top; padding-right: 10px;">
@@ -227,11 +215,11 @@
                             @if($vendorInfo['phone'])
                                 {{ $traslations['phone'] ?? 'Phone' }}: {{ $vendorInfo['phone'] }}
                             @endif
-                            @if($vendorInfo['email'])
-                                | {{ $vendorInfo['email'] }}
+                            @if($vendorInfo['phone'] && $vendorInfo['email'])
+                                |
                             @endif
-                            @if($order->warehouse && $order->warehouse->gstin)
-                                <br>GSTIN: {{ $order->warehouse->gstin }}
+                            @if($vendorInfo['email'])
+                                {{ $traslations['email'] ?? 'Email' }}: {{ $vendorInfo['email'] }}
                             @endif
                         </div>
                     </div>
@@ -246,14 +234,14 @@
             </tr>
         </table>
 
-        {{-- TAX INVOICE TITLE --}}
-        <div class="invoice-title">{{ $traslations['tax_invoice'] ?? 'Tax Invoice' }}</div>
+        {{-- QUOTATION TITLE --}}
+        <div class="invoice-title">{{ $traslations['quotation_estimate'] ?? 'QUOTATION / ESTIMATE' }}</div>
 
-        {{-- BILL TO left, INVOICE DETAILS right --}}
+        {{-- QUOTED TO left, QUOTATION DETAILS right --}}
         <table style="margin-top: 5px;">
             <tr>
                 <td style="width: 50%; vertical-align: top; padding-right: 15px;">
-                    <div class="info-label">{{ $traslations['bill_to'] ?? 'Bill To' }}</div>
+                    <div class="info-label">{{ $traslations['quoted_to'] ?? 'Quoted To' }}</div>
                     <div class="info-content">
                         <div class="font-bold" style="font-size: 13px;">{{ $order->user->name }}</div>
                         @if($order->user->address)
@@ -271,28 +259,23 @@
                     </div>
                 </td>
                 <td style="width: 50%; vertical-align: top; padding-left: 15px;">
-                    <div class="info-label">{{ $traslations['invoice_details'] ?? 'Invoice Details' }}</div>
+                    <div class="info-label">{{ $traslations['quotation_details'] ?? 'Quotation Details' }}</div>
                     <div class="info-content">
                         <div>
-                            <span class="font-bold">{{ $traslations['invoice'] ?? 'Invoice' }} No:</span>
+                            <span class="font-bold">{{ $traslations['quotation'] ?? 'Quotation' }} No:</span>
                             {{ $order->invoice_number }}
                         </div>
                         <div>
-                            <span class="font-bold">{{ $traslations['order_date'] ?? 'Date' }}:</span>
+                            <span class="font-bold">{{ $traslations['quotation_date'] ?? 'Date' }}:</span>
                             {{ $order->order_date->format($dateTimeFormat) }}
                         </div>
-                        @if($order->staffMember)
-                            <div>
-                                <span class="font-bold">{{ $traslations['staff_member'] ?? 'Staff' }}:</span>
-                                {{ $order->staffMember->name }}
-                            </div>
-                        @endif
                         @if($order->warehouse)
                             <div>
                                 <span class="font-bold">{{ $traslations['warehouse'] ?? 'Warehouse' }}:</span>
                                 {{ $order->warehouse->name }}
                             </div>
                         @endif
+                        <div class="validity-note">{{ $traslations['quotation_validity_note'] ?? 'This quotation is an estimate and does not constitute a tax invoice.' }}</div>
                     </div>
                 </td>
             </tr>
@@ -303,11 +286,10 @@
             <thead>
                 <tr>
                     <th style="width: 6%;">#</th>
-                    <th style="width: 32%;">{{ $traslations['product'] ?? 'Item Name' }}</th>
-                    <th style="width: 12%;">HSN/SAC</th>
-                    <th style="width: 12%;">{{ $traslations['quantity'] ?? 'Quantity' }}</th>
-                    <th style="width: 18%;">{{ $traslations['unit_price'] ?? 'Price/Unit' }}</th>
-                    <th style="width: 20%;">{{ $traslations['total'] ?? 'Amount' }}</th>
+                    <th style="width: 38%;">{{ $traslations['product'] ?? 'Item Name' }}</th>
+                    <th style="width: 14%;">{{ $traslations['quantity'] ?? 'Quantity' }}</th>
+                    <th style="width: 21%;">{{ $traslations['unit_price'] ?? 'Price/Unit' }}</th>
+                    <th style="width: 21%;">{{ $traslations['total'] ?? 'Amount' }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -315,7 +297,6 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td class="text-left" style="padding-left: 8px;">{{ $item->product->name }}</td>
-                        <td>{{ $item->hsn_sac_code ?? $item->product->hsn_sac_code ?? '-' }}</td>
                         <td>{{ $item->quantity }} {{ $item->unit->short_name }}</td>
                         <td class="text-right">{{ $company->currency->symbol }}{{ $item->single_unit_price }}</td>
                         <td class="text-right">{{ $company->currency->symbol }}{{ $item->subtotal }}</td>
@@ -323,15 +304,15 @@
                 @endforeach
 
                 <tr class="total-row">
-                    <td colspan="5" class="text-right font-bold">{{ $traslations['total'] ?? 'Total' }}</td>
+                    <td colspan="4" class="text-right font-bold">{{ $traslations['total'] ?? 'Total' }}</td>
                     <td class="text-right">{{ $company->currency->symbol }}{{ number_format($order->total, 2) }}</td>
                 </tr>
             </tbody>
         </table>
 
-        {{-- INVOICE AMOUNT IN WORDS --}}
+        {{-- AMOUNT IN WORDS --}}
         <div class="amount-words-box">
-            <span class="font-bold accent">{{ $traslations['amount_in_words'] ?? 'Invoice Amount in Words' }}:</span>
+            <span class="font-bold accent">{{ $traslations['amount_in_words'] ?? 'Amount in Words' }}:</span>
             {{ $amountInWords }}
         </div>
 
@@ -363,25 +344,9 @@
                 <td class="total-label">{{ $traslations['total'] ?? 'Total' }}</td>
                 <td class="total-value">{{ $company->currency->symbol }}{{ number_format($order->total, 2) }}</td>
             </tr>
-            <tr>
-                <td class="total-label">{{ $traslations['paid_amount'] ?? 'Received' }}</td>
-                <td class="total-value">{{ $company->currency->symbol }}{{ number_format($order->paid_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="total-label">{{ $traslations['due_amount'] ?? 'Balance' }}</td>
-                <td class="total-value">{{ $company->currency->symbol }}{{ number_format($order->due_amount, 2) }}</td>
-            </tr>
         </table>
 
         <div class="clearfix"></div>
-
-        {{-- BANK DETAILS --}}
-        @if($order->warehouse && $order->warehouse->bank_details)
-            <div class="terms-section" style="margin-top: 15px;">
-                <div class="terms-title">{{ $traslations['bank_details'] ?? 'Bank Details' }}:</div>
-                <div>{!! nl2br(e($order->warehouse->bank_details)) !!}</div>
-            </div>
-        @endif
 
         {{-- TERMS & CONDITIONS + SIGNATORY --}}
         <table style="margin-top: 20px;">

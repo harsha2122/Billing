@@ -120,6 +120,9 @@
                                             {{ $t("menu.login") }}
                                         </a-button>
                                     </a-form-item>
+                                    <div style="text-align: center;">
+                                        <router-link :to="{ name: 'admin.forgot-password' }">Forgot password?</router-link>
+                                    </div>
                                 </template>
                             </a-form>
                         </a-card>

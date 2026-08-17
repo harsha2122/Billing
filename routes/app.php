@@ -15,5 +15,9 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::post('verify-otp', ['as' => 'api.extra.verify-otp', 'uses' => 'AuthController@verifyOtp']);
         ApiRoute::post('refresh-token', ['as' => 'api.extra.refresh-token', 'uses' => 'AuthController@refreshToken']);
         ApiRoute::post('logout', ['as' => 'api.extra.logout', 'uses' => 'AuthController@logout']);
+
+        // Forgot password
+        ApiRoute::post('forgot-password', ['as' => 'api.extra.forgot-password', 'uses' => 'AuthController@forgotPassword']);
+        ApiRoute::post('reset-password', ['as' => 'api.extra.reset-password', 'uses' => 'AuthController@resetPassword']);
     });
 });

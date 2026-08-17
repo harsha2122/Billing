@@ -200,16 +200,16 @@
                     @endif
                 </td>
                 <td style="width: 45%; vertical-align: middle;">
-                    <div class="company-name">{{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
-                    @if($order->warehouse ? $order->warehouse->address : $company->address)
-                        <div class="font-sm">{{ $order->warehouse ? $order->warehouse->address : $company->address }}</div>
+                    <div class="company-name">{{ $vendorInfo['name'] }}</div>
+                    @if($vendorInfo['address'])
+                        <div class="font-sm">{{ $vendorInfo['address'] }}</div>
                     @endif
                     <div class="font-sm">
-                        @if($order->warehouse ? $order->warehouse->phone : $company->phone)
-                            {{ $traslations['phone'] ?? 'Phone' }}: {{ $order->warehouse ? $order->warehouse->phone : $company->phone }}
+                        @if($vendorInfo['phone'])
+                            {{ $traslations['phone'] ?? 'Phone' }}: {{ $vendorInfo['phone'] }}
                         @endif
-                        @if($order->warehouse ? $order->warehouse->email : $company->email)
-                            | {{ $order->warehouse ? $order->warehouse->email : $company->email }}
+                        @if($vendorInfo['email'])
+                            | {{ $vendorInfo['email'] }}
                         @endif
                     </div>
                     @if($order->warehouse && $order->warehouse->gstin)
@@ -341,7 +341,7 @@
                 </td>
                 <td style="width: 40%; text-align: right; vertical-align: bottom;">
                     <div class="signature-box">
-                        <div class="font-bold accent" style="margin-bottom: 3px;">For {{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                        <div class="font-bold accent" style="margin-bottom: 3px;">For {{ $vendorInfo['name'] }}</div>
                         @if($order->warehouse && $order->warehouse->signature)
                             <img src="{{ $order->warehouse->signature_url }}" style="max-width: 120px; max-height: 45px;" />
                             <br>

@@ -91,11 +91,71 @@ class AppSettingsController extends ApiBaseController
             $appSettings->meta_keywords = $request->meta_keywords;
         }
 
+        if ($request->has('smtp_enabled')) {
+            $appSettings->smtp_enabled = $request->smtp_enabled ? true : false;
+        }
+
+        if ($request->has('smtp_host')) {
+            $appSettings->smtp_host = $request->smtp_host;
+        }
+
+        if ($request->has('smtp_port')) {
+            $appSettings->smtp_port = $request->smtp_port;
+        }
+
+        if ($request->has('smtp_username')) {
+            $appSettings->smtp_username = $request->smtp_username;
+        }
+
+        // Only overwrite the stored password when a new one is actually sent
+        // so the masked placeholder in the UI never wipes the saved credential.
+        if ($request->has('smtp_password') && $request->smtp_password != '') {
+            $appSettings->smtp_password = $request->smtp_password;
+        }
+
+        if ($request->has('smtp_encryption')) {
+            $appSettings->smtp_encryption = $request->smtp_encryption;
+        }
+
+        if ($request->has('smtp_from_name')) {
+            $appSettings->smtp_from_name = $request->smtp_from_name;
+        }
+
+        if ($request->has('smtp_from_email')) {
+            $appSettings->smtp_from_email = $request->smtp_from_email;
+        }
+
         $appSettings->save();
 
         return ApiResponse::make('Global settings updated successfully', [
             'app_settings' => $appSettings,
         ]);
+    }
+
+    public function sendTestMail()
+    {
+        $request = request();
+        $user = user();
+
+        if (!$user || !$user->is_superadmin) {
+            throw new ApiException('Unauthorized. Only SuperAdmin can access global settings.');
+        }
+
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $sent = \App\Classes\Common::sendGlobalSmtpMail(
+            $request->email,
+            'Test Mail',
+            '<p>Your SMTP settings are correct. This is a test email sent from your application.</p>'
+        );
+
+        if (!$sent) {
+            throw new ApiException('Failed to send test mail. Please check your SMTP settings and make sure "Enable SMTP" is turned on.');
+        }
+
+        return ApiResponse::make('Test mail sent successfully');
     }
 
     public function getPublicSettings()

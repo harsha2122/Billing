@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\Hash;
 use App\Classes\Common;
 use App\Models\BaseModel;
+use Illuminate\Support\Facades\Crypt;
 
 class AppSettings extends BaseModel
 {
@@ -14,7 +15,7 @@ class AppSettings extends BaseModel
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $hidden = ['id', 'updated_at'];
+    protected $hidden = ['id', 'updated_at', 'smtp_password'];
 
     protected $appends = [
         'xid',
@@ -70,5 +71,23 @@ class AppSettings extends BaseModel
         $appSettingsPath = Common::getFolderPath('appSettingsPath');
 
         return $this->favicon == null ? asset('images/favicon.png') : Common::getFileUrl($appSettingsPath, $this->favicon);
+    }
+
+    public function setSmtpPasswordAttribute($value)
+    {
+        $this->attributes['smtp_password'] = $value ? Crypt::encryptString($value) : null;
+    }
+
+    public function getSmtpPasswordAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

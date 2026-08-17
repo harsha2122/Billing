@@ -86,6 +86,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         // App Settings (SuperAdmin only)
         ApiRoute::get('app-settings', ['as' => 'api.app-settings.index', 'uses' => 'AppSettingsController@index']);
         ApiRoute::post('app-settings', ['as' => 'api.app-settings.update', 'uses' => 'AppSettingsController@update']);
+        ApiRoute::post('app-settings/send-test-mail', ['as' => 'api.app-settings.send-test-mail', 'uses' => 'AppSettingsController@sendTestMail']);
 
         // Update waerhouse online_store_enabled
         ApiRoute::post('warehouses/update-online-store-status', ['as' => 'api.warehouses.update-online-store-status', 'uses' => 'WarehouseController@updateOnlineStoreStatus']);

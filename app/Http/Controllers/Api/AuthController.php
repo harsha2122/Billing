@@ -132,9 +132,24 @@ class AuthController extends ApiBaseController
 
         $company = Company::with('currency')->first();
 
-        // Determine template slug
+        // Vendor details shown on the invoice must always be complete: fall back
+        // per-field to the company's details whenever the warehouse doesn't have
+        // its own value set (instead of switching the whole block at once).
+        $vendorInfo = [
+            'name' => ($order->warehouse && $order->warehouse->name) ? $order->warehouse->name : $company->name,
+            'address' => ($order->warehouse && $order->warehouse->address) ? $order->warehouse->address : $company->address,
+            'phone' => ($order->warehouse && $order->warehouse->phone) ? $order->warehouse->phone : $company->phone,
+            'email' => ($order->warehouse && $order->warehouse->email) ? $order->warehouse->email : $company->email,
+        ];
+
+        // Determine template slug.
+        // Quotations always use the dedicated quotation template - they are
+        // estimates, not tax invoices, and must never inherit a POS invoice
+        // template (and its possibly stale/wrong logo) meant for sales orders.
         $templateSlug = 'default';
-        if ($order->posInvoiceTemplate) {
+        if ($order->order_type == 'quotations') {
+            $templateSlug = 'quotation';
+        } elseif ($order->posInvoiceTemplate) {
             $templateSlug = $order->posInvoiceTemplate->slug;
         }
 
@@ -153,6 +168,7 @@ class AuthController extends ApiBaseController
         $pdfData = [
             'order' => $order,
             'company' => $company,
+            'vendorInfo' => $vendorInfo,
             'dateTimeFormat' => 'd-m-Y',
             'traslations' => $invoiceTranslation,
             'amountInWords' => $amountInWords,
@@ -358,6 +374,88 @@ class AuthController extends ApiBaseController
         return ApiResponse::make('Loggged in successfull', $response);
     }
 
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // Always respond the same way whether the user exists or not,
+        // so the endpoint can't be used to enumerate registered emails.
+        $genericResponse = ApiResponse::make('If this email is registered, a password reset OTP has been sent to it.');
+
+        if (!$user || !$user->email) {
+            return $genericResponse;
+        }
+
+        \App\Models\PasswordResetOtp::where('user_id', $user->id)->where('used', false)->update(['used' => true]);
+
+        $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        \App\Models\PasswordResetOtp::create([
+            'user_id' => $user->id,
+            'otp' => $otpCode,
+            'expires_at' => Carbon::now()->addMinutes(15),
+        ]);
+
+        $sent = Common::sendGlobalSmtpMail(
+            $user->email,
+            'Reset Your Password',
+            '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px;">' .
+                '<h2 style="color:#5254cf;">Password Reset Request</h2>' .
+                '<p>Hello ' . e($user->name) . ',</p>' .
+                '<p>We received a request to reset your password. Use the OTP below to proceed:</p>' .
+                '<div style="background:#f0efff;padding:15px;text-align:center;border-radius:8px;margin:20px 0;">' .
+                '<span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#5254cf;">' . $otpCode . '</span>' .
+                '</div>' .
+                '<p>This OTP is valid for <strong>15 minutes</strong>.</p>' .
+                '<p>If you did not request this, please ignore this email.</p>' .
+                '</div>'
+        );
+
+        if (!$sent) {
+            throw new ApiException('Unable to send reset email. Please contact your administrator to configure SMTP settings.');
+        }
+
+        return $genericResponse;
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'otp' => 'required|string|size:6',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw new ApiException('Invalid request.');
+        }
+
+        $otpRecord = \App\Models\PasswordResetOtp::where('user_id', $user->id)
+            ->where('otp', $request->otp)
+            ->where('used', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->latest()
+            ->first();
+
+        if (!$otpRecord) {
+            throw new ApiException('Invalid or expired OTP.');
+        }
+
+        $otpRecord->used = true;
+        $otpRecord->save();
+
+        $user->password = $request->password;
+        $user->save();
+
+        return ApiResponse::make('Password reset successfully. Please login with your new password.');
+    }
+
     protected function isOtpEnabled()
     {
         // Check the company's email settings for require_otp_signin flag
@@ -398,7 +496,23 @@ class AuthController extends ApiBaseController
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
-        // First try company email SMTP settings (admin-configured)
+        $otpHtml = '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px;">' .
+            '<h2 style="color:#5254cf;">Login Verification</h2>' .
+            '<p>Hello ' . e($user->name) . ',</p>' .
+            '<p>Your One-Time Password (OTP) for login is:</p>' .
+            '<div style="background:#f0efff;padding:15px;text-align:center;border-radius:8px;margin:20px 0;">' .
+            '<span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#5254cf;">' . $otpCode . '</span>' .
+            '</div>' .
+            '<p>This OTP is valid for <strong>5 minutes</strong>.</p>' .
+            '<p>If you did not request this, please ignore this email.</p>' .
+            '</div>';
+
+        // First try the SuperAdmin configured global SMTP (App Settings)
+        if (Common::sendGlobalSmtpMail($user->email, 'Login OTP Verification', $otpHtml)) {
+            return true;
+        }
+
+        // Fall back to company email SMTP settings (admin-configured)
         $creds = null;
         $emailSetting = Settings::where('setting_type', 'email')
             ->where('status', 1)

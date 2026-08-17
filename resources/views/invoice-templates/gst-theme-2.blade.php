@@ -225,11 +225,11 @@
                     </td>
                     <td style="width: 70%; vertical-align: middle;">
                         <div class="company-box">
-                            <div class="company-name">{{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                            <div class="company-name">{{ $vendorInfo['name'] }}</div>
                             @php
-                                $displayAddress = $order->warehouse ? $order->warehouse->address : $company->address;
-                                $displayPhone = $order->warehouse ? $order->warehouse->phone : $company->phone;
-                                $displayEmail = $order->warehouse ? $order->warehouse->email : $company->email;
+                                $displayAddress = $vendorInfo['address'];
+                                $displayPhone = $vendorInfo['phone'];
+                                $displayEmail = $vendorInfo['email'];
                             @endphp
                             @if($displayAddress)
                                 <div style="margin-top: 3px;">{{ $displayAddress }}</div>
@@ -403,7 +403,7 @@
                 </td>
                 <td style="width: 45%; text-align: right; vertical-align: bottom;">
                     <div class="signature-box">
-                        <div class="font-bold accent" style="margin-bottom: 5px;">For {{ $order->warehouse ? $order->warehouse->name : $company->name }}</div>
+                        <div class="font-bold accent" style="margin-bottom: 5px;">For {{ $vendorInfo['name'] }}</div>
                         @if($order->warehouse && $order->warehouse->signature)
                             <img src="{{ $order->warehouse->signature_url }}" style="max-width: 150px; max-height: 60px;" />
                             <br>

@@ -186,12 +186,12 @@
 						<tr>
 							<td class="text-right">
 								<span class="company-title">
-									{{ $order->warehouse ? $order->warehouse->name : $company->name }} <br>
+									{{ $vendorInfo['name'] }} <br>
 								</span>
 								<span>
-									{{ $order->warehouse ? $order->warehouse->address : $company->address }} <br>
-									{{ $order->warehouse ? $order->warehouse->email : $company->email }} <br>
-									{{ $order->warehouse ? $order->warehouse->phone : $company->phone }}
+									{{ $vendorInfo['address'] }} <br>
+									{{ $vendorInfo['email'] }} <br>
+									{{ $vendorInfo['phone'] }}
 								</span>
 							</td>
 
