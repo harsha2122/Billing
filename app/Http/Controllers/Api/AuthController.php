@@ -244,6 +244,7 @@ class AuthController extends ApiBaseController
         if (!$authenticatedUser->is_superadmin) {
             $userCompanyForLimit = $userCompany ?? Company::where('id', $authenticatedUser->company_id)->first();
             if ($userCompanyForLimit && $userCompanyForLimit->max_devices > 0) {
+                $this->pruneStaleSessions($userCompanyForLimit->id);
                 $activeSessions = UserSession::where('company_id', $userCompanyForLimit->id)->count();
                 if ($activeSessions >= $userCompanyForLimit->max_devices) {
                     auth('api')->logout();
@@ -344,6 +345,7 @@ class AuthController extends ApiBaseController
         if (!$authenticatedUser->is_superadmin) {
             $userCompany = Company::where('id', $authenticatedUser->company_id)->first();
             if ($userCompany && $userCompany->max_devices > 0) {
+                $this->pruneStaleSessions($userCompany->id);
                 $activeSessions = UserSession::where('company_id', $userCompany->id)->count();
                 if ($activeSessions >= $userCompany->max_devices) {
                     auth('api')->logout();
@@ -611,6 +613,21 @@ class AuthController extends ApiBaseController
         return ApiResponse::make(__('Session closed successfully'));
     }
 
+    /**
+     * Remove device session rows that can no longer possibly be renewed
+     * (older than the JWT refresh window), so a browser that was closed
+     * instead of logged out - or any session orphaned by a bug - eventually
+     * frees up its device slot instead of counting against max_devices forever.
+     */
+    protected function pruneStaleSessions($companyId)
+    {
+        $refreshTtlMinutes = (int) config('jwt.refresh_ttl', 20160);
+
+        UserSession::where('company_id', $companyId)
+            ->where('last_active_at', '<', Carbon::now()->subMinutes($refreshTtlMinutes))
+            ->delete();
+    }
+
     protected function createDeviceSession($user, $token)
     {
         // Skip session tracking when there is no company context (superadmins, or
@@ -653,7 +670,21 @@ class AuthController extends ApiBaseController
 
     public function refreshToken(RefreshTokenRequest $request)
     {
+        $oldToken = $request->bearerToken();
+        $oldSessionToken = $oldToken ? hash('sha256', $oldToken) : null;
+
         $newToken = auth('api')->refresh();
+
+        // Token rotation must not orphan the device session row - otherwise it
+        // keeps counting against max_devices forever and logout can never find
+        // it again (it would be hashing a newer, already-rotated token).
+        if ($oldSessionToken) {
+            UserSession::where('session_token', $oldSessionToken)
+                ->update([
+                    'session_token' => hash('sha256', $newToken),
+                    'last_active_at' => Carbon::now(),
+                ]);
+        }
 
         $response = $this->respondWithToken($newToken);
 
